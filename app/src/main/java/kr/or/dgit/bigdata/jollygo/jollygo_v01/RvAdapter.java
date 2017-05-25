@@ -31,6 +31,7 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.ViewHolder> {
     private static int lastPosition = -1;
     private Context context;
     private static FloatingActionButton floatingActionButton;
+    private static int clickIndex;
 
     public RvAdapter(List<String> myDataset, Context mContext) {
         mDataset = myDataset;
@@ -81,7 +82,7 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.ViewHolder> {
         setAnimationFadeIn(holder.cv, position);
         holder.ivCard.setImageResource(R.drawable.jg_icon);
         holder.tvTest.setText(mDataset.get(position));
-        final int[] clickIndex = new int[1];
+
 
        holder.ivCard.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
@@ -89,7 +90,7 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.ViewHolder> {
                     ClipData clip = ClipData.newPlainText("","");
                     v.startDrag(clip, new View.DragShadowBuilder(v),null, 0);
                     Toast.makeText(context,position+"번 클릭",Toast.LENGTH_SHORT).show();
-                    clickIndex[0] = position;
+                    clickIndex = position;
                     holder.fab.setImageResource(R.drawable.ic_delete);
                     return true;
                    /* mDataset.remove(position);
@@ -109,9 +110,9 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.ViewHolder> {
                 switch (event.getAction()){
                     case DragEvent.ACTION_DROP:
                         fb.setImageResource(R.drawable.ic_action_name);
-                        mDataset.remove(clickIndex[0]);
-                        notifyItemRemoved(clickIndex[0]);
-                        Toast.makeText(context,clickIndex[0]+"번 삭제",Toast.LENGTH_LONG).show();
+                        mDataset.remove(clickIndex);
+                        notifyItemRemoved(clickIndex);
+                        Toast.makeText(context,clickIndex+"번 삭제",Toast.LENGTH_LONG).show();
                         notifyDataSetChanged();
                        // holder.cv.setVisibility(View.VISIBLE);
                         return true;
