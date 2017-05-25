@@ -13,7 +13,8 @@
         android:layout_height="match_parent"
         android:clickable="true"
         android:focusable="true"
-        android:foreground="?selectableItemBackground">
+        android:foreground="?selectableItemBackground"
+        android:id="@+id/card_layout">
 
         <ImageView
             android:id="@+id/ivCard"

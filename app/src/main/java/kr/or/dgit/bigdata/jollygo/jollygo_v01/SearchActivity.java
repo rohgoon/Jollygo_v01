@@ -1,11 +1,15 @@
 package kr.or.dgit.bigdata.jollygo.jollygo_v01;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MotionEvent;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.SearchView;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -30,6 +34,7 @@ public class SearchActivity extends AppCompatActivity
     RecyclerView rv;
     RecyclerView.Adapter rvAdapter;
     RecyclerView.LayoutManager rvLayoutManager;
+    FloatingActionButton fab;
     private List<String> mDataset = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +43,7 @@ public class SearchActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -59,11 +64,9 @@ public class SearchActivity extends AppCompatActivity
         //recyclerView
         rv = (RecyclerView) findViewById(R.id.recyclerView);
         rv.setHasFixedSize(true);
-        //
-
         rvLayoutManager = new GridLayoutManager(this,3);
         rv.setLayoutManager(rvLayoutManager);
-
+        //RecyclerView animation
 
         sv = (SearchView) findViewById(R.id.search_view);
         tvTitle = (TextView) findViewById(R.id.tvTitle);
@@ -80,8 +83,7 @@ public class SearchActivity extends AppCompatActivity
                 //searchCount++;
                 mDataset.add(query);
                 sv.setQuery("",true);
-                rvAdapter = new RvAdapter(mDataset,getApplicationContext()); // List<String> 입력
-
+                rvAdapter = new RvAdapter(mDataset,getApplicationContext(),fab); // List<String> 입력
                 rv.setAdapter(rvAdapter);
                 return true;
             }
@@ -108,7 +110,6 @@ public class SearchActivity extends AppCompatActivity
         rv.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
             @Override
             public void onChildViewAttachedToWindow(View view) {
-
 
                 searchCount = rv.getAdapter().getItemCount();
                 if (tvTitle.getText().toString().equals("")){
