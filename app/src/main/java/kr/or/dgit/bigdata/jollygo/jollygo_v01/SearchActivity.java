@@ -38,7 +38,7 @@ public class SearchActivity extends AppCompatActivity
     RecyclerView.LayoutManager rvLayoutManager;
     FloatingActionButton fab;
     private List<String> mDataset = new ArrayList<>(); //재료 검색어 리스트
-    //private List<String> mImgset; //이미지 url 리스트
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,12 +88,6 @@ public class SearchActivity extends AppCompatActivity
             public boolean onQueryTextSubmit(String query) {
                 //searchCount++;
                 mDataset.add(query);
-                /*//send ImgMaching
-                imgMaching.setmDataset(mDataset);
-                //matching process
-                imgMaching.getWikiRes();
-                //matching image feedback
-                mImgset = imgMaching.getmImgset();*/
 
                 sv.setQuery("",true);
                 rvAdapter = new RvAdapter(mDataset,getApplicationContext(),fab); // List<String> 입력
@@ -173,24 +167,14 @@ public class SearchActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
-   /* @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }*/
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
