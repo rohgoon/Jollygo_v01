@@ -2,11 +2,15 @@ package kr.or.dgit.bigdata.jollygo.jollygo_v01;
 
 import android.content.ClipData;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.DragEvent;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -20,7 +24,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
+
+import kr.or.dgit.bigdata.jollygo.jollygo_v01.imgmanage.ImgMaching;
 
 /**
  * Created by NCG on 2017-05-23.
@@ -80,8 +90,22 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.ViewHolder> {
     public void onBindViewHolder(final ViewHolder holder, final int position) {//이벤트 처리
 
         setAnimationFadeIn(holder.cv, position);
-        holder.ivCard.setImageResource(R.drawable.jg_icon);
+        ImgMaching im = new ImgMaching();
+        im.getWikiRes(mDataset.get(position));
+        String imgUrl = im.getImg();
+        if(imgUrl.equals(R.drawable.jg_icon+"") || imgUrl == null || imgUrl.equals("")){
+            holder.ivCard.setImageResource(R.drawable.jg_icon);
+        }else{
+            Bitmap imgBitmap = mkBitmap(imgUrl);
+            if (imgBitmap == null){
+                holder.ivCard.setImageResource(R.drawable.jg_icon);
+            }else{
+                holder.ivCard.setImageBitmap(imgBitmap);
+            }
+
+        }
         holder.tvTest.setText(mDataset.get(position));
+
 
 
        holder.ivCard.setOnLongClickListener(new View.OnLongClickListener() {
@@ -94,7 +118,6 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.ViewHolder> {
                     holder.fab.setImageResource(R.drawable.ic_delete);
                     return true;
                    /* mDataset.remove(position);
-
                     notifyDataSetChanged();
                     return true;*/
                 }
@@ -110,6 +133,7 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.ViewHolder> {
                 switch (event.getAction()){
                     case DragEvent.ACTION_DROP:
                         fb.setImageResource(R.drawable.ic_action_name);
+                        // 삭제
                         mDataset.remove(clickIndex);
                         notifyItemRemoved(clickIndex);
                         Toast.makeText(context,clickIndex+"번 삭제",Toast.LENGTH_LONG).show();
@@ -131,6 +155,25 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.ViewHolder> {
 
     }
 
+    private Bitmap mkBitmap(String s) {
+        HttpURLConnection connection = null;
+        try {
+            URL url = new URL(s);
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true); connection.connect();
+            InputStream input = connection.getInputStream();
+            Bitmap myBitmap = BitmapFactory.decodeStream(input);
+            return myBitmap;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }finally{
+            if(connection!=null) {
+                connection.disconnect();
+            }
+        }
+
+    }
 
 
     // Return the size of your dataset (invoked by the layout manager)

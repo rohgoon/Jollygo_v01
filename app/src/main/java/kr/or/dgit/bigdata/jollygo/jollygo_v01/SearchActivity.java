@@ -38,13 +38,15 @@ public class SearchActivity extends AppCompatActivity
     RecyclerView.LayoutManager rvLayoutManager;
     FloatingActionButton fab;
     private List<String> mDataset = new ArrayList<>(); //재료 검색어 리스트
+    //private List<String> mImgset; //이미지 url 리스트
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        final ImgMaching imgMaching = new ImgMaching();
+        //final ImgMaching imgMaching = new ImgMaching();
 
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -86,10 +88,12 @@ public class SearchActivity extends AppCompatActivity
             public boolean onQueryTextSubmit(String query) {
                 //searchCount++;
                 mDataset.add(query);
-                //send ImgMaching
+                /*//send ImgMaching
                 imgMaching.setmDataset(mDataset);
-
-
+                //matching process
+                imgMaching.getWikiRes();
+                //matching image feedback
+                mImgset = imgMaching.getmImgset();*/
 
                 sv.setQuery("",true);
                 rvAdapter = new RvAdapter(mDataset,getApplicationContext(),fab); // List<String> 입력
