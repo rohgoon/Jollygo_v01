@@ -26,6 +26,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import kr.or.dgit.bigdata.jollygo.jollygo_v01.imgmanage.ImgMaching;
+
 public class SearchActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     SearchView sv;
@@ -35,13 +37,15 @@ public class SearchActivity extends AppCompatActivity
     RecyclerView.Adapter rvAdapter;
     RecyclerView.LayoutManager rvLayoutManager;
     FloatingActionButton fab;
-    private List<String> mDataset = new ArrayList<>();
+    private List<String> mDataset = new ArrayList<>(); //재료 검색어 리스트
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        final ImgMaching imgMaching = new ImgMaching();
+
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -82,6 +86,11 @@ public class SearchActivity extends AppCompatActivity
             public boolean onQueryTextSubmit(String query) {
                 //searchCount++;
                 mDataset.add(query);
+                //send ImgMaching
+                imgMaching.setmDataset(mDataset);
+
+
+
                 sv.setQuery("",true);
                 rvAdapter = new RvAdapter(mDataset,getApplicationContext(),fab); // List<String> 입력
                 rv.setAdapter(rvAdapter);

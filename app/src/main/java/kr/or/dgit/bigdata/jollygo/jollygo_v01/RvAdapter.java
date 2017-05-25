@@ -27,7 +27,7 @@ import java.util.List;
  */
 
 public class RvAdapter extends RecyclerView.Adapter<RvAdapter.ViewHolder> {
-    private List<String> mDataset;
+    private List<String> mDataset; //재료 검색어 리스트
     private static int lastPosition = -1;
     private Context context;
     private static FloatingActionButton floatingActionButton;
