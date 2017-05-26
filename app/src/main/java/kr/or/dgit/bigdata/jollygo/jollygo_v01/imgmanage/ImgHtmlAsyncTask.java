@@ -32,12 +32,32 @@ public class ImgHtmlAsyncTask extends AsyncTask<String,String,Map<String,Bitmap>
         Document doc = null;
         try {
             doc = Jsoup.connect(url).get();
-            Element img1 = doc.select("img.thumbimage").first(); //기본 썸네일 thumbimage
-            img = "https:"+img1.attr("src");
+            Element img1 = doc.select("img.thumbimage").first(); //기본 썸네일 thumbimage 작동됨
+            Element img2 = doc.select("li.gallerybox img").first(); //기본 썸네일 thumbimage 작동됨
+            Element img3 = doc.select("table.infobox a img").first();
+            if(img1!=null&&img2!=null){
+                img = "https:"+img2.attr("src"); // img2에서 src 빼내기
+                Log.e("파싱 출처2 >>>>>>>>>>>>> ",img);
+            }else if(img1 != null&&img2==null){
+                img = "https:"+img1.attr("src"); // img1에서 src 빼내기
+                Log.e("파싱 출처1 >>>>>>>>>>>>> ",img);
+            }else if(img1==null&&img2 !=null){
+                img = "https:"+img2.attr("src"); // img2에서 src 빼내기
+                Log.e("파싱 출처2 >>>>>>>>>>>>> ",img);
+            }else if(img1==null&&img2==null&&img3!=null){
+                img = "https:"+img3.attr("src"); // img3에서 src 빼내기
+                Log.e("파싱 출처3 >>>>>>>>>>>>> ",img);
+            }
+            //img = "https:"+img1.attr("src");
             Log.e("파싱 결과값 >>>>>>>>>>>>> ",img);
             //경우의 수 추가 요망
-
-            Bitmap imgBitmap = mkBitmap(img);
+            //Bitmap imgBitmap = mkBitmap(img);
+            Bitmap imgBitmap;
+            if (img.equals("")){
+                imgBitmap = null;
+            }else{
+                imgBitmap = mkBitmap(img);
+            }
             resMap.put(params[0],imgBitmap);
 
         } catch (IOException e) {

@@ -101,7 +101,12 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.ViewHolder> {
         Map<String,Bitmap> imgMap = new HashMap<>();
         try {
             imgMap= iha.get();
-            holder.ivCard.setImageBitmap(imgMap.get(mDataset.get(position)));
+            Bitmap resBitmap =imgMap.get(mDataset.get(position));
+            if (resBitmap == null){
+                holder.ivCard.setImageResource(R.drawable.jg_icon);//default image
+            }else {
+                holder.ivCard.setImageBitmap(resBitmap);
+            }
             iha.isCancelled();
         } catch (Exception e) {
             e.printStackTrace();
