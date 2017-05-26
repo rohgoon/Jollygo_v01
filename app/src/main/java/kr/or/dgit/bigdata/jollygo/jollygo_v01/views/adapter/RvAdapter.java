@@ -3,6 +3,10 @@ package kr.or.dgit.bigdata.jollygo.jollygo_v01.views.adapter;
 import android.content.ClipData;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Point;
+import android.graphics.RectF;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -25,6 +29,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.R;
+import kr.or.dgit.bigdata.jollygo.jollygo_v01.design.CanvasShadow;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.imgmanage.ImgHtmlAsyncTask;
 
 /**
@@ -37,18 +42,19 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.ViewHolder> {
     private Context context;
     private static FloatingActionButton floatingActionButton;
     private static int clickIndex;
-
+    private Map<String,Bitmap> resultImgMap;
 
     public RvAdapter(Context context, FloatingActionButton floatingActionButton) {
         this.context = context;
         this.floatingActionButton = floatingActionButton;
         mDataset = new ArrayList<>();
+        resultImgMap = new HashMap<>();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
         public ImageView ivCard;
         public TextView tvTest;
-        public  CardView cv;
+        public CardView cv;
        // public RelativeLayout rl;
         public FloatingActionButton fab; //플로팅버튼 받아오기
 
@@ -65,7 +71,10 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.ViewHolder> {
         @Override
         public boolean onLongClick(View v) {
             ClipData clip = ClipData.newPlainText("","");
-            v.startDrag(clip, new View.DragShadowBuilder(v),null, 0);
+
+            cv.startDrag(clip, new View.DragShadowBuilder(cv),null, 0);
+            //View.DragShadowBuilder(cv) 수정요망
+
             clickIndex = getLayoutPosition();
              Log.e("뷰홀더 롱크릭 >>>>>>>>>>>> ",clickIndex+"번 인덱스 출력");
             fab.setImageResource(R.drawable.ic_delete);
@@ -75,7 +84,9 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.ViewHolder> {
         }
 
 
+
     }//ViewHolder
+
 
     // Create new views (invoked by the layout manager)
     @Override
@@ -94,32 +105,38 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {//이벤트 처리
         setAnimationFadeIn(holder.cv, position);
+        //이미 검색 완료된 요소인지 검증
+            if (resultImgMap.get(mDataset.get(position)) != null){ // 있는 값이면 바로 비트맵 출력
+                Bitmap resBitmap =resultImgMap.get(mDataset.get(position));
+                holder.ivCard.setImageBitmap(resBitmap);
+            }else {
+                ImgHtmlAsyncTask iha = new ImgHtmlAsyncTask();
+                iha.execute(mDataset.get(position));
+                Map<String,Bitmap> imgMap = new HashMap<>();
+                try {
+                    imgMap= iha.get();//파싱결과 받음
+                    Bitmap resBitmap=imgMap.get(mDataset.get(position));
+                    resultImgMap.put(mDataset.get(position),resBitmap);    // 출력물 결과를 맵으로 전송
+                    
+                    if (resBitmap == null){
+                        holder.ivCard.setImageResource(R.drawable.jg_icon);//default image
+                    }else {
+                        holder.ivCard.setImageBitmap(resBitmap);
+                    }
+                    iha.isCancelled();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    holder.ivCard.setImageResource(R.drawable.jg_icon);//default image
+                }
+            }
 
         //ImgHtmlAsyncTask 이미지 받아오기
-        ImgHtmlAsyncTask iha = new ImgHtmlAsyncTask();
-        iha.execute(mDataset.get(position));
-        Map<String,Bitmap> imgMap = new HashMap<>();
-        try {
-            imgMap= iha.get();
-            Bitmap resBitmap =imgMap.get(mDataset.get(position));
-            if (resBitmap == null){
-                holder.ivCard.setImageResource(R.drawable.jg_icon);//default image
-            }else {
-                holder.ivCard.setImageBitmap(resBitmap);
-            }
-            iha.isCancelled();
-        } catch (Exception e) {
-            e.printStackTrace();
-            holder.ivCard.setImageResource(R.drawable.jg_icon);//default image
-        }
-
-
-
         holder.tvTest.setText(mDataset.get(position));
 
         //프롤팅버튼에 드랍 이벤트 주기
 
         holder.fab.setOnDragListener(fabDragListener);//드래그 리스너 구현
+
     }
     View.OnDragListener fabDragListener = new View.OnDragListener() {
         @Override
