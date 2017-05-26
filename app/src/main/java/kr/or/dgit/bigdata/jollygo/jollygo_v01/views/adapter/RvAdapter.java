@@ -2,6 +2,7 @@ package kr.or.dgit.bigdata.jollygo.jollygo_v01.views.adapter;
 
 import android.content.ClipData;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -18,9 +19,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.R;
+import kr.or.dgit.bigdata.jollygo.jollygo_v01.imgmanage.ImgHtmlAsyncTask;
 
 /**
  * Created by NCG on 2017-05-23.
@@ -44,7 +49,7 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.ViewHolder> {
         public ImageView ivCard;
         public TextView tvTest;
         public  CardView cv;
-        public RelativeLayout rl;
+       // public RelativeLayout rl;
         public FloatingActionButton fab; //플로팅버튼 받아오기
 
         public ViewHolder(View v) {
@@ -52,7 +57,7 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.ViewHolder> {
             cv = (CardView) v;
             ivCard = (ImageView) v.findViewById(R.id.ivCard);
             tvTest = (TextView) v.findViewById(R.id.tvTest);
-            rl = (RelativeLayout) v.findViewById(R.id.card_layout);
+            //rl = (RelativeLayout) v.findViewById(R.id.card_layout);
             fab = floatingActionButton;
             ivCard.setOnLongClickListener(this);
         }
@@ -89,12 +94,27 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {//이벤트 처리
         setAnimationFadeIn(holder.cv, position);
-        holder.ivCard.setImageResource(R.drawable.jg_icon);//
+
+        //ImgHtmlAsyncTask 이미지 받아오기
+        ImgHtmlAsyncTask iha = new ImgHtmlAsyncTask();
+        iha.execute(mDataset.get(position));
+        Map<String,Bitmap> imgMap = new HashMap<>();
+        try {
+            imgMap= iha.get();
+            holder.ivCard.setImageBitmap(imgMap.get(mDataset.get(position)));
+            iha.isCancelled();
+        } catch (Exception e) {
+            e.printStackTrace();
+            holder.ivCard.setImageResource(R.drawable.jg_icon);//default image
+        }
+
+
+
         holder.tvTest.setText(mDataset.get(position));
 
         //프롤팅버튼에 드랍 이벤트 주기
 
-        holder.fab.setOnDragListener(fabDragListener);//드래그 리스너 구현*/
+        holder.fab.setOnDragListener(fabDragListener);//드래그 리스너 구현
     }
     View.OnDragListener fabDragListener = new View.OnDragListener() {
         @Override
