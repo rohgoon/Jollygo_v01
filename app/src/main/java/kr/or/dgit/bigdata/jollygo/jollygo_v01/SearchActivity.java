@@ -1,15 +1,10 @@
 package kr.or.dgit.bigdata.jollygo.jollygo_v01;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.MotionEvent;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.SearchView;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -18,15 +13,10 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import kr.or.dgit.bigdata.jollygo.jollygo_v01.imgmanage.ImgMaching;
+import kr.or.dgit.bigdata.jollygo.jollygo_v01.views.adapter.RvAdapter;
 
 public class SearchActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -34,11 +24,8 @@ public class SearchActivity extends AppCompatActivity
     TextView tvTitle;
     static int searchCount;
     RecyclerView rv;
-    RecyclerView.Adapter rvAdapter;
-    RecyclerView.LayoutManager rvLayoutManager;
     FloatingActionButton fab;
-    private List<String> mDataset = new ArrayList<>(); //재료 검색어 리스트
-
+    RvAdapter rvAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +33,6 @@ public class SearchActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        //final ImgMaching imgMaching = new ImgMaching();
 
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -70,9 +56,9 @@ public class SearchActivity extends AppCompatActivity
         //recyclerView
         rv = (RecyclerView) findViewById(R.id.recyclerView);
         rv.setHasFixedSize(true);
-        rvLayoutManager = new GridLayoutManager(this,3);
-        rv.setLayoutManager(rvLayoutManager);
-        //RecyclerView animation
+        rv.setLayoutManager(new GridLayoutManager(this,3));
+        rvAdapter = new RvAdapter(this,fab);
+        rv.setAdapter(rvAdapter);
 
         sv = (SearchView) findViewById(R.id.search_view);
         tvTitle = (TextView) findViewById(R.id.tvTitle);
@@ -86,12 +72,8 @@ public class SearchActivity extends AppCompatActivity
 
             @Override
             public boolean onQueryTextSubmit(String query) {
-                //searchCount++;
-                mDataset.add(query);
-
                 sv.setQuery("",true);
-                rvAdapter = new RvAdapter(mDataset,getApplicationContext(),fab); // List<String> 입력
-                rv.setAdapter(rvAdapter);
+                rvAdapter.addItem(query);
                 return true;
             }
 
@@ -108,7 +90,7 @@ public class SearchActivity extends AppCompatActivity
                     tvTitle.setText("JOLLYGO- " + searchCount + " items were ready");
                 }else if (searchCount == 1){
                     tvTitle.setText("JOLLYGO- " + searchCount + " item was ready");
-                }else if (searchCount == 0 || mDataset == null){
+                }else if (searchCount == 0 ){
                     tvTitle.setText("JOLLYGO-Search your own recipe");
                 }
                 return false;
@@ -117,25 +99,7 @@ public class SearchActivity extends AppCompatActivity
         rv.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
             @Override
             public void onChildViewAttachedToWindow(View view) {
-
-                searchCount = rv.getAdapter().getItemCount();
-                if (tvTitle.getText().toString().equals("")){
-                   return;
-                }else{
-                    if (searchCount>1) {
-                        tvTitle.setText("JOLLYGO- " + searchCount + " items were ready");
-                    }else if (searchCount == 1){
-                        tvTitle.setText("JOLLYGO- " + searchCount + " item was ready");
-                    }else if (searchCount == 0 || mDataset == null){
-                        tvTitle.setText("JOLLYGO-Search your own recipe");
-                    }
-                }
-            }
-
-            @Override
-            public void onChildViewDetachedFromWindow(View view) {
-
-                searchCount = rv.getAdapter().getItemCount();
+                int searchCount = rv.getAdapter().getItemCount();
                 if (tvTitle.getText().toString().equals("")){
                     return;
                 }else{
@@ -143,15 +107,28 @@ public class SearchActivity extends AppCompatActivity
                         tvTitle.setText("JOLLYGO- " + searchCount + " items were ready");
                     }else if (searchCount == 1){
                         tvTitle.setText("JOLLYGO- " + searchCount + " item was ready");
-                    }else if (searchCount == 0 || mDataset == null){
+                    }else if (searchCount == 0 ){
+                        tvTitle.setText("JOLLYGO-Search your own recipe");
+                    }
+                }
+            }
+
+            @Override
+            public void onChildViewDetachedFromWindow(View view) {
+                int searchCount = rv.getAdapter().getItemCount();
+                if (tvTitle.getText().toString().equals("")){
+                    return;
+                }else{
+                    if (searchCount>1) {
+                        tvTitle.setText("JOLLYGO- " + searchCount + " items were ready");
+                    }else if (searchCount == 1){
+                        tvTitle.setText("JOLLYGO- " + searchCount + " item was ready");
+                    }else if (searchCount == 0){
                         tvTitle.setText("JOLLYGO-Search your own recipe");
                     }
                 }
             }
         });
-
-
-
     }
 
     @Override
