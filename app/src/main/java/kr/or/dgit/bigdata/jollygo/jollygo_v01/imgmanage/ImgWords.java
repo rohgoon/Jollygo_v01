@@ -1,5 +1,8 @@
 package kr.or.dgit.bigdata.jollygo.jollygo_v01.imgmanage;
 
+import android.graphics.Bitmap;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,14 +13,16 @@ import java.util.Map;
 
 public class ImgWords {
     private List<String> mDataset;
-    private List<String> mImgset; //이미지 url 리스트
-    private static Map<String,String> imgMatchingRes = new HashMap<>();
+    private Map<String,Bitmap> resultImgMap;
 
-    public ImgWords(List<String> mDataset, List<String> mImgset) {
-        this.mDataset = mDataset;
-        this.mImgset = mImgset;
+    public ImgWords() {
+        mDataset = new ArrayList<>();
+        resultImgMap = new HashMap<>();
     }
 
+    public ImgWords(List<String> mDataset) {
+        this.mDataset = mDataset;
+    }
     public List<String> getmDataset() {
         return mDataset;
     }
@@ -26,19 +31,11 @@ public class ImgWords {
         this.mDataset = mDataset;
     }
 
-    public List<String> getmImgset() {
-        return mImgset;
+    public Map<String, Bitmap> getResultImgMap() {
+        return resultImgMap;
     }
 
-    public void setmImgset(List<String> mImgset) {
-        this.mImgset = mImgset;
-    }
-
-    public static Map<String, String> getImgMatchingRes() {
-        return imgMatchingRes;
-    }
-
-    public static void setImgMatchingRes(Map<String, String> imgMatchingRes) {
-        ImgWords.imgMatchingRes = imgMatchingRes;
+    public void setResultImgMap(Map<String, Bitmap> resultImgMap) {
+        this.resultImgMap = resultImgMap;
     }
 }

@@ -29,26 +29,28 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.R;
-import kr.or.dgit.bigdata.jollygo.jollygo_v01.design.CanvasShadow;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.imgmanage.ImgHtmlAsyncTask;
+import kr.or.dgit.bigdata.jollygo.jollygo_v01.imgmanage.ImgWords;
 
 /**
  * Created by NCG on 2017-05-23.
  */
 
 public class RvAdapter extends RecyclerView.Adapter<RvAdapter.ViewHolder> {
-    private List<String> mDataset; //재료 검색어 리스트
+   // private List<String> mDataset; //재료 검색어 리스트 //삭제예정
     private static int lastPosition = -1;
     private Context context;
     private static FloatingActionButton floatingActionButton;
     private static int clickIndex;
-    private Map<String,Bitmap> resultImgMap;
+    //private Map<String,Bitmap> resultImgMap;//삭제예정
+    private ImgWords imgWords;
 
-    public RvAdapter(Context context, FloatingActionButton floatingActionButton) {
+    public RvAdapter(Context context, FloatingActionButton floatingActionButton,ImgWords imgWords) {
         this.context = context;
         this.floatingActionButton = floatingActionButton;
-        mDataset = new ArrayList<>();
-        resultImgMap = new HashMap<>();
+      //  mDataset = new ArrayList<>();
+        //resultImgMap = new HashMap<>();
+        this.imgWords = imgWords;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
@@ -106,17 +108,17 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder holder, int position) {//이벤트 처리
         setAnimationFadeIn(holder.cv, position);
         //이미 검색 완료된 요소인지 검증
-            if (resultImgMap.get(mDataset.get(position)) != null){ // 있는 값이면 바로 비트맵 출력
-                Bitmap resBitmap =resultImgMap.get(mDataset.get(position));
+            if (imgWords.getResultImgMap().get(imgWords.getmDataset().get(position)) != null){ // 있는 값이면 바로 비트맵 출력
+                Bitmap resBitmap =imgWords.getResultImgMap().get(imgWords.getmDataset().get(position));
                 holder.ivCard.setImageBitmap(resBitmap);
             }else {
                 ImgHtmlAsyncTask iha = new ImgHtmlAsyncTask();
-                iha.execute(mDataset.get(position));
+                iha.execute(imgWords.getmDataset().get(position));
                 Map<String,Bitmap> imgMap = new HashMap<>();
                 try {
                     imgMap= iha.get();//파싱결과 받음
-                    Bitmap resBitmap=imgMap.get(mDataset.get(position));
-                    resultImgMap.put(mDataset.get(position),resBitmap);    // 출력물 결과를 맵으로 전송
+                    Bitmap resBitmap=imgMap.get(imgWords.getmDataset().get(position));
+                    imgWords.getResultImgMap().put(imgWords.getmDataset().get(position),resBitmap);    // 출력물 결과를 맵으로 전송
                     
                     if (resBitmap == null){
                         holder.ivCard.setImageResource(R.drawable.jg_icon);//default image
@@ -131,7 +133,7 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.ViewHolder> {
             }
 
         //ImgHtmlAsyncTask 이미지 받아오기
-        holder.tvTest.setText(mDataset.get(position));
+        holder.tvTest.setText(imgWords.getmDataset().get(position));
 
         //프롤팅버튼에 드랍 이벤트 주기
 
@@ -165,25 +167,25 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        if (mDataset == null){
+        if (imgWords.getmDataset() == null){
             return 0;
         }else{
-            return mDataset.size();
+            return imgWords.getmDataset().size();
         }
 
     }
 
 //addItem
     public void addItem(String infoData) {
-        mDataset.add(infoData);
-        notifyItemInserted(mDataset.size()-1);
+        imgWords.getmDataset().add(infoData);
+        notifyItemInserted(imgWords.getmDataset().size()-1);
         notifyDataSetChanged();
     }
 //deleteItem
 
     public void deleteItem(int position) {
         try {
-            mDataset.remove(position);
+            imgWords.getmDataset().remove(position);
             notifyItemRemoved(position);
             Toast.makeText(context,position+"번 삭제",Toast.LENGTH_LONG).show();
             //notifyDataSetChanged();
@@ -198,9 +200,5 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.ViewHolder> {
             viewToAnimate.startAnimation(animation);
             lastPosition = position;
         }
-    }
-
-    public List<String> getmDataset() {
-        return mDataset;
     }
 }

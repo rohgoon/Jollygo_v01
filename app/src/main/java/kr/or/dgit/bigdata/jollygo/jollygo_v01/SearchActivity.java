@@ -16,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import kr.or.dgit.bigdata.jollygo.jollygo_v01.imgmanage.ImgWords;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.views.adapter.RvAdapter;
 
 public class SearchActivity extends AppCompatActivity
@@ -26,6 +27,7 @@ public class SearchActivity extends AppCompatActivity
     RecyclerView rv;
     FloatingActionButton fab;
     RvAdapter rvAdapter;
+    private ImgWords imgWords;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,12 +54,12 @@ public class SearchActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
+        imgWords = new ImgWords();
         //recyclerView
         rv = (RecyclerView) findViewById(R.id.recyclerView);
         rv.setHasFixedSize(true);
         rv.setLayoutManager(new GridLayoutManager(this,3));
-        rvAdapter = new RvAdapter(this,fab);
+        rvAdapter = new RvAdapter(this,fab,imgWords);
         rv.setAdapter(rvAdapter);
 
         sv = (SearchView) findViewById(R.id.search_view);
