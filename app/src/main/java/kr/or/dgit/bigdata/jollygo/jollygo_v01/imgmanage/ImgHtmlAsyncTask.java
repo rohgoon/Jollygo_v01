@@ -33,8 +33,8 @@ public class ImgHtmlAsyncTask extends AsyncTask<String,String,Map<String,Bitmap>
         try {
             doc = Jsoup.connect(url).get();
             Element img1 = doc.select("img.thumbimage").first(); //기본 썸네일 thumbimage 작동됨
-            Element img2 = doc.select("li.gallerybox img").first(); //기본 썸네일 thumbimage 작동됨
-            Element img3 = doc.select("table.infobox a img").first();
+            Element img2 = doc.select("li.gallerybox img").first(); //예비1 썸네일 thumbimage 작동됨
+            Element img3 = doc.select("table.infobox a img").first();//예비2 썸네일 thumbimage
             if(img1!=null&&img2!=null){
                 img = "https:"+img2.attr("src"); // img2에서 src 빼내기
                 Log.e("파싱 출처2 >>>>>>>>>>>>> ",img);

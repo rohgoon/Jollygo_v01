@@ -3,10 +3,6 @@ package kr.or.dgit.bigdata.jollygo.jollygo_v01.views.adapter;
 import android.content.ClipData;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Point;
-import android.graphics.RectF;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -18,15 +14,10 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.R;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.imgmanage.ImgHtmlAsyncTask;
@@ -37,19 +28,15 @@ import kr.or.dgit.bigdata.jollygo.jollygo_v01.imgmanage.ImgWords;
  */
 
 public class RvAdapter extends RecyclerView.Adapter<RvAdapter.ViewHolder> {
-   // private List<String> mDataset; //재료 검색어 리스트 //삭제예정
     private static int lastPosition = -1;
     private Context context;
     private static FloatingActionButton floatingActionButton;
     private static int clickIndex;
-    //private Map<String,Bitmap> resultImgMap;//삭제예정
     private ImgWords imgWords;
 
     public RvAdapter(Context context, FloatingActionButton floatingActionButton,ImgWords imgWords) {
         this.context = context;
         this.floatingActionButton = floatingActionButton;
-      //  mDataset = new ArrayList<>();
-        //resultImgMap = new HashMap<>();
         this.imgWords = imgWords;
     }
 
@@ -57,7 +44,6 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.ViewHolder> {
         public ImageView ivCard;
         public TextView tvTest;
         public CardView cv;
-       // public RelativeLayout rl;
         public FloatingActionButton fab; //플로팅버튼 받아오기
 
         public ViewHolder(View v) {
@@ -65,7 +51,6 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.ViewHolder> {
             cv = (CardView) v;
             ivCard = (ImageView) v.findViewById(R.id.ivCard);
             tvTest = (TextView) v.findViewById(R.id.tvTest);
-            //rl = (RelativeLayout) v.findViewById(R.id.card_layout);
             fab = floatingActionButton;
             ivCard.setOnLongClickListener(this);
         }
@@ -187,7 +172,7 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.ViewHolder> {
         try {
             imgWords.getmDataset().remove(position);
             notifyItemRemoved(position);
-            Toast.makeText(context,position+"번 삭제",Toast.LENGTH_LONG).show();
+            Toast.makeText(context,position+"번 삭제",Toast.LENGTH_LONG).show(); // 테스트용 출력물
             //notifyDataSetChanged();
         } catch(IndexOutOfBoundsException ex) {
             ex.printStackTrace();
