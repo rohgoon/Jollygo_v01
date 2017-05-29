@@ -1,4 +1,4 @@
-package kr.or.dgit.bigdata.jollygo.jollygo_v01;
+package kr.or.dgit.bigdata.jollygo.jollygo_v01.customviews;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
@@ -29,7 +29,7 @@ public class GridRecyclerView extends RecyclerView {
         super(context, attrs, defStyle);
     }
 
-    public void changeListener(View v){
+    public void gridChangeListener(View v){
         final TextView tvTitle = (TextView) v;
         addOnChildAttachStateChangeListener(new OnChildAttachStateChangeListener() {
             @Override
@@ -65,6 +65,4 @@ public class GridRecyclerView extends RecyclerView {
             }
         });
     }
-
-
 }

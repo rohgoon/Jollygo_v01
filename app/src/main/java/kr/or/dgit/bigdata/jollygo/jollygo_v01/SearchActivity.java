@@ -2,9 +2,8 @@ package kr.or.dgit.bigdata.jollygo.jollygo_v01;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.LinearLayoutManager;
 import android.widget.SearchView;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -17,6 +16,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import kr.or.dgit.bigdata.jollygo.jollygo_v01.customviews.GridRecyclerView;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.imgmanage.ImgWords;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.views.adapter.RvAdapter;
 
@@ -25,14 +25,13 @@ public class SearchActivity extends AppCompatActivity
     SearchView sv;
     TextView tvTitle;
     static int searchCount;
-    //RecyclerView rv;
     GridRecyclerView rv;
     FloatingActionButton fab;
     RvAdapter rvAdapter;
     private ImgWords imgWords;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -68,7 +67,7 @@ public class SearchActivity extends AppCompatActivity
         rvAdapter = new RvAdapter(this,fab,imgWords);
         rv.setAdapter(rvAdapter);
         tvTitle = (TextView) findViewById(R.id.tvTitle);
-        rv.changeListener(tvTitle);
+        rv.gridChangeListener(tvTitle);
 
         sv = (SearchView) findViewById(R.id.search_view);
         sv.setOnSearchClickListener(new View.OnClickListener() {
