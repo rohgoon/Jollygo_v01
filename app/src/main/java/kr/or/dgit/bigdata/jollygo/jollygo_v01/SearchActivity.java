@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.imgmanage.ImgWords;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.views.adapter.RvAdapter;
@@ -24,7 +25,8 @@ public class SearchActivity extends AppCompatActivity
     SearchView sv;
     TextView tvTitle;
     static int searchCount;
-    RecyclerView rv;
+    //RecyclerView rv;
+    GridRecyclerView rv;
     FloatingActionButton fab;
     RvAdapter rvAdapter;
     private ImgWords imgWords;
@@ -41,8 +43,12 @@ public class SearchActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+               //검색결과 리스트 액티비티로 이동
+            if(imgWords.getmDataset().size()>0){
+
+            }else{
+                Toast.makeText(getApplicationContext(),"재료들을 먼저 입력해 주세요.",Toast.LENGTH_SHORT).show();
+            }
             }
         });
 
@@ -55,15 +61,16 @@ public class SearchActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         imgWords = new ImgWords();
-        //recyclerView
-        rv = (RecyclerView) findViewById(R.id.recyclerView);
+        //GridRecyclerView
+        rv = (GridRecyclerView) findViewById(R.id.recyclerView);
         rv.setHasFixedSize(true);
         rv.setLayoutManager(new GridLayoutManager(this,3));
         rvAdapter = new RvAdapter(this,fab,imgWords);
         rv.setAdapter(rvAdapter);
+        tvTitle = (TextView) findViewById(R.id.tvTitle);
+        rv.changeListener(tvTitle);
 
         sv = (SearchView) findViewById(R.id.search_view);
-        tvTitle = (TextView) findViewById(R.id.tvTitle);
         sv.setOnSearchClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,39 +103,6 @@ public class SearchActivity extends AppCompatActivity
                     tvTitle.setText("JOLLYGO-Search your own recipe");
                 }
                 return false;
-            }
-        });
-        rv.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
-            @Override
-            public void onChildViewAttachedToWindow(View view) {
-                int searchCount = rv.getAdapter().getItemCount();
-                if (tvTitle.getText().toString().equals("")){
-                    return;
-                }else{
-                    if (searchCount>1) {
-                        tvTitle.setText("JOLLYGO- " + searchCount + " items were ready");
-                    }else if (searchCount == 1){
-                        tvTitle.setText("JOLLYGO- " + searchCount + " item was ready");
-                    }else if (searchCount == 0 ){
-                        tvTitle.setText("JOLLYGO-Search your own recipe");
-                    }
-                }
-            }
-
-            @Override
-            public void onChildViewDetachedFromWindow(View view) {
-                int searchCount = rv.getAdapter().getItemCount();
-                if (tvTitle.getText().toString().equals("")){
-                    return;
-                }else{
-                    if (searchCount>1) {
-                        tvTitle.setText("JOLLYGO- " + searchCount + " items were ready");
-                    }else if (searchCount == 1){
-                        tvTitle.setText("JOLLYGO- " + searchCount + " item was ready");
-                    }else if (searchCount == 0){
-                        tvTitle.setText("JOLLYGO-Search your own recipe");
-                    }
-                }
             }
         });
     }
