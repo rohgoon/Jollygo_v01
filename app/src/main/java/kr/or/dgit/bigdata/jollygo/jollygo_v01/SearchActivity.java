@@ -1,11 +1,8 @@
 package kr.or.dgit.bigdata.jollygo.jollygo_v01;
 
+import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.widget.SearchView;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -28,12 +25,10 @@ import kr.or.dgit.bigdata.jollygo.jollygo_v01.views.adapter.RvAdapter;
 
 public class SearchActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    SearchView sv;
     TextView tvTitle;
     static int searchCount;
     FloatingActionButton fab;
     FragmentManager mFragmentManager;
-    SearchMainFragment smf;
     SearchMainFragment searchMainFragment; //디자인패턴 적용요망
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -50,6 +45,20 @@ public class SearchActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //검색결과 가지고 리스트 프래그먼트로 이동
+                mFragmentManager = getFragmentManager();
+                if(searchMainFragment.getRvAdapter().getImgWords().getmDataset().size()>0){
+
+                }else{
+                    Toast.makeText(getApplicationContext(),"재료들을 먼저 입력해 주세요.",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
 
     }
 
