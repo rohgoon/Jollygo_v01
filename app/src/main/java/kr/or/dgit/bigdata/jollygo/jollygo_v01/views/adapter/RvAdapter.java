@@ -186,4 +186,12 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.ViewHolder> {
             lastPosition = position;
         }
     }
+
+    public ImgWords getImgWords() {
+        return imgWords;
+    }
+
+    public void setImgWords(ImgWords imgWords) {
+        this.imgWords = imgWords;
+    }
 }

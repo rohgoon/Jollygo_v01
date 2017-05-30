@@ -2,6 +2,8 @@ package kr.or.dgit.bigdata.jollygo.jollygo_v01;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.widget.SearchView;
@@ -16,7 +18,11 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.customviews.GridRecyclerView;
+import kr.or.dgit.bigdata.jollygo.jollygo_v01.fragments.SearchMainFragment;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.imgmanage.ImgWords;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.views.adapter.RvAdapter;
 
@@ -25,31 +31,16 @@ public class SearchActivity extends AppCompatActivity
     SearchView sv;
     TextView tvTitle;
     static int searchCount;
-    GridRecyclerView rv;
     FloatingActionButton fab;
-    RvAdapter rvAdapter;
-    private ImgWords imgWords;
-
+    FragmentManager mFragmentManager;
+    SearchMainFragment smf;
+    SearchMainFragment searchMainFragment; //디자인패턴 적용요망
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-               //검색결과 리스트 액티비티로 이동
-            if(imgWords.getmDataset().size()>0){
-
-            }else{
-                Toast.makeText(getApplicationContext(),"재료들을 먼저 입력해 주세요.",Toast.LENGTH_SHORT).show();
-            }
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -59,51 +50,7 @@ public class SearchActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        imgWords = new ImgWords();
-        //GridRecyclerView
-        rv = (GridRecyclerView) findViewById(R.id.recyclerView);
-        rv.setHasFixedSize(true);
-        rv.setLayoutManager(new GridLayoutManager(this,3));
-        rvAdapter = new RvAdapter(this,fab,imgWords);
-        rv.setAdapter(rvAdapter);
-        tvTitle = (TextView) findViewById(R.id.tvTitle);
-        rv.gridChangeListener(tvTitle);
 
-        sv = (SearchView) findViewById(R.id.search_view);
-        sv.setOnSearchClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                tvTitle.setText("");
-            }
-        });
-        sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                sv.setQuery("",true);
-                rvAdapter.addItem(query);
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return true;
-            }
-        });
-        sv.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                searchCount = rv.getAdapter().getItemCount();
-                if (searchCount>1) {
-                    tvTitle.setText("JOLLYGO- " + searchCount + " items were ready");
-                }else if (searchCount == 1){
-                    tvTitle.setText("JOLLYGO- " + searchCount + " item was ready");
-                }else if (searchCount == 0 ){
-                    tvTitle.setText("JOLLYGO-Search your own recipe");
-                }
-                return false;
-            }
-        });
     }
 
     @Override
