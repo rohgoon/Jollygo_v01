@@ -1,7 +1,10 @@
 package kr.or.dgit.bigdata.jollygo.jollygo_v01.imgmanage;
 
 import android.graphics.Bitmap;
+import android.os.Parcel;
+import android.os.Parcelable;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,7 +14,8 @@ import java.util.Map;
  * Created by rohgoon on 2017-05-25.
  */
 
-public class ImgWords {
+public class ImgWords{
+
     private List<String> mDataset;
     private Map<String,Bitmap> resultImgMap;
 
@@ -23,6 +27,7 @@ public class ImgWords {
     public ImgWords(List<String> mDataset) {
         this.mDataset = mDataset;
     }
+
     public List<String> getmDataset() {
         return mDataset;
     }
@@ -38,4 +43,6 @@ public class ImgWords {
     public void setResultImgMap(Map<String, Bitmap> resultImgMap) {
         this.resultImgMap = resultImgMap;
     }
+
 }
+

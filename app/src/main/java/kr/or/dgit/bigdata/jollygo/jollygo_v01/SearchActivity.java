@@ -1,5 +1,6 @@
 package kr.or.dgit.bigdata.jollygo.jollygo_v01;
 
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -15,21 +16,15 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import kr.or.dgit.bigdata.jollygo.jollygo_v01.customviews.GridRecyclerView;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.fragments.SearchMainFragment;
-import kr.or.dgit.bigdata.jollygo.jollygo_v01.imgmanage.ImgWords;
-import kr.or.dgit.bigdata.jollygo.jollygo_v01.views.adapter.RvAdapter;
 
 public class SearchActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     TextView tvTitle;
     static int searchCount;
-    FloatingActionButton fab;
-    FragmentManager mFragmentManager;
-    SearchMainFragment searchMainFragment; //디자인패턴 적용요망
+   // FloatingActionButton fab;
+
+    //SearchMainFragment searchMainFragment; //디자인패턴 적용요망
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,20 +40,6 @@ public class SearchActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //검색결과 가지고 리스트 프래그먼트로 이동
-                mFragmentManager = getFragmentManager();
-                if(searchMainFragment.getRvAdapter().getImgWords().getmDataset().size()>0){
-
-                }else{
-                    Toast.makeText(getApplicationContext(),"재료들을 먼저 입력해 주세요.",Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
 
     }
 
