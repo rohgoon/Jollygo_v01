@@ -28,6 +28,7 @@ import java.util.Map;
  */
 
 public class HtmlJsonAsyncTask extends AsyncTask<String,String,List<SearchResult>> {
+    private int cutIndex = 0;
     @Override
     protected List<SearchResult> doInBackground(String... params) {
         String addr = "https://www.google.co.kr/search?q=allintext:+레시피";
@@ -36,15 +37,13 @@ public class HtmlJsonAsyncTask extends AsyncTask<String,String,List<SearchResult
         }
         addr +="+이웃추가&hl=ko&noj=1&source=lnms&tbm=isch&sa=X&ved=0ahUKEwiQkuKvicTTAhUBlZQKHXlUC7wQ_AUICigB&biw=853&bih=974";
         Log.e("인풋 스트링값 >>>>>>>>>>>>> ", addr);
-        List<JSONArray> jsonList = new ArrayList<>();
         List<SearchResult> srList = new ArrayList<>(); // 결과 리스트
         Document doc = null;
         try {
             //json 추출해서 리스트에 삽입
             doc = Jsoup.connect(addr).get();
             Elements jsons = doc.select("div.rg_meta"); //기본 썸네일 thumbimage 작동됨
-            int cutIndex = 0;
-            for (Element e: jsons) {
+            for (Element e: jsons) { //중복 검사후 리스트로 삽입해야 함.
                 SearchResult sr = new SearchResult(); //SearchResult 생성
 
                 String jsonRes = e.html();//json 가져옴. 그냥 긁어도 기능함.
@@ -57,17 +56,33 @@ public class HtmlJsonAsyncTask extends AsyncTask<String,String,List<SearchResult
                 sr = gson.fromJson(jsonRes,SearchResult.class); // ou : 이미지 pt : 제목 ru : 링크주소
                 //비트맵 처리
                 Log.e("이미지 결과값 >>>>>>>>>>>>> ", sr.getOu());
-                //경우의 수 추가 요망
-                Bitmap imgBitmap;
-                if (sr.getOu().equals("")){
-                    imgBitmap = null;
+                //중복 제거 처리
+                boolean checkTf = false;
+                if (cutIndex > 0) {
+                    for (int i = 0; i <srList.size();i++){
+                        if (sr.getRid().equals(srList.get(i).getRid())) {
+                            checkTf =false;
+                            break;
+                        }else {
+                            checkTf =true;
+                        }
+                    }
                 }else{
-                    imgBitmap = mkBitmap(sr.getOu());
+                   checkTf = true;
                 }
-                sr.setBitmap(imgBitmap);
-                srList.add(sr); // List<SearchResult>에 삽입
-                cutIndex++;
-                if (cutIndex >20){
+                if (checkTf){
+                    Bitmap imgBitmap;
+                    if (sr.getOu().equals("")) {
+                        imgBitmap = null;
+                    } else {
+                        imgBitmap = mkBitmap(sr.getOu());
+                    }
+                    sr.setBitmap(imgBitmap);
+                    srList.add(sr); // List<SearchResult>에 삽입
+                    cutIndex++;
+                }
+
+                if (cutIndex >19){
                     break;
                 }
             }
