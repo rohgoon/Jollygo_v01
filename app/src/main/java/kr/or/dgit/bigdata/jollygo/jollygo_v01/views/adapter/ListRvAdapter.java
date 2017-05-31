@@ -1,29 +1,23 @@
 package kr.or.dgit.bigdata.jollygo.jollygo_v01.views.adapter;
 
-import android.content.ClipData;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.R;
-import kr.or.dgit.bigdata.jollygo.jollygo_v01.imgmanage.ImgHtmlAsyncTask;
+import kr.or.dgit.bigdata.jollygo.jollygo_v01.WebActivity;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.imgmanage.ImgWords;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.searchmanage.HtmlJsonAsyncTask;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.searchmanage.SearchResult;
@@ -61,13 +55,15 @@ public class ListRvAdapter extends RecyclerView.Adapter<ListRvAdapter.ViewHolder
         public ImageView ivCard;
         public TextView tvTest;
         public CardView cv;
-
+        public RelativeLayout rl;
         public ViewHolder(View v) {
             super(v);
             cv = (CardView) v;
             ivCard = (ImageView) v.findViewById(R.id.ivListCard);
             tvTest = (TextView) v.findViewById(R.id.tvListTitle);
+            rl = (RelativeLayout) v.findViewById(R.id.list_card_layout);
         }
+
     }//ViewHolder
 
 
@@ -86,7 +82,7 @@ public class ListRvAdapter extends RecyclerView.Adapter<ListRvAdapter.ViewHolder
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {//이벤트 처리
+    public void onBindViewHolder(ViewHolder holder, final int position){//이벤트 처리 // ou : 이미지 pt : 제목 ru : 링크주소 rid : 중복검사용 고유번호
         Bitmap resBitmap=srList.get(position).getBitmap();
         if (resBitmap == null){
             holder.ivCard.setImageResource(R.drawable.jg_icon);//default image
@@ -97,6 +93,15 @@ public class ListRvAdapter extends RecyclerView.Adapter<ListRvAdapter.ViewHolder
         if (getItemCount()==(position-1)){
             hjat.isCancelled();
         }
+        holder.rl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Uri uri = Uri.parse();
+                Intent intent = new Intent(context,WebActivity.class);
+                intent.putExtra("uri",srList.get(position).getRu());
+                context.startActivity(intent);
+            }
+        });
 
     }
 

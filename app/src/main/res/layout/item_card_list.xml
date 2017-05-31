@@ -14,7 +14,7 @@
         android:clickable="true"
         android:focusable="true"
         android:foreground="?selectableItemBackground"
-        android:id="@+id/card_layout">
+        android:id="@+id/list_card_layout">
 
         <ImageView
             android:id="@+id/ivListCard"

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="kr.or.dgit.bigdata.jollygo.jollygo_v01">
+
     <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/jg_icon_circle"
@@ -18,6 +20,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".WebActivity"
+            android:label="@string/title_activity_web"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
