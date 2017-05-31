@@ -98,7 +98,7 @@ public class ListRvAdapter extends RecyclerView.Adapter<ListRvAdapter.ViewHolder
             public void onClick(View v) {
                 //Uri uri = Uri.parse();
                 Intent intent = new Intent(context,WebActivity.class);
-                intent.putExtra("uri",srList.get(position).getRu());
+                intent.putExtra("url",srList.get(position).getRu());
                 context.startActivity(intent);
             }
         });
