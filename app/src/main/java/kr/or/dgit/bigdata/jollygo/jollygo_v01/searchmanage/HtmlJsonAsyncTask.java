@@ -31,11 +31,11 @@ public class HtmlJsonAsyncTask extends AsyncTask<String,String,List<SearchResult
     private int cutIndex = 0;
     @Override
     protected List<SearchResult> doInBackground(String... params) {
-        String addr = "https://www.google.co.kr/search?q=allintext:+레시피";
+        String addr = "https://www.google.co.kr/search?q=allintext:+레시피+재료";
         for (String str: params) {
             addr += "+"+str;
         }
-        addr +="+이웃추가&hl=ko&noj=1&source=lnms&tbm=isch&sa=X&ved=0ahUKEwiQkuKvicTTAhUBlZQKHXlUC7wQ_AUICigB&biw=853&bih=974";
+        addr +="++\"이웃추가\"&lr=&hl=ko&noj=1&source=lnms&tbm=isch&sa=X&ved=0ahUKEwiQkuKvicTTAhUBlZQKHXlUC7wQ_AUICigB&biw=853&bih=974";
         Log.e("인풋 스트링값 >>>>>>>>>>>>> ", addr);
         List<SearchResult> srList = new ArrayList<>(); // 결과 리스트
         Document doc = null;
