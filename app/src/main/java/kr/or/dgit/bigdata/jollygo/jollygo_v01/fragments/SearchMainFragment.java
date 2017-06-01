@@ -118,10 +118,11 @@ public class SearchMainFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-                bar.setVisibility(View.VISIBLE);
+
                 //검색결과 가지고 리스트 프래그먼트로 이동
                 if(getRvAdapter().getImgWords().getmDataset().size()>0){
                     //프로그래스바 등장
+                    bar.setVisibility(View.VISIBLE);
                     Toast.makeText(getContext(),"쉐프님들이 모이고 있어요",Toast.LENGTH_LONG).show();
                     Message msg = new Message();
                     msg.what =2;
@@ -131,7 +132,7 @@ public class SearchMainFragment extends Fragment {
 
                 }else{
                     Toast.makeText(getContext(),"재료들을 먼저 입력해 주세요.",Toast.LENGTH_SHORT).show();
-                    bar.setVisibility(View.INVISIBLE);
+
                 }
             }
         });
