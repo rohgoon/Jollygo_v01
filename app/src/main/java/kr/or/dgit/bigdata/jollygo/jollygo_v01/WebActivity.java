@@ -13,6 +13,7 @@ import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 public class WebActivity extends AppCompatActivity {
     private WebView webView;
@@ -29,6 +30,7 @@ public class WebActivity extends AppCompatActivity {
         webView = (WebView) findViewById(R.id.webView);
         webView.setWebViewClient(new WebViewClient(){
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                Toast.makeText(WebActivity.this,"TIP: 우측 하단 버튼의 브라우저로 이동을 실행하면 둘러보실 수 있어요",Toast.LENGTH_SHORT).show();
                 return true;
             }
         });

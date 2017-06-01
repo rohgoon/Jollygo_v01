@@ -1,5 +1,6 @@
 package kr.or.dgit.bigdata.jollygo.jollygo_v01.fragments;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -34,6 +35,7 @@ public class SearchMainFragment extends Fragment {
     private RvAdapter rvAdapter;
     private ListRvAdapter listRvAdapter;
     private static ProgressBar bar;
+    private Activity activityThis;
 
     public SearchMainFragment() {
         // Required empty public constructor
@@ -48,9 +50,9 @@ public class SearchMainFragment extends Fragment {
         return root;
     }
 
-
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        activityThis = getActivity();
         Log.e("카드 액티비티 완성<<<<<<<<<<<","ㅇㅇㅇㅇ");
         super.onActivityCreated(savedInstanceState);
 
@@ -60,7 +62,7 @@ public class SearchMainFragment extends Fragment {
         grv.setLayoutManager(new GridLayoutManager(getContext(),3));
         final FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
         imgWords = new ImgWords();//초기화
-        rvAdapter = new RvAdapter(getContext(),fab,imgWords,bar);
+        rvAdapter = new RvAdapter(getContext(),fab,imgWords);
         grv.setAdapter(rvAdapter);
         final TextView tvTitle = (TextView) getActivity().findViewById(R.id.tvTitle);
         grv.gridChangeListener(tvTitle);
@@ -78,18 +80,18 @@ public class SearchMainFragment extends Fragment {
 
             @Override
             public boolean onQueryTextSubmit(String query) {
-                bar.setVisibility(View.VISIBLE);
+
                 Log.e("카드 추가 시작<<<<<<<<<<<","ㅇㅇㅇ");
                 sv.setQuery("",true);
+                //프로그래스바 등장
+                bar.setVisibility(View.VISIBLE);
 
                 Message msg = new Message();
                 msg.what =1;
                 msg.obj = query;
 
                 Handler mh = new mHandler();
-                mh.sendMessageDelayed(msg,200);
-
-               /* getRvAdapter().addItem(query); //수정*/
+                mh.sendMessageDelayed(msg,100);
                 return true;
             }
 
@@ -115,25 +117,21 @@ public class SearchMainFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                bar.setVisibility(View.VISIBLE);
                 //검색결과 가지고 리스트 프래그먼트로 이동
                 if(getRvAdapter().getImgWords().getmDataset().size()>0){
-                    LinearLayoutManager llm = new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false); //reverseLayout은  sort 순서 반대로하기 기능
-                    grv.setLayoutManager(llm);
-                   // Log.e("초기 단어>>>",getRvAdapter().getImgWords().getmDataset().get(0)); 확인
-                    listRvAdapter = new ListRvAdapter(getContext(),getRvAdapter().getImgWords());
+                    //프로그래스바 등장
+                    Toast.makeText(getContext(),"쉐프님들이 모이고 있어요",Toast.LENGTH_LONG).show();
+                    Message msg = new Message();
+                    msg.what =2;
 
-                    grv.setAdapter(listRvAdapter);
+                    Handler mh = new mHandler();
+                    mh.sendMessageDelayed(msg,100);
 
-
-                    //이후 뷰처리 및 초기화
-                    tvTitle.setText("JOLLYGO-Recipe List");
-                    sv.setVisibility(View.INVISIBLE);
-                    fab.setVisibility(View.INVISIBLE);
-                    List<String> newList= new ArrayList<String>();
-                    getRvAdapter().getImgWords().setmDataset(newList);
                 }else{
                     Toast.makeText(getContext(),"재료들을 먼저 입력해 주세요.",Toast.LENGTH_SHORT).show();
-
+                    bar.setVisibility(View.INVISIBLE);
                 }
             }
         });
@@ -144,9 +142,29 @@ public class SearchMainFragment extends Fragment {
             if (msg.what ==1){
                 String query = (String) msg.obj;
                 getRvAdapter().addItem(query); //수정
-            }
+                bar.setVisibility(View.INVISIBLE);
 
+                removeMessages(msg.what);//
+            }else if (msg.what ==2){
+
+                LinearLayoutManager llm = new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false); //reverseLayout은  sort 순서 반대로하기 기능
+                grv.setLayoutManager(llm);
+                // Log.e("초기 단어>>>",getRvAdapter().getImgWords().getmDataset().get(0)); 확인
+                listRvAdapter = new ListRvAdapter(getContext(),getRvAdapter().getImgWords());
+
+                grv.setAdapter(listRvAdapter);
+
+                //이후 뷰처리 및 초기화
+                ((TextView)activityThis.findViewById(R.id.tvTitle)).setText("JOLLYGO-Recipe List");
+                ((SearchView)activityThis.findViewById(R.id.search_view)).setVisibility(View.INVISIBLE);
+                ((FloatingActionButton)activityThis.findViewById(R.id.fab)).setVisibility(View.INVISIBLE);
+                List<String> newList= new ArrayList<String>();
+                getRvAdapter().getImgWords().setmDataset(newList);
+                bar.setVisibility(View.INVISIBLE);
+                removeMessages(msg.what);//
+            }
         }
+
     }
 
     public GridRecyclerView getGrv() {

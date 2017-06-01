@@ -38,7 +38,6 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.ViewHolder> {
     private static FloatingActionButton floatingActionButton;
     private static int clickIndex;
     private ImgWords imgWords;
-    private ProgressBar bar;
     private ImgHtmlAsyncTask iha;
     private int prTime;
 
@@ -48,12 +47,6 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.ViewHolder> {
         this.imgWords = imgWords;
     }
 
-    public RvAdapter(Context context, FloatingActionButton fab, ImgWords imgWords, ProgressBar bar) {
-        this.context = context;
-        this.floatingActionButton = fab;
-        this.imgWords = imgWords;
-        this.bar =bar;
-    }
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
         public ImageView ivCard;
@@ -134,7 +127,6 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.ViewHolder> {
 
                     iha.isCancelled();
                     Log.e("어싱크테스크 완료<<<<<<<<<<<","ㅇㅇㅇㅇ");
-                    bar.setVisibility(View.INVISIBLE);
                 } catch (Exception e) {
                     e.printStackTrace();
                     holder.ivCard.setImageResource(R.drawable.jg_icon);//default image
