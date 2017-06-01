@@ -143,7 +143,7 @@ public class SearchMainFragment extends Fragment {
             if (msg.what ==1){
                 String query = (String) msg.obj;
                 getRvAdapter().addItem(query); //수정
-                bar.setVisibility(View.INVISIBLE);
+                bar.setVisibility(View.GONE);
 
                 removeMessages(msg.what);//
             }else if (msg.what ==2){
@@ -161,7 +161,7 @@ public class SearchMainFragment extends Fragment {
                 ((FloatingActionButton)activityThis.findViewById(R.id.fab)).setVisibility(View.INVISIBLE);
                 List<String> newList= new ArrayList<String>();
                 getRvAdapter().getImgWords().setmDataset(newList);
-                bar.setVisibility(View.INVISIBLE);
+                bar.setVisibility(View.GONE);
                 removeMessages(msg.what);//
             }
         }

@@ -1,6 +1,7 @@
 package kr.or.dgit.bigdata.jollygo.jollygo_v01;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -10,14 +11,17 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 public class WebActivity extends AppCompatActivity {
     private WebView webView;
     private WebSettings webSettings;
+    private ProgressBar progressBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,14 +30,39 @@ public class WebActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);*/
         Intent intent = new Intent(this.getIntent());
         String url = intent.getStringExtra("url");
-        //Uri uri = Uri.parse(uriStr);
+        progressBar = (ProgressBar) findViewById(R.id.webPb);
+        //progressBar.setMax(100);
+
         webView = (WebView) findViewById(R.id.webView);
         webView.setWebViewClient(new WebViewClient(){
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 Toast.makeText(WebActivity.this,"TIP: 우측 하단 버튼의 브라우저로 이동을 실행하면 둘러보실 수 있어요",Toast.LENGTH_SHORT).show();
                 return true;
             }
+
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+                progressBar.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                progressBar.setVisibility(View.GONE);
+            }
         });
+       /* webView.setWebChromeClient(new WebChromeClient(){
+            @Override
+            public void onProgressChanged(WebView view, int newProgress) {//
+                progressBar.setVisibility(View.VISIBLE);
+                progressBar.setProgress(newProgress);
+                if (newProgress == 100){
+                    progressBar.setVisibility(View.GONE);
+                }
+
+            }
+        });*/
         webSettings = webView.getSettings();
         //webView.setInitialScale(1);
         webSettings.setJavaScriptEnabled(true);
@@ -46,8 +75,22 @@ public class WebActivity extends AppCompatActivity {
         webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
 
         String[] mobiUrlArr = url.split("/");
+        String bnc = mobiUrlArr[2];
+        String[] countMur = bnc.split("\\.");
+        Log.e("주소변경>>>>>>",countMur[2]);
         if (mobiUrlArr[2].equals("blog.naver.com")){
             mobiUrlArr[2] = "m."+mobiUrlArr[2];
+            String newUrl = "";
+            for (String s:mobiUrlArr) {
+                newUrl += s;
+                newUrl += "/";
+            }
+            url = newUrl;
+        }else if (countMur[0].equals("m")){
+
+        }else if (!countMur[0].equals("m") && countMur[2].equals("naver")){
+            Log.e("주소변경2>>>>>>",countMur[0]);
+            mobiUrlArr[2] = "m.blog.naver.com";
             String newUrl = "";
             for (String s:mobiUrlArr) {
                 newUrl += s;

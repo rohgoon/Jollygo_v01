@@ -8,15 +8,11 @@
     tools:context="kr.or.dgit.bigdata.jollygo.jollygo_v01.SearchActivity"
     tools:showIn="@layout/app_bar_main">
 
-    <!--<kr.or.dgit.bigdata.jollygo.jollygo_v01.customviews.GridRecyclerView
-        android:layout_width="395dp"
-        android:layout_height="587dp"
-        tools:layout_editor_absoluteY="8dp"
-        tools:layout_editor_absoluteX="8dp"
-        android:id="@+id/recyclerView"/>-->
     <fragment
         android:id="@+id/fragment"
         android:name="kr.or.dgit.bigdata.jollygo.jollygo_v01.fragments.SearchMainFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteY="8dp"
+        tools:layout_editor_absoluteX="8dp" />
 </android.support.constraint.ConstraintLayout>
