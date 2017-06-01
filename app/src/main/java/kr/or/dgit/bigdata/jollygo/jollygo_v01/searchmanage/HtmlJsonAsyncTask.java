@@ -82,7 +82,7 @@ public class HtmlJsonAsyncTask extends AsyncTask<String,String,List<SearchResult
                     cutIndex++;
                 }
 
-                if (cutIndex >19){
+                if (cutIndex >19){ //30개는 대략 12초 20개는 7초
                     break;
                 }
             }

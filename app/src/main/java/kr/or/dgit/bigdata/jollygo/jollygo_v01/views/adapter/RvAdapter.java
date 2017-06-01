@@ -3,6 +3,8 @@ package kr.or.dgit.bigdata.jollygo.jollygo_v01.views.adapter;
 import android.content.ClipData;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -14,10 +16,13 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.LogRecord;
 
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.R;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.imgmanage.ImgHtmlAsyncTask;
@@ -33,11 +38,21 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.ViewHolder> {
     private static FloatingActionButton floatingActionButton;
     private static int clickIndex;
     private ImgWords imgWords;
+    private ProgressBar bar;
+    private ImgHtmlAsyncTask iha;
+    private int prTime;
 
     public RvAdapter(Context context, FloatingActionButton floatingActionButton,ImgWords imgWords) {
         this.context = context;
         this.floatingActionButton = floatingActionButton;
         this.imgWords = imgWords;
+    }
+
+    public RvAdapter(Context context, FloatingActionButton fab, ImgWords imgWords, ProgressBar bar) {
+        this.context = context;
+        this.floatingActionButton = fab;
+        this.imgWords = imgWords;
+        this.bar =bar;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
@@ -97,11 +112,16 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.ViewHolder> {
                 Bitmap resBitmap =imgWords.getResultImgMap().get(imgWords.getmDataset().get(position));
                 holder.ivCard.setImageBitmap(resBitmap);
             }else {
-                ImgHtmlAsyncTask iha = new ImgHtmlAsyncTask();
+                iha = new ImgHtmlAsyncTask();
+                Log.e("어싱크테스크 생성<<<<<<<<<<<","ㅇㅇㅇ");
                 iha.execute(imgWords.getmDataset().get(position));
+                Log.e("어싱크테스크 시작<<<<<<<<<<<","ㅇㅇㅇ");
                 Map<String,Bitmap> imgMap = new HashMap<>();
+
                 try {
                     imgMap= iha.get();//파싱결과 받음
+
+
                     Bitmap resBitmap=imgMap.get(imgWords.getmDataset().get(position));
                     imgWords.getResultImgMap().put(imgWords.getmDataset().get(position),resBitmap);    // 출력물 결과를 맵으로 전송
                     
@@ -110,7 +130,11 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.ViewHolder> {
                     }else {
                         holder.ivCard.setImageBitmap(resBitmap);
                     }
+                    //프로그래스바 관련
+
                     iha.isCancelled();
+                    Log.e("어싱크테스크 완료<<<<<<<<<<<","ㅇㅇㅇㅇ");
+                    bar.setVisibility(View.INVISIBLE);
                 } catch (Exception e) {
                     e.printStackTrace();
                     holder.ivCard.setImageResource(R.drawable.jg_icon);//default image
@@ -194,4 +218,5 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.ViewHolder> {
     public void setImgWords(ImgWords imgWords) {
         this.imgWords = imgWords;
     }
+
 }

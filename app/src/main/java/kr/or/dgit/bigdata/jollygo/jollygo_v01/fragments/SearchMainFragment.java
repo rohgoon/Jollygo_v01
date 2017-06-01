@@ -1,6 +1,8 @@
 package kr.or.dgit.bigdata.jollygo.jollygo_v01.fragments;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -10,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,6 +33,8 @@ public class SearchMainFragment extends Fragment {
     private GridRecyclerView grv;
     private RvAdapter rvAdapter;
     private ListRvAdapter listRvAdapter;
+    private static ProgressBar bar;
+
     public SearchMainFragment() {
         // Required empty public constructor
     }
@@ -38,21 +43,24 @@ public class SearchMainFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {//
         View root = inflater.inflate(R.layout.fragment_search_main,container,false);
-        grv = (GridRecyclerView) root.findViewById(R.id.recyclerView);// 확인요망
+        grv = (GridRecyclerView) root.findViewById(R.id.recyclerView);// 확인요망 -> 작동완료
+        bar = (ProgressBar) root.findViewById(R.id.cardPb);
         return root;
     }
 
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        Log.e("카드 액티비티 완성<<<<<<<<<<<","ㅇㅇㅇㅇ");
         super.onActivityCreated(savedInstanceState);
+
         //-->
         grv.setHasFixedSize(true);
 
         grv.setLayoutManager(new GridLayoutManager(getContext(),3));
         final FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
         imgWords = new ImgWords();//초기화
-        rvAdapter = new RvAdapter(getContext(),fab,imgWords);
+        rvAdapter = new RvAdapter(getContext(),fab,imgWords,bar);
         grv.setAdapter(rvAdapter);
         final TextView tvTitle = (TextView) getActivity().findViewById(R.id.tvTitle);
         grv.gridChangeListener(tvTitle);
@@ -70,8 +78,18 @@ public class SearchMainFragment extends Fragment {
 
             @Override
             public boolean onQueryTextSubmit(String query) {
+                bar.setVisibility(View.VISIBLE);
+                Log.e("카드 추가 시작<<<<<<<<<<<","ㅇㅇㅇ");
                 sv.setQuery("",true);
-                getRvAdapter().addItem(query); //수정
+
+                Message msg = new Message();
+                msg.what =1;
+                msg.obj = query;
+
+                Handler mh = new mHandler();
+                mh.sendMessageDelayed(msg,200);
+
+               /* getRvAdapter().addItem(query); //수정*/
                 return true;
             }
 
@@ -119,6 +137,16 @@ public class SearchMainFragment extends Fragment {
                 }
             }
         });
+    }
+    private class mHandler extends Handler{ // 리사이클링 뷰 갱신하기 전에 프로그래스바 보이기 위한 핸들러
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what ==1){
+                String query = (String) msg.obj;
+                getRvAdapter().addItem(query); //수정
+            }
+
+        }
     }
 
     public GridRecyclerView getGrv() {

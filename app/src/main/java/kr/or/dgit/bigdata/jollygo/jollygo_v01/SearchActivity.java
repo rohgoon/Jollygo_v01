@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -20,9 +21,9 @@ import kr.or.dgit.bigdata.jollygo.jollygo_v01.fragments.SearchMainFragment;
 
 public class SearchActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    TextView tvTitle;
+
     static int searchCount;
-   // FloatingActionButton fab;
+
 
     //SearchMainFragment searchMainFragment; //디자인패턴 적용요망
     @Override
@@ -67,7 +68,7 @@ public class SearchActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(MenuItem item) { //플래그먼트로 구현
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 

@@ -42,7 +42,6 @@ public class WebActivity extends AppCompatActivity {
         webSettings.setUserAgentString(uas);
         //webSettings.setUserAgentString("Android");
         webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
-        //webSettings.setDomStorageEnabled(true);//네이버 사이트 모바일용으로 인식시키기 위함
 
         String[] mobiUrlArr = url.split("/");
         if (mobiUrlArr[2].equals("blog.naver.com")){
@@ -61,7 +60,7 @@ public class WebActivity extends AppCompatActivity {
 
         //로딩에 많은 시간이 걸려 프로그래스바 설치 필요
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabWeb);
-        fab.setOnClickListener(new View.OnClickListener() {//사진찍기, 뒤로가기(리스트로), 홈으로, 인스타그램에 바로 공유, 브라우저로 열기
+        fab.setOnClickListener(new View.OnClickListener() {//사진찍기, 뒤로가기(리스트로), 홈으로, /*인스타그램에 바로 공유*/, 브라우저로 열기
             @Override
             public void onClick(View view) {
 

@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -22,7 +24,14 @@ import java.util.Map;
  * Created by NCG on 2017-05-26.
  */
 
-public class ImgHtmlAsyncTask extends AsyncTask<String,String,Map<String,Bitmap>> {
+public class ImgHtmlAsyncTask extends AsyncTask<String,Integer,Map<String,Bitmap>> {
+
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+    }
+
     @Override
     protected Map<String,Bitmap> doInBackground(String... params) {
         //차후 DB 구축시 파싱 예외처리 요망
@@ -84,4 +93,10 @@ public class ImgHtmlAsyncTask extends AsyncTask<String,String,Map<String,Bitmap>
             }
         }
     }
+
+    @Override
+    protected void onPostExecute(Map<String, Bitmap> stringBitmapMap) {
+        super.onPostExecute(stringBitmapMap);
+    }
+
 }
