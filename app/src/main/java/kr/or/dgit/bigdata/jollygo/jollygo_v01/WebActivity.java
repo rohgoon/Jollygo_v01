@@ -2,9 +2,12 @@ package kr.or.dgit.bigdata.jollygo.jollygo_v01;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
+import com.github.clans.fab.FloatingActionButton;
+
+import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -18,10 +21,16 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.github.clans.fab.FloatingActionMenu;
+
 public class WebActivity extends AppCompatActivity {
     private WebView webView;
     private WebSettings webSettings;
     private ProgressBar progressBar;
+    private FloatingActionMenu fam;
+    private FloatingActionButton fabPhoto, fabBack,fabHome,fabBrowser,fabFav;
+    private String urlRes;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,12 +40,19 @@ public class WebActivity extends AppCompatActivity {
         Intent intent = new Intent(this.getIntent());
         String url = intent.getStringExtra("url");
         progressBar = (ProgressBar) findViewById(R.id.webPb);
-        //progressBar.setMax(100);
+        fabPhoto = (FloatingActionButton) findViewById(R.id.fabPhoto);
+        fabBack = (FloatingActionButton) findViewById(R.id.fabBack);
+        fabHome = (FloatingActionButton) findViewById(R.id.fabHome);
+        fabBrowser = (FloatingActionButton) findViewById(R.id.fabBrowser);
+        fabFav = (FloatingActionButton) findViewById(R.id.fabFav);
+        fam = (FloatingActionMenu) findViewById(R.id.fab_menu);
+
+        //fam.setMenuButtonColorNormal(Color.BLUE);
 
         webView = (WebView) findViewById(R.id.webView);
         webView.setWebViewClient(new WebViewClient(){
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                Toast.makeText(WebActivity.this,"TIP: 우측 하단 버튼의 브라우저로 이동을 실행하면 둘러보실 수 있어요",Toast.LENGTH_SHORT).show();
+                Toast.makeText(WebActivity.this,"TIP: 우측 하단 버튼 속의 [브라우저로]를 실행하시면 자세히 둘러보실 수 있어요",Toast.LENGTH_SHORT).show();
                 return true;
             }
 
@@ -52,17 +68,7 @@ public class WebActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.GONE);
             }
         });
-       /* webView.setWebChromeClient(new WebChromeClient(){
-            @Override
-            public void onProgressChanged(WebView view, int newProgress) {//
-                progressBar.setVisibility(View.VISIBLE);
-                progressBar.setProgress(newProgress);
-                if (newProgress == 100){
-                    progressBar.setVisibility(View.GONE);
-                }
 
-            }
-        });*/
         webSettings = webView.getSettings();
         //webView.setInitialScale(1);
         webSettings.setJavaScriptEnabled(true);
@@ -77,7 +83,6 @@ public class WebActivity extends AppCompatActivity {
         String[] mobiUrlArr = url.split("/");
         String bnc = mobiUrlArr[2];
         String[] countMur = bnc.split("\\.");
-        Log.e("주소변경>>>>>>",countMur[2]);
         if (mobiUrlArr[2].equals("blog.naver.com")){
             mobiUrlArr[2] = "m."+mobiUrlArr[2];
             String newUrl = "";
@@ -89,7 +94,7 @@ public class WebActivity extends AppCompatActivity {
         }else if (countMur[0].equals("m")){
 
         }else if (!countMur[0].equals("m") && countMur[2].equals("naver")){
-            Log.e("주소변경2>>>>>>",countMur[0]);
+
             mobiUrlArr[2] = "m.blog.naver.com";
             String newUrl = "";
             for (String s:mobiUrlArr) {
@@ -101,16 +106,44 @@ public class WebActivity extends AppCompatActivity {
         Log.e("웹뷰 주소>>>>>>",url);
 
         webView.loadUrl(url);
-
-
-        //로딩에 많은 시간이 걸려 프로그래스바 설치 필요
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabWeb);
-        fab.setOnClickListener(new View.OnClickListener() {//사진찍기, 뒤로가기(리스트로), 홈으로, /*인스타그램에 바로 공유*/, 브라우저로 열기
+        urlRes =url;
+        //플로팅버튼 관련 //fabPhoto, fabBack,fabHome,fabBrowser,fabFav;
+        fabPhoto.setOnClickListener(onButtonClick());
+        fabBrowser.setOnClickListener(onButtonClick());
+        fabBack.setOnClickListener(onButtonClick());
+        fabHome.setOnClickListener(onButtonClick());
+        fabFav.setOnClickListener(onButtonClick());
+        fam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                if (fam.isOpened()) {
+                    fam.close(true);
+                }
             }
         });
+    }//onCreate
+    private View.OnClickListener onButtonClick() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (view == fabPhoto) {//퍼미션 안받을시 확인 재요청
+                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivity(intent);
+
+                } else if (view == fabBrowser) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse(urlRes));
+                    startActivity(intent);
+
+                } else if (view == fabFav) {
+
+                } else if (view == fabHome) { // 홈화면가기
+
+                } else {//뒤로가기
+                    finish();
+                }
+                fam.close(true);
+            }
+        };
     }
 
 }

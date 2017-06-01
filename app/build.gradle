@@ -32,5 +32,6 @@ dependencies {
     compile 'org.jsoup:jsoup:1.10.2'
     compile 'com.google.code.gson:gson:2.7'
     compile 'com.android.support:support-v4:24.2.1'
+    compile 'com.github.clans:fab:1.6.4'
     testCompile 'junit:junit:4.12'
 }

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    >
+    xmlns:fab="http://schemas.android.com/tools">
 <!--<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -32,14 +32,72 @@
 
     <include layout="@layout/content_web" />
 
-    <android.support.design.widget.FloatingActionButton
+   <!-- <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabWeb"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="50dp"
         android:layout_marginRight="16dp"
-        app:srcCompat="@drawable/ic_add_white_24dp" />
-
+        app:srcCompat="@drawable/ic_add_white_24dp" />-->
+    <!--fabPhoto, fabBack,fabHome,fabBrowser;-->
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/fab_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="50dp"
+        android:layout_marginRight="16dp"
+        app:menu_colorNormal="#3d41c5"
+        app:menu_colorPressed="#6366c2"
+        app:menu_colorRipple="#99FFFFFF"
+        app:menu_showShadow="true"
+        app:menu_labels_colorNormal="#fff"
+        app:menu_labels_colorPressed="#cccccc"
+        app:menu_labels_colorRipple="#66FFFFFF"
+        app:menu_labels_textColor="#000"
+        app:menu_labels_showShadow="true"
+        app:menu_labels_maxLines="-1"
+        app:menu_labels_position="left"
+        app:menu_openDirection="up"
+        app:menu_shadowColor="#66000000"
+        app:menu_labels_ellipsize="end"
+        app:menu_labels_singleLine="true">
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fabHome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_search"
+            app:fab_label="새로 검색"
+            app:fab_size="mini" />
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fabBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_revert"
+            app:fab_label="리스트로"
+            app:fab_size="mini" />
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fabPhoto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_camera"
+            app:fab_label="사진 남기기"
+            app:fab_size="mini" />
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fabBrowser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_set_as"
+            app:fab_label="브라우저로"
+            app:fab_size="mini" />
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fabFav"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/btn_star_big_off"
+            app:fab_label="즐겨찾기"
+            app:fab_size="mini" />
+    </com.github.clans.fab.FloatingActionMenu>
 
 </android.support.design.widget.CoordinatorLayout>

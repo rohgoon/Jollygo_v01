@@ -1,9 +1,11 @@
 package kr.or.dgit.bigdata.jollygo.jollygo_v01;
 
+import android.Manifest;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.view.View;
@@ -32,7 +34,7 @@ public class SearchActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA},0);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
