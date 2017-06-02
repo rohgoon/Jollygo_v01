@@ -60,7 +60,7 @@ public class SearchMainFragment extends Fragment {
         grv.setHasFixedSize(true);
 
         grv.setLayoutManager(new GridLayoutManager(getContext(),3));
-        final FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
         imgWords = new ImgWords();//초기화
         rvAdapter = new RvAdapter(getContext(),fab,imgWords);
         grv.setAdapter(rvAdapter);
@@ -114,24 +114,25 @@ public class SearchMainFragment extends Fragment {
                 return false;
             }
         });
-        fab.setOnClickListener(new View.OnClickListener() {
+        fab.setOnClickListener(new View.OnClickListener() {   //검색결과 가지고 리스트 프래그먼트로 이동
             @Override
             public void onClick(View view) {
 
+                Log.e("플로팅버튼클릭>>>>","확인"+grv.getAdapter().getClass().getName().toString());
+                if(grv.getAdapter().getClass().getName().equals("kr.or.dgit.bigdata.jollygo.jollygo_v01.views.adapter.RvAdapter")) {//확인 요망
+                    if (getRvAdapter().getImgWords().getmDataset().size() > 0) {
+                        //프로그래스바 등장
+                        bar.setVisibility(View.VISIBLE);
+                        Toast.makeText(getContext(), "쉐프님들이 모이고 있어요", Toast.LENGTH_LONG).show();
+                        Message msg = new Message();
+                        msg.what = 2;
+                        Handler mh = new mHandler();
+                        mh.sendMessageDelayed(msg, 100);
+                    } else {
+                        Toast.makeText(getContext(), "재료들을 먼저 입력해 주세요.", Toast.LENGTH_SHORT).show();
 
-                //검색결과 가지고 리스트 프래그먼트로 이동
-                if(getRvAdapter().getImgWords().getmDataset().size()>0){
-                    //프로그래스바 등장
-                    bar.setVisibility(View.VISIBLE);
-                    Toast.makeText(getContext(),"쉐프님들이 모이고 있어요",Toast.LENGTH_LONG).show();
-                    Message msg = new Message();
-                    msg.what =2;
-
-                    Handler mh = new mHandler();
-                    mh.sendMessageDelayed(msg,100);
-
-                }else{
-                    Toast.makeText(getContext(),"재료들을 먼저 입력해 주세요.",Toast.LENGTH_SHORT).show();
+                    }
+                }else if(grv.getAdapter().getClass().getName().equals("kr.or.dgit.bigdata.jollygo.jollygo_v01.views.adapter.ListRvAdapter")) {
 
                 }
             }
@@ -150,15 +151,14 @@ public class SearchMainFragment extends Fragment {
 
                 LinearLayoutManager llm = new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false); //reverseLayout은  sort 순서 반대로하기 기능
                 grv.setLayoutManager(llm);
-                // Log.e("초기 단어>>>",getRvAdapter().getImgWords().getmDataset().get(0)); 확인
                 listRvAdapter = new ListRvAdapter(getContext(),getRvAdapter().getImgWords());
-
                 grv.setAdapter(listRvAdapter);
 
                 //이후 뷰처리 및 초기화
                 ((TextView)activityThis.findViewById(R.id.tvTitle)).setText("JOLLYGO-Recipe List");
                 ((SearchView)activityThis.findViewById(R.id.search_view)).setVisibility(View.INVISIBLE);
-                ((FloatingActionButton)activityThis.findViewById(R.id.fab)).setVisibility(View.INVISIBLE);
+                //((FloatingActionButton)activityThis.findViewById(R.id.fab)).setVisibility(View.INVISIBLE);
+                //((FloatingActionButton)activityThis.findViewById(R.id.fab)).setImageResource(R.drawable.);
                 List<String> newList= new ArrayList<String>();
                 getRvAdapter().getImgWords().setmDataset(newList);
                 bar.setVisibility(View.GONE);
