@@ -48,8 +48,8 @@
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="50dp"
         android:layout_marginRight="16dp"
-        app:menu_colorNormal="#3d41c5"
-        app:menu_colorPressed="#6366c2"
+        app:menu_colorNormal="#ff4b04"
+        app:menu_colorPressed="#ff9600"
         app:menu_colorRipple="#99FFFFFF"
         app:menu_showShadow="true"
         app:menu_labels_colorNormal="#fff"
@@ -67,35 +67,45 @@
             android:id="@+id/fabHome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_menu_search"
+            android:src="@drawable/fabhome"
+            app:fab_colorNormal="#ff4b04"
             app:fab_label="새로 검색"
+            android:tint="#fff"
             app:fab_size="mini" />
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fabBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_menu_revert"
+            android:src="@drawable/fabback"
+            app:fab_colorNormal="#ff0468"
+            android:tint="#fff"
             app:fab_label="리스트로"
             app:fab_size="mini" />
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fabPhoto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_menu_camera"
+            android:src="@drawable/fabcamera"
+            app:fab_colorNormal="#10f000"
+            android:tint="#fff"
             app:fab_label="사진 남기기"
             app:fab_size="mini" />
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fabBrowser"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_menu_set_as"
+            android:src="@drawable/fabbrowser"
+            app:fab_colorNormal="#0468ff"
+            android:tint="#fff"
             app:fab_label="브라우저로"
             app:fab_size="mini" />
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fabFav"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@android:drawable/btn_star_big_off"
+            app:fab_colorNormal="#ffde04"
+            android:src="@drawable/fabfav"
+            android:tint="#fff"
             app:fab_label="즐겨찾기"
             app:fab_size="mini" />
     </com.github.clans.fab.FloatingActionMenu>

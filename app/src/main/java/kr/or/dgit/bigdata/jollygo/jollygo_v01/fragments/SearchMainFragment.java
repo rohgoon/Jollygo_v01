@@ -61,6 +61,7 @@ public class SearchMainFragment extends Fragment {
 
         grv.setLayoutManager(new GridLayoutManager(getContext(),3));
         FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+
         imgWords = new ImgWords();//초기화
         rvAdapter = new RvAdapter(getContext(),fab,imgWords);
         grv.setAdapter(rvAdapter);
@@ -105,11 +106,11 @@ public class SearchMainFragment extends Fragment {
             public boolean onClose() {
                 int searchCount = getRvAdapter().getItemCount(); // 수정
                 if (searchCount>1) {
-                    tvTitle.setText("JOLLYGO- " + searchCount + " items were ready");
+                    tvTitle.setText(searchCount + " items were ready");
                 }else if (searchCount == 1){
-                    tvTitle.setText("JOLLYGO- " + searchCount + " item was ready");
+                    tvTitle.setText(searchCount + " item was ready");
                 }else if (searchCount == 0 ){
-                    tvTitle.setText("JOLLYGO-Search your own recipe");
+                    tvTitle.setText("What a lot of chefs in the world");
                 }
                 return false;
             }
@@ -155,7 +156,7 @@ public class SearchMainFragment extends Fragment {
                 grv.setAdapter(listRvAdapter);
 
                 //이후 뷰처리 및 초기화
-                ((TextView)activityThis.findViewById(R.id.tvTitle)).setText("JOLLYGO-Recipe List");
+                ((TextView)activityThis.findViewById(R.id.tvTitle)).setText("Recipe List");
                 ((SearchView)activityThis.findViewById(R.id.search_view)).setVisibility(View.INVISIBLE);
                 //((FloatingActionButton)activityThis.findViewById(R.id.fab)).setVisibility(View.INVISIBLE);
                 //((FloatingActionButton)activityThis.findViewById(R.id.fab)).setImageResource(R.drawable.);

@@ -15,7 +15,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@drawable/side_nav_bar"
+            android:background="#ff9600"
             app:popupTheme="@style/AppTheme.PopupOverlay">
             <!--android:background="?attr/colorPrimary"-->
             <RelativeLayout
@@ -28,13 +28,13 @@
                 <TextView
                     android:id="@+id/tvTitle"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:textSize="15dp"
                     android:textStyle="bold"
                     android:textColor="#fff"
-                    android:text="JOLLYGO-Search your own recipe"
+                    android:text="What a lot of chefs in the world"
                     android:layout_centerVertical="true"
-                    android:layout_alignParentStart="true" />
+                    android:layout_alignParentStart="true"/>
 
                 <SearchView
                     android:id="@+id/search_view"

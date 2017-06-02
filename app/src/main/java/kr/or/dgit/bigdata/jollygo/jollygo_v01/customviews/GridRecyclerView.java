@@ -40,11 +40,11 @@ public class GridRecyclerView extends RecyclerView {
                     return;
                 }else{
                     if (searchCount>1) {
-                        tvTitle.setText("JOLLYGO- " + searchCount + " items were ready");
+                        tvTitle.setText(searchCount + " items were ready");
                     }else if (searchCount == 1){
-                        tvTitle.setText("JOLLYGO- " + searchCount + " item was ready");
+                        tvTitle.setText(searchCount + " item was ready");
                     }else if (searchCount == 0 ){
-                        tvTitle.setText("JOLLYGO-Search your own recipe");
+                        tvTitle.setText("What a lot of chefs in the world");
                     }
                 }
             }
@@ -56,11 +56,11 @@ public class GridRecyclerView extends RecyclerView {
                     return;
                 }else{
                     if (searchCount>1) {
-                        tvTitle.setText("JOLLYGO- " + searchCount + " items were ready");
+                        tvTitle.setText(searchCount + " items were ready");
                     }else if (searchCount == 1){
-                        tvTitle.setText("JOLLYGO- " + searchCount + " item was ready");
+                        tvTitle.setText(searchCount + " item was ready");
                     }else if (searchCount == 0){
-                        tvTitle.setText("JOLLYGO-Search your own recipe");
+                        tvTitle.setText("What a lot of chefs in the world");
                     }
                 }
             }
