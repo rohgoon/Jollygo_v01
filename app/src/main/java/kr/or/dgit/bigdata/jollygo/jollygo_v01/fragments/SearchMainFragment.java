@@ -60,7 +60,7 @@ public class SearchMainFragment extends Fragment {
         grv.setHasFixedSize(true);
 
         grv.setLayoutManager(new GridLayoutManager(getContext(),3));
-        FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+        final FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
 
         imgWords = new ImgWords();//초기화
         rvAdapter = new RvAdapter(getContext(),fab,imgWords);
@@ -129,16 +129,33 @@ public class SearchMainFragment extends Fragment {
                         msg.what = 2;
                         Handler mh = new mHandler();
                         mh.sendMessageDelayed(msg, 100);
+                        fab.setImageResource(R.drawable.fabback);
                     } else {
                         Toast.makeText(getContext(), "재료들을 먼저 입력해 주세요.", Toast.LENGTH_SHORT).show();
 
                     }
                 }else if(grv.getAdapter().getClass().getName().equals("kr.or.dgit.bigdata.jollygo.jollygo_v01.views.adapter.ListRvAdapter")) {
+                    //-->
+                    grv.setHasFixedSize(true);
+
+                    grv.setLayoutManager(new GridLayoutManager(getContext(),3));
+                    FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+
+                    imgWords = new ImgWords();//초기화
+                    rvAdapter = new RvAdapter(getContext(),fab,imgWords);
+                    grv.setAdapter(rvAdapter);
+                    final TextView tvTitle = (TextView) getActivity().findViewById(R.id.tvTitle);
+                    grv.gridChangeListener(tvTitle);
+                    //<--
+
+                    sv.setVisibility(View.VISIBLE);
+                    tvTitle.setText("What a lot of chefs in the world");
 
                 }
             }
         });
-    }
+
+    }//onActivityCreated
     private class mHandler extends Handler{ // 리사이클링 뷰 갱신하기 전에 프로그래스바 보이기 위한 핸들러
         @Override
         public void handleMessage(Message msg) {
@@ -163,10 +180,10 @@ public class SearchMainFragment extends Fragment {
                 List<String> newList= new ArrayList<String>();
                 getRvAdapter().getImgWords().setmDataset(newList);
                 bar.setVisibility(View.GONE);
+
                 removeMessages(msg.what);//
             }
         }
-
     }
 
     public GridRecyclerView getGrv() {
@@ -184,5 +201,7 @@ public class SearchMainFragment extends Fragment {
     public void setRvAdapter(RvAdapter rvAdapter) {
         this.rvAdapter = rvAdapter;
     }
+
+
 
 }

@@ -137,7 +137,8 @@ public class WebActivity extends AppCompatActivity {
                 } else if (view == fabFav) {
 
                 } else if (view == fabHome) { // 홈화면가기
-
+                    Intent intent = new Intent(WebActivity.this,SearchActivity.class);
+                    startActivity(intent);
                 } else {//뒤로가기
                     finish();
                 }

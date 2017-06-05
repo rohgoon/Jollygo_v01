@@ -63,7 +63,6 @@ public class ListRvAdapter extends RecyclerView.Adapter<ListRvAdapter.ViewHolder
             tvTest = (TextView) v.findViewById(R.id.tvListTitle);
             rl = (RelativeLayout) v.findViewById(R.id.list_card_layout);
         }
-
     }//ViewHolder
 
 
@@ -102,7 +101,6 @@ public class ListRvAdapter extends RecyclerView.Adapter<ListRvAdapter.ViewHolder
                 context.startActivity(intent);
             }
         });
-
     }
 
     @Override
