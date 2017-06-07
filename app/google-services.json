@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1096637901714",
+    "firebase_url": "https://jollygo-7296a.firebaseio.com",
+    "project_id": "jollygo-7296a",
+    "storage_bucket": "jollygo-7296a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1096637901714:android:d47735e8b43770aa",
+        "android_client_info": {
+          "package_name": "kr.or.dgit.bigdata.jollygo.jollygo_v01"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1096637901714-ls76hi5esmvjpasbifqnk9emm6ts74it.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "kr.or.dgit.bigdata.jollygo.jollygo_v01",
+            "certificate_hash": "3c269a2841b0366236e45d55bb032d6e3e772f1d"
+          }
+        },
+        {
+          "client_id": "1096637901714-rpohqj4462642lfke9j8f5c0cbq3dgfg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlMb_BZ2XM-zqicJU-Aey-JLyOWNpUUX4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1096637901714-rpohqj4462642lfke9j8f5c0cbq3dgfg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
