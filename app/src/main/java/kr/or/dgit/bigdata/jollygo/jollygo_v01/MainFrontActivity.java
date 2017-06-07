@@ -71,6 +71,7 @@ public class MainFrontActivity extends AppCompatActivity  implements
             public void onClick(View v) {
                 FirebaseUser currentUser = mAuth.getCurrentUser();
                 updateUI(currentUser);
+                signOut();
             }
         });
     }//onCreate
@@ -121,7 +122,7 @@ public class MainFrontActivity extends AppCompatActivity  implements
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("isSuccessful", "signInWithCredential:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
+                            ibOauth.setImageResource(R.drawable.oauthbtn02);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("isNotSuccessful", "signInWithCredential:failure", task.getException());
@@ -143,7 +144,7 @@ public class MainFrontActivity extends AppCompatActivity  implements
   private void signOut() {
       // Firebase sign out
       mAuth.signOut();
-
+      Log.e("싸인아웃","signOut");
       // Google sign out
       Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
               new ResultCallback<Status>() {
