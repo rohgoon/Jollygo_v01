@@ -28,7 +28,7 @@ public class SearchActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     static int searchCount;
-   // private FirebaseAuth mAuth;
+    private FirebaseAuth mAuth;
 
     //SearchMainFragment searchMainFragment; //디자인패턴 적용요망
     @Override
@@ -47,7 +47,7 @@ public class SearchActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-       // mAuth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance();
     }
 
     @Override
@@ -80,12 +80,10 @@ public class SearchActivity extends AppCompatActivity
 
         if (id == R.id.nav_camera) {
             // Handle the camera action
-           // FirebaseUser currentUser = mAuth.getCurrentUser();
-           // updateUI(currentUser);
+            FirebaseUser currentUser = mAuth.getCurrentUser();
+            updateUI(currentUser);
         } else if (id == R.id.nav_gallery) {
-           // mAuth.signOut();
-           // Toast.makeText(getApplicationContext(),"유저가 signOut.",Toast.LENGTH_LONG).show();
-          //  finish();
+
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
@@ -93,7 +91,9 @@ public class SearchActivity extends AppCompatActivity
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
-
+            mAuth.signOut();
+            Toast.makeText(getApplicationContext(),"유저가 signOut.",Toast.LENGTH_LONG).show();
+            finish();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

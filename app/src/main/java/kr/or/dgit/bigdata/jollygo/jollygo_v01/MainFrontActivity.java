@@ -32,6 +32,7 @@ public class MainFrontActivity extends AppCompatActivity  implements
     private GoogleSignInOptions gso;
     private GoogleApiClient mGoogleApiClient;
     private static final int RC_SIGN_IN = 9001;
+    private static final int SEARCHACTIVITY = 9002;
     private ImageButton ibOauth;
     private ImageView ivFront;
     @Override
@@ -57,9 +58,7 @@ public class MainFrontActivity extends AppCompatActivity  implements
             public void onClick(View v) {
                 ibOauth.setImageResource(R.drawable.oauthbtn_ns);
                 signIn();
-              /*Intent intent = new Intent(MainFrontActivity.this,SearchActivity.class);
 
-                startActivityForResult(intent,0);*/
             }
         });
 
@@ -71,7 +70,6 @@ public class MainFrontActivity extends AppCompatActivity  implements
             public void onClick(View v) {
                 FirebaseUser currentUser = mAuth.getCurrentUser();
                 updateUI(currentUser);
-                signOut();
             }
         });
     }//onCreate
@@ -123,6 +121,8 @@ public class MainFrontActivity extends AppCompatActivity  implements
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("isSuccessful", "signInWithCredential:success");
                             ibOauth.setImageResource(R.drawable.oauthbtn02);
+                            Intent intent = new Intent(MainFrontActivity.this,SearchActivity.class);
+                            startActivityForResult(intent,SEARCHACTIVITY);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("isNotSuccessful", "signInWithCredential:failure", task.getException());
@@ -136,9 +136,9 @@ public class MainFrontActivity extends AppCompatActivity  implements
     }//firebaseAuthWithGoogle
   private void updateUI(FirebaseUser user) {
         if (user != null) {
-           // Toast.makeText(getApplicationContext(),user.getDisplayName(),Toast.LENGTH_LONG).show();
+           Toast.makeText(getApplicationContext(),user.getDisplayName(),Toast.LENGTH_SHORT).show();
         } else {
-           // Toast.makeText(getApplicationContext(),"유저가 없습니다.",Toast.LENGTH_LONG).show();
+           Toast.makeText(getApplicationContext(),"유저가 없습니다.",Toast.LENGTH_SHORT).show();
         }
     }
   private void signOut() {
