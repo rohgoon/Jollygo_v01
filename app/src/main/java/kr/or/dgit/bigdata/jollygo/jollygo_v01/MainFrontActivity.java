@@ -12,10 +12,11 @@ public class MainFrontActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_front);
-        ImageButton ibOauth= (ImageButton) findViewById(R.id.ibOauth);
+        final ImageButton ibOauth= (ImageButton) findViewById(R.id.ibOauth);
         ibOauth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ibOauth.setImageResource(R.drawable.oauthbtn_ns);
                 Intent intent = new Intent(MainFrontActivity.this,SearchActivity.class);
                 startActivity(intent);
             }
