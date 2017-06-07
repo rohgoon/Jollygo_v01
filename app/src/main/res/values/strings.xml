@@ -9,6 +9,4 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_web">WebActivity</string>
-    <string name="android_client_id">1096637901714-ls76hi5esmvjpasbifqnk9emm6ts74it.apps.googleusercontent.com</string>
-    <string name="web_client_id">1096637901714-rpohqj4462642lfke9j8f5c0cbq3dgfg.apps.googleusercontent.com</string>
 </resources>
