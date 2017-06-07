@@ -3,6 +3,7 @@ package kr.or.dgit.bigdata.jollygo.jollygo_v01;
 import android.Manifest;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -29,6 +30,12 @@ public class SearchActivity extends AppCompatActivity
 
     static int searchCount;
     private FirebaseAuth mAuth;
+    private FirebaseUser currentUser;
+    public static final String APP_RESULT = "appresult";
+    public static final String APP_FINISH = "finish";
+    public static final String APP_SIGNOUT = "signout";
+    private static final int SEARCHACTIVITY = 9002;
+    private boolean checkBack = false;
 
     //SearchMainFragment searchMainFragment; //디자인패턴 적용요망
     @Override
@@ -48,15 +55,30 @@ public class SearchActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         mAuth = FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();//유저정보
+
+
     }
 
     @Override
-    public void onBackPressed() {
+    public void onBackPressed() {//앱 종료 관련 수정 요망
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            if (checkBack){
+                Intent intent = new Intent();
+                intent.putExtra(APP_RESULT,APP_FINISH);
+                setResult(SEARCHACTIVITY,intent);
+                finish();
+                //super.onBackPressed();
+            }else{
+                checkBack = true;
+                Toast.makeText(this, "뒤로가기를 한번 더 누르시면 앱이 종료됩니다.", Toast.LENGTH_SHORT).show();
+
+
+            }
+
         }
     }
 
@@ -80,7 +102,7 @@ public class SearchActivity extends AppCompatActivity
 
         if (id == R.id.nav_camera) {
             // Handle the camera action
-            FirebaseUser currentUser = mAuth.getCurrentUser();
+
             updateUI(currentUser);
         } else if (id == R.id.nav_gallery) {
 
@@ -93,6 +115,9 @@ public class SearchActivity extends AppCompatActivity
         } else if (id == R.id.nav_send) {
             mAuth.signOut();
             Toast.makeText(getApplicationContext(),"유저가 signOut.",Toast.LENGTH_LONG).show();
+            Intent intent = new Intent();
+            intent.putExtra(APP_RESULT,APP_SIGNOUT);
+            setResult(SEARCHACTIVITY,intent);
             finish();
         }
 

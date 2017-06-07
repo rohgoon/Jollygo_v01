@@ -1,5 +1,6 @@
 package kr.or.dgit.bigdata.jollygo.jollygo_v01;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -35,6 +36,8 @@ public class MainFrontActivity extends AppCompatActivity  implements
     private static final int SEARCHACTIVITY = 9002;
     private ImageButton ibOauth;
     private ImageView ivFront;
+    private ProgressDialog mDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,7 +96,7 @@ public class MainFrontActivity extends AppCompatActivity  implements
         super.onActivityResult(requestCode, resultCode, data);
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN) {
+        if (requestCode == RC_SIGN_IN) {//어디에서 온건지 분류 필요
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if (result.isSuccess()) {
                 // Google Sign In was successful, authenticate with Firebase
@@ -105,12 +108,19 @@ public class MainFrontActivity extends AppCompatActivity  implements
                 updateUI(null);
                 // [END_EXCLUDE]
             }
+        }else if (requestCode == SEARCHACTIVITY){
+            String res = data.getExtras().getString(SearchActivity.APP_RESULT);
+            if (res.equals(SearchActivity.APP_FINISH)){
+                finish();
+            }
+
         }
     }
     // [END onactivityresult]
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d("firebaseAuthWithGoogle", "firebaseAuthWithGoogle:" + acct.getId());
+        mDialog = ProgressDialog.show(MainFrontActivity.this,null, "Please wait...", true);
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
@@ -130,7 +140,7 @@ public class MainFrontActivity extends AppCompatActivity  implements
                                     Toast.LENGTH_SHORT).show();
                             updateUI(null);
                         }
-
+                        mDialog.dismiss();
                     }
                 });
     }//firebaseAuthWithGoogle
