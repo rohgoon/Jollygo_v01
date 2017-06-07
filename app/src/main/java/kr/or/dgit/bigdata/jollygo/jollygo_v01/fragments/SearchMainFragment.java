@@ -36,6 +36,7 @@ public class SearchMainFragment extends Fragment {
     private ListRvAdapter listRvAdapter;
     private static ProgressBar bar;
     private Activity activityThis;
+    private FloatingActionButton fab;
 
     public SearchMainFragment() {
         // Required empty public constructor
@@ -60,7 +61,7 @@ public class SearchMainFragment extends Fragment {
         grv.setHasFixedSize(true);
 
         grv.setLayoutManager(new GridLayoutManager(getContext(),3));
-        final FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+        fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
 
         imgWords = new ImgWords();//초기화
         rvAdapter = new RvAdapter(getContext(),fab,imgWords);
@@ -122,6 +123,7 @@ public class SearchMainFragment extends Fragment {
                 Log.e("플로팅버튼클릭>>>>","확인"+grv.getAdapter().getClass().getName().toString());
                 if(grv.getAdapter().getClass().getName().equals("kr.or.dgit.bigdata.jollygo.jollygo_v01.views.adapter.RvAdapter")) {//확인 요망
                     if (getRvAdapter().getImgWords().getmDataset().size() > 0) {
+                        fab.setVisibility(View.INVISIBLE);
                         //프로그래스바 등장
                         bar.setVisibility(View.VISIBLE);
                         Toast.makeText(getContext(), "쉐프님들이 모이고 있어요", Toast.LENGTH_LONG).show();
@@ -139,7 +141,7 @@ public class SearchMainFragment extends Fragment {
                     grv.setHasFixedSize(true);
 
                     grv.setLayoutManager(new GridLayoutManager(getContext(),3));
-                    FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+                   // FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
 
                     imgWords = new ImgWords();//초기화
                     rvAdapter = new RvAdapter(getContext(),fab,imgWords);
@@ -147,8 +149,10 @@ public class SearchMainFragment extends Fragment {
                     final TextView tvTitle = (TextView) getActivity().findViewById(R.id.tvTitle);
                     grv.gridChangeListener(tvTitle);
                     //<--
+                    fab.setImageResource(R.drawable.fabhome);
 
                     sv.setVisibility(View.VISIBLE);
+                    sv.setIconified(true);
                     tvTitle.setText("What a lot of chefs in the world");
 
                 }
@@ -180,7 +184,7 @@ public class SearchMainFragment extends Fragment {
                 List<String> newList= new ArrayList<String>();
                 getRvAdapter().getImgWords().setmDataset(newList);
                 bar.setVisibility(View.GONE);
-
+                fab.setVisibility(View.VISIBLE);
                 removeMessages(msg.what);//
             }
         }
