@@ -6,7 +6,7 @@ package kr.or.dgit.bigdata.jollygo.jollygo_v01.firebasedto;
 
 public class uword {
     private int uwno;
-    private String idToken;
+    private int uno;
     private int awno;
     private int uwcount;
 
@@ -18,12 +18,12 @@ public class uword {
         this.uwno = uwno;
     }
 
-    public String getidToken() {
-        return idToken;
+    public int getUno() {
+        return uno;
     }
 
-    public void setidToken(String idToken) {
-        this.idToken = idToken;
+    public void setUno(int uno) {
+        this.uno = uno;
     }
 
     public int getAwno() {
@@ -45,7 +45,7 @@ public class uword {
     @Override
     public String toString() {
         return "uwno:" + uwno +
-                "\nidToken:" + idToken +
+                "\nuno:" + uno +
                 "\nawno:" + awno +
                 "\nuwcount:" + uwcount;
     }

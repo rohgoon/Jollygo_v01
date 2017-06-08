@@ -5,16 +5,16 @@ package kr.or.dgit.bigdata.jollygo.jollygo_v01.firebasedto;
  */
 
 public class user {
-    private String idToken;
+    private int uno;
     private String uid;
     private String uname;
 
-    public String getidToken() {
-        return idToken;
+    public int getUno() {
+        return uno;
     }
 
-    public void setidToken(String idToken) {
-        this.idToken = idToken;
+    public void setUno(int uno) {
+        this.uno = uno;
     }
 
     public String getUid() {
@@ -35,8 +35,8 @@ public class user {
 
     @Override
     public String toString() {
-        return "idToken:" + idToken +
-                "\nuid:" + uid +
+        return "uno:" + uno +
+                "\nuid:" + uid + '\'' +
                 "\nuname:" + uname;
     }
 }
