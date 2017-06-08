@@ -15,8 +15,17 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import kr.or.dgit.bigdata.jollygo.jollygo_v01.firebasedto.Favlink;
 
 public class SearchActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -31,7 +40,8 @@ public class SearchActivity extends AppCompatActivity
     private boolean checkBack = false;
     private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     private DatabaseReference databaseReference = firebaseDatabase.getReference();
-    private int userNo;
+    private List<Favlink> favlinkList;
+    public static int flcount; //해당 아이디 즐겨찾기 갯수 카운트
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -51,10 +61,30 @@ public class SearchActivity extends AppCompatActivity
 
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();//유저정보
-        
 
+        favlinkList = new ArrayList<>();
+        getFavlinkOnce(currentUser);
     }
 
+    private void getFavlinkOnce(FirebaseUser currentUser) {
+        DatabaseReference flRef = databaseReference.child("favlink").equalTo(currentUser.getUid(),"uid").getRef();
+
+        flRef.addListenerForSingleValueEvent(new ValueEventListener() {//처음 한번 리스트 불러오기 체크 요망
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+               flcount= (int) dataSnapshot.getChildrenCount();
+                for (DataSnapshot d : dataSnapshot.getChildren()) {
+                    favlinkList.add(d.getValue(Favlink.class));
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
 
 
     @Override

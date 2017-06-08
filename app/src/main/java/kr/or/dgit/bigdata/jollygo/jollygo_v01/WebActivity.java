@@ -22,6 +22,12 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionMenu;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import kr.or.dgit.bigdata.jollygo.jollygo_v01.firebasedto.Favlink;
 
 public class WebActivity extends AppCompatActivity {
     private WebView webView;
@@ -30,6 +36,11 @@ public class WebActivity extends AppCompatActivity {
     private FloatingActionMenu fam;
     private FloatingActionButton fabPhoto, fabBack,fabHome,fabBrowser,fabFav;
     private String urlRes;
+
+    private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+    private DatabaseReference databaseReference = firebaseDatabase.getReference();
+    private FirebaseAuth mAuth;
+    private FirebaseUser currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +57,9 @@ public class WebActivity extends AppCompatActivity {
         fabBrowser = (FloatingActionButton) findViewById(R.id.fabBrowser);
         fabFav = (FloatingActionButton) findViewById(R.id.fabFav);
         fam = (FloatingActionMenu) findViewById(R.id.fab_menu);
+
+        mAuth = FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();//유저정보
 
         //fam.setMenuButtonColorNormal(Color.BLUE);
 
@@ -126,7 +140,7 @@ public class WebActivity extends AppCompatActivity {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (view == fabPhoto) {//퍼미션 안받을시 확인 재요청
+                if (view == fabPhoto) {//저장소 지정요망
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     startActivity(intent);
 
@@ -135,7 +149,10 @@ public class WebActivity extends AppCompatActivity {
                     startActivity(intent);
 
                 } else if (view == fabFav) {
-
+                    Favlink favlink = new Favlink(SearchActivity.flcount,urlRes,"이미지",
+                            currentUser.getUid(),0);
+                    databaseReference.child("favlink").push().setValue(favlink);
+                    
                 } else if (view == fabHome) { // 홈화면가기
                     Intent intent = new Intent(WebActivity.this,SearchActivity.class);
                     startActivity(intent);
