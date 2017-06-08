@@ -22,6 +22,8 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.fragments.SearchMainFragment;
 
@@ -36,6 +38,8 @@ public class SearchActivity extends AppCompatActivity
     public static final String APP_SIGNOUT = "signout";
     private static final int SEARCHACTIVITY = 9002;
     private boolean checkBack = false;
+    private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+    private DatabaseReference databaseReference = firebaseDatabase.getReference();
 
     //SearchMainFragment searchMainFragment; //디자인패턴 적용요망
     @Override
@@ -56,7 +60,12 @@ public class SearchActivity extends AppCompatActivity
 
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();//유저정보
+        pushUser(currentUser);
 
+    }
+
+    private void pushUser(FirebaseUser currentUser) {
+        //databaseReference.child("userlist").push().setValue()
 
     }
 
@@ -112,7 +121,7 @@ public class SearchActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_share) {
 
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_send) {//signOut
             mAuth.signOut();
             Toast.makeText(getApplicationContext(),"유저가 signOut.",Toast.LENGTH_LONG).show();
             Intent intent = new Intent();
