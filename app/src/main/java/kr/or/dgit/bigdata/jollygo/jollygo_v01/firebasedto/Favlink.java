@@ -9,17 +9,35 @@ public class Favlink {
     private String furl;
     private String fimgurl;
     private String uid;
+    private String fname;
     private int fcount;
 
     public Favlink() {
     }
 
-    public Favlink(int fno, String furl, String fimgurl, String uid, int fcount) {
+    public Favlink(int fno, String furl, String fimgurl, String uid, String fname, int fcount) {
         this.fno = fno;
         this.furl = furl;
         this.fimgurl = fimgurl;
         this.uid = uid;
+        this.fname = fname;
         this.fcount = fcount;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
+    public String getFname() {
+        return fname;
+    }
+
+    public void setFname(String fname) {
+        this.fname = fname;
     }
 
     public String getFimgurl() {
@@ -46,14 +64,6 @@ public class Favlink {
         this.furl = furl;
     }
 
-    public String getuid() {
-        return uid;
-    }
-
-    public void setuid(String uid) {
-        this.uid = uid;
-    }
-
     public int getFcount() {
         return fcount;
     }
@@ -68,6 +78,7 @@ public class Favlink {
                 "\nfurl:" + furl +
                 "\nfimgurl:" + fimgurl +
                 "\nuid:" + uid +
+                "\nfname:" + fname +
                 "\nfcount:" + fcount;
     }
 

@@ -36,7 +36,8 @@ public class WebActivity extends AppCompatActivity {
     private FloatingActionMenu fam;
     private FloatingActionButton fabPhoto, fabBack,fabHome,fabBrowser,fabFav;
     private String urlRes;
-
+    private String imgurl;
+    private String blogname;
     private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     private DatabaseReference databaseReference = firebaseDatabase.getReference();
     private FirebaseAuth mAuth;
@@ -50,6 +51,8 @@ public class WebActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);*/
         Intent intent = new Intent(this.getIntent());
         String url = intent.getStringExtra("url");
+        imgurl = intent.getStringExtra("imgurl");
+        blogname = intent.getStringExtra("blogname");
         progressBar = (ProgressBar) findViewById(R.id.webPb);
         fabPhoto = (FloatingActionButton) findViewById(R.id.fabPhoto);
         fabBack = (FloatingActionButton) findViewById(R.id.fabBack);
@@ -149,10 +152,10 @@ public class WebActivity extends AppCompatActivity {
                     startActivity(intent);
 
                 } else if (view == fabFav) {
-                    Favlink favlink = new Favlink(SearchActivity.flcount,urlRes,"이미지",
-                            currentUser.getUid(),0);
+                    Favlink favlink = new Favlink(SearchActivity.flcount,urlRes,imgurl,
+                            currentUser.getUid(),blogname,0);
                     databaseReference.child("favlink").push().setValue(favlink);
-                    
+
                 } else if (view == fabHome) { // 홈화면가기
                     Intent intent = new Intent(WebActivity.this,SearchActivity.class);
                     startActivity(intent);

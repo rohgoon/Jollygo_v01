@@ -7,17 +7,27 @@ package kr.or.dgit.bigdata.jollygo.jollygo_v01.firebasedto;
 public class Allurl {
     private int auno;
     private String auurl;
+    private String auimgurl;
     private String auname;
     private int aucount;
 
     public Allurl() {
     }
 
-    public Allurl(int auno, String auurl, String auname, int aucount) {
+    public Allurl(int auno, String auurl, String auimgurl, String auname, int aucount) {
         this.auno = auno;
         this.auurl = auurl;
+        this.auimgurl = auimgurl;
         this.auname = auname;
         this.aucount = aucount;
+    }
+
+    public String getAuimgurl() {
+        return auimgurl;
+    }
+
+    public void setAuimgurl(String auimgurl) {
+        this.auimgurl = auimgurl;
     }
 
     public int getAuno() {
@@ -56,7 +66,8 @@ public class Allurl {
     public String toString() {
         return "auno=" + auno +
                 "\nauurl:" + auurl +
-                "\nauname:" + auname + '\'' +
+                "\nauimgurl:" + auimgurl +
+                "\nauname:" + auname +
                 "\naucount:" + aucount;
     }
 }

@@ -28,11 +28,11 @@ public class Uword {
         this.uwno = uwno;
     }
 
-    public String getuid() {
+    public String getUid() {
         return uid;
     }
 
-    public void setuid(String uid) {
+    public void setUid(String uid) {
         this.uid = uid;
     }
 
