@@ -189,15 +189,6 @@ public class SearchMainFragment extends Fragment {
             }
         }
     }
-
-    public GridRecyclerView getGrv() {
-        return grv;
-    }
-
-    public void setGrv(GridRecyclerView grv) {
-        this.grv = grv;
-    }
-
     public RvAdapter getRvAdapter() {
         return rvAdapter;
     }

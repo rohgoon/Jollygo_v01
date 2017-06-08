@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -26,6 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.firebasedto.Favlink;
+import kr.or.dgit.bigdata.jollygo.jollygo_v01.fragments.FavlinkFragment;
+import kr.or.dgit.bigdata.jollygo.jollygo_v01.fragments.SearchMainFragment;
 
 public class SearchActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -41,6 +46,8 @@ public class SearchActivity extends AppCompatActivity
     private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     private DatabaseReference databaseReference = firebaseDatabase.getReference();
     private List<Favlink> favlinkList;
+    private FragmentManager mFragmentManager;
+    private Fragment mFragment;
     public static int flcount; //해당 아이디 즐겨찾기 갯수 카운트
 
     @Override
@@ -64,6 +71,8 @@ public class SearchActivity extends AppCompatActivity
 
         favlinkList = new ArrayList<>();
         getFavlinkOnce(currentUser);
+
+
     }
 
     private void getFavlinkOnce(FirebaseUser currentUser) {//동작은 잘됨, 마지막 fno를 가져오는 걸로 변경 할것
@@ -126,20 +135,22 @@ public class SearchActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) { //플래그먼트로 구현
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        mFragmentManager = getSupportFragmentManager();
+        mFragment = mFragmentManager.findFragmentById(R.id.fragment);
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_home) {
             // Handle the camera action
+            FragmentTransaction ft = mFragmentManager.beginTransaction();
+            SearchMainFragment smf = new SearchMainFragment();
+            ft.replace(R.id.fragment,smf,"nav_home");
 
-            updateUI(currentUser);
-        } else if (id == R.id.nav_gallery) {
+            //updateUI(currentUser);
+        } else if (id == R.id.nav_favlist) {
+            FragmentTransaction ft = mFragmentManager.beginTransaction();
+            FavlinkFragment flf = new FavlinkFragment();
+            ft.replace(R.id.fragment,flf,"nav_favlist");
 
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {//signOut
+        } else if (id == R.id.nav_signout) {//signOut
             mAuth.signOut();
             Toast.makeText(getApplicationContext(),"유저가 signOut.",Toast.LENGTH_LONG).show();
             Intent intent = new Intent();
