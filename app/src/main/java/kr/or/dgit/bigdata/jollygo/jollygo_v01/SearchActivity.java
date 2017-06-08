@@ -1,15 +1,9 @@
 package kr.or.dgit.bigdata.jollygo.jollygo_v01;
 
 import android.Manifest;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
-import android.widget.ProgressBar;
-import android.widget.SearchView;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -17,15 +11,12 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
-import kr.or.dgit.bigdata.jollygo.jollygo_v01.fragments.SearchMainFragment;
 
 public class SearchActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -40,8 +31,8 @@ public class SearchActivity extends AppCompatActivity
     private boolean checkBack = false;
     private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     private DatabaseReference databaseReference = firebaseDatabase.getReference();
+    private int userNo;
 
-    //SearchMainFragment searchMainFragment; //디자인패턴 적용요망
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,14 +51,11 @@ public class SearchActivity extends AppCompatActivity
 
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();//유저정보
-        pushUser(currentUser);
+        
 
     }
 
-    private void pushUser(FirebaseUser currentUser) {
-        //databaseReference.child("userlist").push().setValue()
 
-    }
 
     @Override
     public void onBackPressed() {//앱 종료 관련 수정 요망

@@ -4,11 +4,21 @@ package kr.or.dgit.bigdata.jollygo.jollygo_v01.firebasedto;
  * Created by rohgoon on 2017-06-08.
  */
 
-public class uword {
+public class Uword {
     private int uwno;
-    private int uno;
+    private String uid;
     private int awno;
     private int uwcount;
+
+    public Uword() {
+    }
+
+    public Uword(int uwno, String uid, int awno, int uwcount) {
+        this.uwno = uwno;
+        this.uid = uid;
+        this.awno = awno;
+        this.uwcount = uwcount;
+    }
 
     public int getUwno() {
         return uwno;
@@ -18,12 +28,12 @@ public class uword {
         this.uwno = uwno;
     }
 
-    public int getUno() {
-        return uno;
+    public String getuid() {
+        return uid;
     }
 
-    public void setUno(int uno) {
-        this.uno = uno;
+    public void setuid(String uid) {
+        this.uid = uid;
     }
 
     public int getAwno() {
@@ -45,7 +55,7 @@ public class uword {
     @Override
     public String toString() {
         return "uwno:" + uwno +
-                "\nuno:" + uno +
+                "\nuid:" + uid +
                 "\nawno:" + awno +
                 "\nuwcount:" + uwcount;
     }

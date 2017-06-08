@@ -4,12 +4,23 @@ package kr.or.dgit.bigdata.jollygo.jollygo_v01.firebasedto;
  * Created by rohgoon on 2017-06-08.
  */
 
-public class favlink {
+public class Favlink {
     private int fno;
     private String furl;
     private String fimgurl;
-    private int uno;
+    private String uid;
     private int fcount;
+
+    public Favlink() {
+    }
+
+    public Favlink(int fno, String furl, String fimgurl, String uid, int fcount) {
+        this.fno = fno;
+        this.furl = furl;
+        this.fimgurl = fimgurl;
+        this.uid = uid;
+        this.fcount = fcount;
+    }
 
     public String getFimgurl() {
         return fimgurl;
@@ -35,12 +46,12 @@ public class favlink {
         this.furl = furl;
     }
 
-    public int getUno() {
-        return uno;
+    public String getuid() {
+        return uid;
     }
 
-    public void setUno(int uno) {
-        this.uno = uno;
+    public void setuid(String uid) {
+        this.uid = uid;
     }
 
     public int getFcount() {
@@ -56,7 +67,7 @@ public class favlink {
         return "fno:" + fno +
                 "\nfurl:" + furl +
                 "\nfimgurl:" + fimgurl +
-                "\nuno:" + uno +
+                "\nuid:" + uid +
                 "\nfcount:" + fcount;
     }
 

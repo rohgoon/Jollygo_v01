@@ -4,11 +4,21 @@ package kr.or.dgit.bigdata.jollygo.jollygo_v01.firebasedto;
  * Created by rohgoon on 2017-06-08.
  */
 
-public class allurl {
+public class Allurl {
     private int auno;
     private String auurl;
     private String auname;
     private int aucount;
+
+    public Allurl() {
+    }
+
+    public Allurl(int auno, String auurl, String auname, int aucount) {
+        this.auno = auno;
+        this.auurl = auurl;
+        this.auname = auname;
+        this.aucount = aucount;
+    }
 
     public int getAuno() {
         return auno;

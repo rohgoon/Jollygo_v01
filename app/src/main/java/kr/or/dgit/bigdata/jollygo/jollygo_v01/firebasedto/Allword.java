@@ -4,11 +4,21 @@ package kr.or.dgit.bigdata.jollygo.jollygo_v01.firebasedto;
  * Created by rohgoon on 2017-06-08.
  */
 
-public class allword {
+public class Allword {
     private int awno;
     private String awname;
     private String awimgurl;
     private int awcount;
+
+    public Allword() {
+    }
+
+    public Allword(int awno, String awname, String awimgurl, int awcount) {
+        this.awno = awno;
+        this.awname = awname;
+        this.awimgurl = awimgurl;
+        this.awcount = awcount;
+    }
 
     public int getAwno() {
         return awno;
