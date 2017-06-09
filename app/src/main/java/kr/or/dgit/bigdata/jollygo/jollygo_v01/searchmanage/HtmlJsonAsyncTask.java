@@ -5,6 +5,10 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -23,15 +27,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import kr.or.dgit.bigdata.jollygo.jollygo_v01.firebasedto.Allword;
+import kr.or.dgit.bigdata.jollygo.jollygo_v01.firebasedto.Uword;
+
 /**
  * Created by NCG on 2017-05-26.
  */
 
 public class HtmlJsonAsyncTask extends AsyncTask<String,String,List<SearchResult>> {
     private int cutIndex = 0;
+    private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+    private DatabaseReference databaseReference = firebaseDatabase.getReference();
+    private FirebaseAuth mAuth;
+    private FirebaseUser currentUser;
     @Override
     protected List<SearchResult> doInBackground(String... params) {
+        mAuth = FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();
         String addr = "https://www.google.co.kr/search?q=allintext:+레시피+재료";
+
         for (String str: params) {
             addr += "+"+str;
         }
@@ -111,4 +125,5 @@ public class HtmlJsonAsyncTask extends AsyncTask<String,String,List<SearchResult
             }
         }
     }
+
 }

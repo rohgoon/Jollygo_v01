@@ -7,6 +7,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -20,23 +28,67 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import kr.or.dgit.bigdata.jollygo.jollygo_v01.firebasedto.Allword;
+import kr.or.dgit.bigdata.jollygo.jollygo_v01.firebasedto.Favlink;
+import kr.or.dgit.bigdata.jollygo.jollygo_v01.firebasedto.Uword;
+
 /**
  * Created by NCG on 2017-05-26.
  */
 
 public class ImgHtmlAsyncTask extends AsyncTask<String,Integer,Map<String,Bitmap>> {
 
-
+    private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+    private DatabaseReference databaseReference = firebaseDatabase.getReference();
+    private FirebaseAuth mAuth;
+    private FirebaseUser currentUser;
+    private boolean existCheck = false;
+    private String awimgurl;
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
     }
 
     @Override
-    protected Map<String,Bitmap> doInBackground(String... params) {
+    protected Map<String,Bitmap> doInBackground(final String... params) {
         //차후 DB 구축시 파싱 예외처리 요망
-        String url = "https://ko.wikipedia.org/wiki/" +params[0];
+        mAuth = FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();
         Map<String,Bitmap> resMap= new HashMap<>();
+        //있는지 검색하고 예외처리
+
+        DatabaseReference awd = databaseReference.child("allword").getRef();
+        awd.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot d : dataSnapshot.getChildren()) {
+                    Allword aw = d.getValue(Allword.class);
+                   if (aw.getAwname().equals(params[0])){
+                       awimgurl = aw.getAwimgurl();
+                       existCheck = true;
+                       break;
+                   }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        if (existCheck) {
+            //단어가 DB에 있을 시
+            resMap = wordExists(params[0], awimgurl, resMap);
+        }else {
+            //단어가 DB에 없을 시
+            resMap = wordNotExists(params[0], resMap);
+        }
+
+        return resMap;
+    }
+
+    private Map<String, Bitmap> wordNotExists(String param, Map<String, Bitmap> resMap) {
+        String url = "https://ko.wikipedia.org/wiki/" +param;
         String img="";
         Document doc = null;
         try {
@@ -67,14 +119,23 @@ public class ImgHtmlAsyncTask extends AsyncTask<String,Integer,Map<String,Bitmap
             }else{
                 imgBitmap = mkBitmap(img);
             }
-            resMap.put(params[0],imgBitmap);
+            resMap.put(param,imgBitmap);
 
+            wordsSetValue(param,img,0,0);//(String name, String imgurl,int awno, int uwno) allword와 uword에 추가
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return resMap;
+    }
+
+    private Map<String, Bitmap> wordExists(String param, String img,Map<String, Bitmap> resMap) {
+
+
 
         return resMap;
     }
+
+
     private Bitmap mkBitmap(String s) {
         HttpURLConnection connection = null;
         try {
@@ -98,5 +159,14 @@ public class ImgHtmlAsyncTask extends AsyncTask<String,Integer,Map<String,Bitmap
     protected void onPostExecute(Map<String, Bitmap> stringBitmapMap) {
         super.onPostExecute(stringBitmapMap);
     }
+
+    private void wordsSetValue(String name, String imgurl,int awno, int uwno){
+        Allword aw = new Allword(awno,name,imgurl,0);
+        Uword uw = new Uword(uwno,currentUser.getUid(),awno,0);
+        databaseReference.child("allword").push().setValue(aw);
+        databaseReference.child("uword").push().setValue(uw);
+
+    }
+
 
 }

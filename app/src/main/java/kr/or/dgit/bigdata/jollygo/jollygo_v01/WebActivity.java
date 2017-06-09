@@ -33,7 +33,9 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import kr.or.dgit.bigdata.jollygo.jollygo_v01.firebasedto.Allword;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.firebasedto.Favlink;
+import kr.or.dgit.bigdata.jollygo.jollygo_v01.firebasedto.Uword;
 
 public class WebActivity extends AppCompatActivity {
     private WebView webView;
@@ -152,19 +154,22 @@ public class WebActivity extends AppCompatActivity {
         }else{
             fabFav.setVisibility(View.VISIBLE);
         }
+        //이미 존재하는 즐겨찾기인지 검증
         DatabaseReference fld = databaseReference.child("favlink").equalTo(currentUser.getUid(),"uid").getRef();
         fld.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 List<Favlink> favlinks = new ArrayList<Favlink>();
-                for (DataSnapshot d : dataSnapshot.getChildren()) {
-                    favlinks.add(d.getValue(Favlink.class));
-                }
-                for (Favlink f:favlinks) {
-                    if (f.getFurl().equals(url)){//이미 존재
-                        fabFav.setColorFilter(Color.RED);
-                    }else{
-                        fabFav.setOnClickListener(onButtonClick());
+                if (favlinks !=null) {
+                    for (DataSnapshot d : dataSnapshot.getChildren()) {
+                        favlinks.add(d.getValue(Favlink.class));
+                    }
+                    for (Favlink f : favlinks) {
+                        if (f.getFurl().equals(url)) {//이미 존재
+                            fabFav.setColorFilter(Color.RED);
+                        } else {
+                            fabFav.setOnClickListener(onButtonClick());
+                        }
                     }
                 }
             }
@@ -220,5 +225,4 @@ public class WebActivity extends AppCompatActivity {
             }
         };
     }
-
 }
