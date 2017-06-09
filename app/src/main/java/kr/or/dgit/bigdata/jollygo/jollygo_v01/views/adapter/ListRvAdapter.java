@@ -100,6 +100,7 @@ public class ListRvAdapter extends RecyclerView.Adapter<ListRvAdapter.ViewHolder
                 intent.putExtra("url",srList.get(position).getRu());
                 intent.putExtra("imgurl",srList.get(position).getOu());
                 intent.putExtra("blogname",srList.get(position).getPt());
+                intent.putExtra("byfav",false);
                 context.startActivity(intent);
             }
         });

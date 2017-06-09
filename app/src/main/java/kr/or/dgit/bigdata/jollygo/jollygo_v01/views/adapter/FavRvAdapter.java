@@ -16,11 +16,15 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +32,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.R;
+import kr.or.dgit.bigdata.jollygo.jollygo_v01.WebActivity;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.firebasedto.Favlink;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.imgmanage.BitmapOnlyAsyncTask;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.imgmanage.ImgHtmlAsyncTask;
@@ -62,6 +67,7 @@ public class FavRvAdapter extends RecyclerView.Adapter<FavRvAdapter.ViewHolder> 
         public CardView cv;
         public FloatingActionButton fab; //플로팅버튼 받아오기
         public ImageView ivBrowser;
+        public RelativeLayout rl;
 
         public ViewHolder(View v) {
             super(v);
@@ -69,6 +75,7 @@ public class FavRvAdapter extends RecyclerView.Adapter<FavRvAdapter.ViewHolder> 
             ivCard = (ImageView) v.findViewById(R.id.ivFavCard);
             tvTest = (TextView) v.findViewById(R.id.tvFavTitle);
             ivBrowser = (ImageView) v.findViewById(R.id.ivFavCard);
+            rl = (RelativeLayout) v.findViewById(R.id.list_fav_layout);
             fab = floatingActionButton;
             ivCard.setOnLongClickListener(this);
         }
@@ -126,6 +133,34 @@ public class FavRvAdapter extends RecyclerView.Adapter<FavRvAdapter.ViewHolder> 
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(favlinkList.get(position).getFurl()));
+                context.startActivity(intent);
+            }
+        });
+
+        //클릭시 웹뷰로 이동
+        holder.rl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+              //클릭 카운팅
+                final DatabaseReference fld = databaseReference.child("favlink").equalTo(currentUser.getUid(),"uid")
+                        .equalTo(favlinkList.get(position).getFno(),"fno").getRef();
+                fld.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Favlink favlink = dataSnapshot.getValue(Favlink.class);
+                        fld.child("fcount").setValue(favlink.getFcount()+1); //카운팅에 1 더하기
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
+
+                Intent intent = new Intent(context,WebActivity.class);
+                intent.putExtra("url",favlinkList.get(position).getFurl());
+                intent.putExtra("imgurl",favlinkList.get(position).getFimgurl());
+                intent.putExtra("blogname",favlinkList.get(position).getFname());
+                intent.putExtra("byfav",true);
                 context.startActivity(intent);
             }
         });
