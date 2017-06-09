@@ -42,6 +42,7 @@ public class WebActivity extends AppCompatActivity {
     private DatabaseReference databaseReference = firebaseDatabase.getReference();
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
+    private int flcount; //해당 아이디 즐겨찾기 갯수 카운트
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,7 +153,7 @@ public class WebActivity extends AppCompatActivity {
                     startActivity(intent);
 
                 } else if (view == fabFav) {
-                    Favlink favlink = new Favlink(SearchActivity.flcount,urlRes,imgurl,
+                    Favlink favlink = new Favlink(flcount,urlRes,imgurl,
                             currentUser.getUid(),blogname,0);
                     databaseReference.child("favlink").push().setValue(favlink);
 

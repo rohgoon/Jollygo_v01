@@ -45,10 +45,8 @@ public class SearchActivity extends AppCompatActivity
     private boolean checkBack = false;
     private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     private DatabaseReference databaseReference = firebaseDatabase.getReference();
-    private List<Favlink> favlinkList;
     private FragmentManager mFragmentManager;
     private Fragment mFragment;
-    public static int flcount; //해당 아이디 즐겨찾기 갯수 카운트
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -69,31 +67,9 @@ public class SearchActivity extends AppCompatActivity
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();//유저정보
 
-        favlinkList = new ArrayList<>();
-        getFavlinkOnce(currentUser);
-
 
     }
 
-    private void getFavlinkOnce(FirebaseUser currentUser) {//동작은 잘됨, 마지막 fno를 가져오는 걸로 변경 할것
-        DatabaseReference flRef = databaseReference.child("favlink").equalTo(currentUser.getUid(),"uid").getRef();
-
-        flRef.addListenerForSingleValueEvent(new ValueEventListener() {//처음 한번 리스트 불러오기 체크 요망
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-               flcount= (int) dataSnapshot.getChildrenCount();
-                for (DataSnapshot d : dataSnapshot.getChildren()) {
-                    favlinkList.add(d.getValue(Favlink.class));
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-    }
 
 
     @Override
