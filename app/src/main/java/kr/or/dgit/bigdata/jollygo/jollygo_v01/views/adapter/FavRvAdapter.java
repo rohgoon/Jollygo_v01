@@ -19,6 +19,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,11 +44,15 @@ public class FavRvAdapter extends RecyclerView.Adapter<FavRvAdapter.ViewHolder> 
     private static int clickIndex;
     private List<Favlink> favlinkList;
     private BitmapOnlyAsyncTask boat;
+    private DatabaseReference databaseReference;
+    private FirebaseUser currentUser;
 
-    public FavRvAdapter(Context context, FloatingActionButton floatingActionButton, List<Favlink> favlinkList) {
+    public FavRvAdapter(Context context, FloatingActionButton floatingActionButton, List<Favlink> favlinkList, DatabaseReference databaseReference, FirebaseUser currentUser) {
         this.context = context;
         this.floatingActionButton = floatingActionButton;
         this.favlinkList =favlinkList;
+        this.databaseReference = databaseReference;
+        this.currentUser =currentUser;
     }
 
 
@@ -138,6 +145,10 @@ public class FavRvAdapter extends RecyclerView.Adapter<FavRvAdapter.ViewHolder> 
             switch (event.getAction()){
                 case DragEvent.ACTION_DROP:
                     fb.setImageResource(R.drawable.ic_action_name);
+                    //파이어베이스에서도 삭제
+                    DatabaseReference fld = databaseReference.child("favlink").equalTo(currentUser.getUid(),"uid")
+                            .equalTo(favlinkList.get(clickIndex).getFno(),"fno").getRef(); //fno 기준으로 삭제함으로 fno를 특정화 시키는게 중요
+                    fld.removeValue();
                     // 삭제
                     deleteItem(clickIndex);
 
@@ -183,4 +194,7 @@ public class FavRvAdapter extends RecyclerView.Adapter<FavRvAdapter.ViewHolder> 
         }
     }
 
+    public static int getClickIndex() {
+        return clickIndex;
+    }
 }
