@@ -36,14 +36,8 @@ import kr.or.dgit.bigdata.jollygo.jollygo_v01.firebasedto.Uword;
 
 public class HtmlJsonAsyncTask extends AsyncTask<String,String,List<SearchResult>> {
     private int cutIndex = 0;
-    private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-    private DatabaseReference databaseReference = firebaseDatabase.getReference();
-    private FirebaseAuth mAuth;
-    private FirebaseUser currentUser;
     @Override
     protected List<SearchResult> doInBackground(String... params) {
-        mAuth = FirebaseAuth.getInstance();
-        currentUser = mAuth.getCurrentUser();
         String addr = "https://www.google.co.kr/search?q=allintext:+레시피+재료";
 
         for (String str: params) {
