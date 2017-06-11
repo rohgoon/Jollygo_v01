@@ -10,7 +10,7 @@
 
     <fragment
         android:id="@+id/fragment"
-        android:name="kr.or.dgit.bigdata.jollygo.jollygo_v01.fragments.FavlinkFragment"
+        android:name="kr.or.dgit.bigdata.jollygo.jollygo_v01.fragments.SearchMainFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:layout_editor_absoluteY="8dp"
