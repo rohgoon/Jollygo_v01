@@ -125,6 +125,7 @@ public class SearchActivity extends AppCompatActivity
             FragmentTransaction ft = mFragmentManager.beginTransaction();
             SearchMainFragment smf = new SearchMainFragment();
             ft.replace(R.id.fragment,smf,"nav_home");
+            ft.commit();
 
             //updateUI(currentUser);
         } else if (id == R.id.nav_favlist) {
@@ -133,6 +134,7 @@ public class SearchActivity extends AppCompatActivity
             FragmentTransaction ft = mFragmentManager.beginTransaction();
             FavlinkFragment flf = new FavlinkFragment();
             ft.replace(R.id.fragment,flf,"nav_favlist");
+            ft.commit();
 
         } else if (id == R.id.nav_signout) {//signOut
             Log.e("signOut","signOut");
