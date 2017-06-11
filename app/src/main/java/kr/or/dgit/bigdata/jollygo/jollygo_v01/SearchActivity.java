@@ -67,7 +67,8 @@ public class SearchActivity extends AppCompatActivity
         //->차후 프래그먼트로 이동
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();//유저정보
-
+        mFragmentManager = getSupportFragmentManager();
+        mFragment = mFragmentManager.findFragmentById(R.id.fragment);
 
     }
 
@@ -98,6 +99,7 @@ public class SearchActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Log.e("메뉴 열기","onOptionsItemSelected");
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
@@ -113,10 +115,11 @@ public class SearchActivity extends AppCompatActivity
         Log.e("메뉴 열기","onNavigationItemSelected");
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        mFragmentManager = getSupportFragmentManager();
-        mFragment = mFragmentManager.findFragmentById(R.id.fragment);
+       /* mFragmentManager = getSupportFragmentManager();
+        mFragment = mFragmentManager.findFragmentById(R.id.fragment);*/
         //작동 안됨
         if (id == R.id.nav_home) {
+            Toast.makeText(getApplicationContext(),"nav_home",Toast.LENGTH_SHORT).show();//반응 있음
             // Handle the camera action
             Log.e("프래그먼트 교체","nav_home");
             FragmentTransaction ft = mFragmentManager.beginTransaction();
@@ -125,12 +128,14 @@ public class SearchActivity extends AppCompatActivity
 
             //updateUI(currentUser);
         } else if (id == R.id.nav_favlist) {
+            Toast.makeText(getApplicationContext(),"nav_favlist",Toast.LENGTH_SHORT).show();//반응 있음
             Log.e("프래그먼트 교체","nav_favlist");
             FragmentTransaction ft = mFragmentManager.beginTransaction();
             FavlinkFragment flf = new FavlinkFragment();
             ft.replace(R.id.fragment,flf,"nav_favlist");
 
         } else if (id == R.id.nav_signout) {//signOut
+            Log.e("signOut","signOut");
             mAuth.signOut();
             Toast.makeText(getApplicationContext(),"유저가 signOut.",Toast.LENGTH_LONG).show();
             Intent intent = new Intent();
