@@ -28,7 +28,7 @@ import kr.or.dgit.bigdata.jollygo.jollygo_v01.views.adapter.ListRvAdapter;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.views.adapter.RvAdapter;
 
 public class SearchMainFragment extends Fragment {
-
+  
     //
     private ImgWords imgWords;
     private GridRecyclerView grv;
