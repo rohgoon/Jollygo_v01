@@ -24,10 +24,18 @@ import android.widget.Toast;
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import kr.or.dgit.bigdata.jollygo.jollygo_v01.firebasedto.Allword;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.firebasedto.Favlink;
+import kr.or.dgit.bigdata.jollygo.jollygo_v01.firebasedto.Uword;
 
 public class WebActivity extends AppCompatActivity {
     private WebView webView;
@@ -42,6 +50,8 @@ public class WebActivity extends AppCompatActivity {
     private DatabaseReference databaseReference = firebaseDatabase.getReference();
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
+    private int flcount; //해당 아이디 즐겨찾기 갯수 카운트
+    private String url;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +60,7 @@ public class WebActivity extends AppCompatActivity {
         /*Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);*/
         Intent intent = new Intent(this.getIntent());
-        String url = intent.getStringExtra("url");
+        url = intent.getStringExtra("url");
         imgurl = intent.getStringExtra("imgurl");
         blogname = intent.getStringExtra("blogname");
         progressBar = (ProgressBar) findViewById(R.id.webPb);
@@ -129,7 +139,6 @@ public class WebActivity extends AppCompatActivity {
         fabBrowser.setOnClickListener(onButtonClick());
         fabBack.setOnClickListener(onButtonClick());
         fabHome.setOnClickListener(onButtonClick());
-        fabFav.setOnClickListener(onButtonClick());
         fam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -138,6 +147,39 @@ public class WebActivity extends AppCompatActivity {
                 }
             }
         });
+
+        boolean fav = intent.getBooleanExtra("byfav",false);//즐겨찾기에서 오면 즐겨찾기 버튼 숨기기
+        if (fav){
+            fabFav.setVisibility(View.GONE);
+        }else{
+            fabFav.setVisibility(View.VISIBLE);
+        }
+        //이미 존재하는 즐겨찾기인지 검증
+        DatabaseReference fld = databaseReference.child("favlink").equalTo(currentUser.getUid(),"uid").getRef();
+        fld.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<Favlink> favlinks = new ArrayList<Favlink>();
+                if (favlinks !=null) {
+                    for (DataSnapshot d : dataSnapshot.getChildren()) {
+                        favlinks.add(d.getValue(Favlink.class));
+                    }
+                    for (Favlink f : favlinks) {
+                        if (f.getFurl().equals(url)) {//이미 존재
+                            fabFav.setColorFilter(Color.RED);
+                        } else {
+                            fabFav.setOnClickListener(onButtonClick());
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }//onCreate
     private View.OnClickListener onButtonClick() {
         return new View.OnClickListener() {
@@ -151,10 +193,27 @@ public class WebActivity extends AppCompatActivity {
                     Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse(urlRes));
                     startActivity(intent);
 
-                } else if (view == fabFav) {
-                    Favlink favlink = new Favlink(SearchActivity.flcount,urlRes,imgurl,
+                } else if (view == fabFav) {//DB에 즐겨찾기 새로 추가
+
+                    DatabaseReference fld = databaseReference.child("favlink").equalTo(currentUser.getUid(),"uid").getRef();
+                    fld.orderByKey().limitToLast(1).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            Favlink favlinkBefore = dataSnapshot.getValue(Favlink.class);
+                            flcount = favlinkBefore.getFno();
+
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                    flcount++;
+                    //차후 이미있는 즐겨찾기는 중복처리
+                    Favlink favlinkAfter = new Favlink(flcount,urlRes,imgurl,
                             currentUser.getUid(),blogname,0);
-                    databaseReference.child("favlink").push().setValue(favlink);
+                    databaseReference.child("favlink").push().setValue(favlinkAfter);
 
                 } else if (view == fabHome) { // 홈화면가기
                     Intent intent = new Intent(WebActivity.this,SearchActivity.class);
@@ -166,5 +225,4 @@ public class WebActivity extends AppCompatActivity {
             }
         };
     }
-
 }

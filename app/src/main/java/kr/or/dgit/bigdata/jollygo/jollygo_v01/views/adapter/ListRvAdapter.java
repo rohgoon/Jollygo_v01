@@ -13,11 +13,21 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.R;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.WebActivity;
+import kr.or.dgit.bigdata.jollygo.jollygo_v01.firebasedto.Allurl;
+import kr.or.dgit.bigdata.jollygo.jollygo_v01.firebasedto.Allword;
+import kr.or.dgit.bigdata.jollygo.jollygo_v01.firebasedto.Favlink;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.imgmanage.ImgWords;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.searchmanage.HtmlJsonAsyncTask;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.searchmanage.SearchResult;
@@ -31,7 +41,10 @@ public class ListRvAdapter extends RecyclerView.Adapter<ListRvAdapter.ViewHolder
     private static int clickIndex;
     private List<SearchResult> srList; //파싱 결과가 들어감
     private HtmlJsonAsyncTask hjat;
-
+    private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+    private DatabaseReference databaseReference = firebaseDatabase.getReference();
+    private boolean check = false;
+    private int auNum;
     public ListRvAdapter(Context context, ImgWords imgWords) {
         this.context = context;
         srList = new ArrayList<>();
@@ -69,7 +82,7 @@ public class ListRvAdapter extends RecyclerView.Adapter<ListRvAdapter.ViewHolder
     // Create new views (invoked by the layout manager)
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                   int viewType) {
+                                         int viewType) {
         // create a new view
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_card_list, parent, false);//해당 레이아웃 결정
@@ -95,11 +108,56 @@ public class ListRvAdapter extends RecyclerView.Adapter<ListRvAdapter.ViewHolder
         holder.rl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Uri uri = Uri.parse();
+                //주소 중복 확인
+
+                DatabaseReference aud = databaseReference.child("allurl").getRef();
+                aud.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        for (DataSnapshot d : dataSnapshot.getChildren()) {
+                            check =false;
+                            Allurl auCheck = d.getValue(Allurl.class);
+                            if (auCheck.getAuurl().equals(srList.get(position).getRu())){
+                                check =true;
+                                break;
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+                //주소 없을시
+                aud.orderByKey().limitToLast(1).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Allurl auCheck = dataSnapshot.getValue(Allurl.class);
+                        auNum = auCheck.getAuno();
+                        auNum++;
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+                if (check == false){
+                    Allurl allurl = new Allurl(auNum,srList.get(position).getRu(),
+                            srList.get(position).getOu(),srList.get(position).getPt(),0);
+                    databaseReference.child("allurl").push().setValue(allurl);
+
+                }
+                //주소(original) 수집
+
+
                 Intent intent = new Intent(context,WebActivity.class);
                 intent.putExtra("url",srList.get(position).getRu());
                 intent.putExtra("imgurl",srList.get(position).getOu());
                 intent.putExtra("blogname",srList.get(position).getPt());
+                intent.putExtra("byfav",false);
                 context.startActivity(intent);
             }
         });
