@@ -13,6 +13,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -109,19 +110,22 @@ public class SearchActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) { //플래그먼트로 구현
+        Log.e("메뉴 열기","onNavigationItemSelected");
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         mFragmentManager = getSupportFragmentManager();
         mFragment = mFragmentManager.findFragmentById(R.id.fragment);
-
+        //작동 안됨
         if (id == R.id.nav_home) {
             // Handle the camera action
+            Log.e("프래그먼트 교체","nav_home");
             FragmentTransaction ft = mFragmentManager.beginTransaction();
             SearchMainFragment smf = new SearchMainFragment();
             ft.replace(R.id.fragment,smf,"nav_home");
 
             //updateUI(currentUser);
         } else if (id == R.id.nav_favlist) {
+            Log.e("프래그먼트 교체","nav_favlist");
             FragmentTransaction ft = mFragmentManager.beginTransaction();
             FavlinkFragment flf = new FavlinkFragment();
             ft.replace(R.id.fragment,flf,"nav_favlist");
