@@ -203,8 +203,8 @@ public class WebActivity extends AppCompatActivity {
                     startActivity(intent);
                 } else {//즐겨찾기 //이부분이 자꾸 먹통됨
                     Toast.makeText(getApplicationContext(),"즐겨찾기",Toast.LENGTH_SHORT).show();
-                   /* DatabaseReference fld = databaseReference.child("favlink");//fno를 굳이 아이디별로 특정화 시킬 이유가 없음
-                    fld.orderByChild("fno").limitToLast(1).addListenerForSingleValueEvent(new ValueEventListener() {
+                    DatabaseReference fld = databaseReference.child("favlink");//fno를 굳이 아이디별로 특정화 시킬 이유가 없음
+                    fld.orderByKey().limitToLast(1).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -225,7 +225,7 @@ public class WebActivity extends AppCompatActivity {
                     Favlink favlinkAfter = new Favlink(flcount,urlRes,imgurl,
                             currentUser.getUid(),blogname,0);
                     databaseReference.child("favlink").push().setValue(favlinkAfter);
-                    //*/
+
                 }
                 fam.close(true);
             }
