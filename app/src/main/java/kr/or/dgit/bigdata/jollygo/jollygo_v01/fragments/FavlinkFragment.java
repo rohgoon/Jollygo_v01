@@ -76,8 +76,8 @@ public class FavlinkFragment extends Fragment {
         favRvAdapter = new FavRvAdapter(getContext(),fab,favlinkList,databaseReference,currentUser);
         grv.setAdapter(favRvAdapter);
         //change리스너와 additem 연결
-        DatabaseReference flRef = databaseReference.child("favlink").equalTo(currentUser.getUid(),"uid").getRef();//uid value를 특정해서 가져오지 않음
-        flRef.addChildEventListener(new ChildEventListener() {
+        DatabaseReference flRef = databaseReference.child("favlink");//uid value를 특정해서 가져오지 않음 -> getRef삭제하고 분리 변경 완료 후 작동 잘됨
+        flRef.orderByChild("uid").equalTo(currentUser.getUid()).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 //Toast.makeText(getContext(),"dataSnapshot 카운트 "+dataSnapshot.getChildrenCount(),Toast.LENGTH_SHORT).show();//6이 카운트 됨
@@ -105,7 +105,6 @@ public class FavlinkFragment extends Fragment {
 
             }
         });//addChildEventListener
-
     }
    /* private void getFavlinkOnce(FirebaseUser currentUser) {//동작은 잘됨, 마지막 fno를 가져오는 걸로 변경 할것
         DatabaseReference flRef = databaseReference.child("favlink").equalTo(currentUser.getUid(),"uid").getRef();
