@@ -129,23 +129,18 @@ public class SearchActivity extends AppCompatActivity
 
             //updateUI(currentUser);
         } else if (id == R.id.nav_favlist) {
-            Toast.makeText(getApplicationContext(),"nav_favlist",Toast.LENGTH_SHORT).show();//반응 있음
-            Log.e("프래그먼트 교체","nav_favlist");
             FragmentTransaction ft = mFragmentManager.beginTransaction();
             FavlinkFragment flf = new FavlinkFragment();
             ft.replace(R.id.fragment,flf,"nav_favlist");
             ft.commit();
 
         } else if (id == R.id.nav_signout) {//signOut
-            Log.e("signOut","signOut");
             mAuth.signOut();
-            Toast.makeText(getApplicationContext(),"유저가 signOut.",Toast.LENGTH_LONG).show();
             Intent intent = new Intent();
             intent.putExtra(APP_RESULT,APP_SIGNOUT);
             setResult(SEARCHACTIVITY,intent);
             finish();
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;

@@ -35,7 +35,7 @@ public class BitmapOnlyAsyncTask extends AsyncTask<String,Integer,Bitmap> {
         Bitmap resBitmap = mkBitmap(url);
 
 
-        return resBitmap;  
+        return resBitmap;
     }
     private Bitmap mkBitmap(String s) {
         HttpURLConnection connection = null;

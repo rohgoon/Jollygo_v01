@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -63,7 +64,7 @@ public class FavlinkFragment extends Fragment {
         currentUser = mAuth.getCurrentUser();//유저정보
 
         favlinkList = new ArrayList<>();
-        getFavlinkOnce(currentUser);//한번 불러오기
+        //getFavlinkOnce(currentUser);//한번 불러오기 -> 이것 이후에 additem을 해서 두배로 리스트가 만들어 진것
         //뷰 구현
         //-->
         grv.setHasFixedSize(true);
@@ -75,10 +76,11 @@ public class FavlinkFragment extends Fragment {
         favRvAdapter = new FavRvAdapter(getContext(),fab,favlinkList,databaseReference,currentUser);
         grv.setAdapter(favRvAdapter);
         //change리스너와 additem 연결
-        DatabaseReference flRef = databaseReference.child("favlink").equalTo(currentUser.getUid(),"uid").getRef();
+        DatabaseReference flRef = databaseReference.child("favlink").equalTo(currentUser.getUid(),"uid").getRef();//uid value를 특정해서 가져오지 않음
         flRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                //Toast.makeText(getContext(),"dataSnapshot 카운트 "+dataSnapshot.getChildrenCount(),Toast.LENGTH_SHORT).show();//6이 카운트 됨
                 Favlink fl= dataSnapshot.getValue(Favlink.class);//
                 favRvAdapter.addItem(fl);
             }
@@ -105,7 +107,7 @@ public class FavlinkFragment extends Fragment {
         });//addChildEventListener
 
     }
-    private void getFavlinkOnce(FirebaseUser currentUser) {//동작은 잘됨, 마지막 fno를 가져오는 걸로 변경 할것
+   /* private void getFavlinkOnce(FirebaseUser currentUser) {//동작은 잘됨, 마지막 fno를 가져오는 걸로 변경 할것
         DatabaseReference flRef = databaseReference.child("favlink").equalTo(currentUser.getUid(),"uid").getRef();
 
         flRef.addListenerForSingleValueEvent(new ValueEventListener() {//처음 한번 리스트 불러오기 체크 요망
@@ -113,7 +115,7 @@ public class FavlinkFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //flcount= (int) dataSnapshot.getChildrenCount();
                 for (DataSnapshot d : dataSnapshot.getChildren()) {
-                    favlinkList.add(d.getValue(Favlink.class));
+                    favlinkList.add(d.getValue(Favlink.class)); //2배로 받아옴 받아옴
                 }
             }
 
@@ -123,5 +125,5 @@ public class FavlinkFragment extends Fragment {
             }
         });
 
-    }
+    }*/
 }

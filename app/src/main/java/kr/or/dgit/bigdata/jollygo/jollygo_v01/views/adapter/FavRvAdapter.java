@@ -168,8 +168,8 @@ public class FavRvAdapter extends RecyclerView.Adapter<FavRvAdapter.ViewHolder> 
         //프롤팅버튼에 드랍 이벤트 주기
         holder.fab.setOnDragListener(fabDragListener);//드래그 리스너 구현
 
-
-    }
+        //Toast.makeText(context,"사이즈는 "+favlinkList.size(),Toast.LENGTH_SHORT).show();//사이즈 자체가 16임->수정 완료
+    }//onBindViewHolder
     View.OnDragListener fabDragListener = new View.OnDragListener() {
         @Override
         public boolean onDrag(View v, DragEvent event) {
