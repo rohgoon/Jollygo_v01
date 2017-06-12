@@ -42,11 +42,11 @@
 
         <ImageView
             android:id="@+id/ivBrowser"
-            android:layout_width="40dp"
-            android:layout_height="100dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             card_view:srcCompat="@drawable/fabbrowser"
             android:layout_alignParentRight="true"
-            android:background="#e1e1e1"/>
+            android:tint="#b3ffa600"/>
 
 
     </RelativeLayout>

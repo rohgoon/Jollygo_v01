@@ -28,6 +28,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -154,8 +155,8 @@ public class WebActivity extends AppCompatActivity {
         }else{
             fabFav.setVisibility(View.VISIBLE);
         }
-        //이미 존재하는 즐겨찾기인지 검증
-        DatabaseReference fld = databaseReference.child("favlink").equalTo(currentUser.getUid(),"uid").getRef();
+        //이미 존재하는 즐겨찾기인지 검증 // 쿼리로 변경
+        Query fld = databaseReference.child("favlink").orderByChild("uid").equalTo(currentUser.getUid());
         fld.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -193,15 +194,26 @@ public class WebActivity extends AppCompatActivity {
                     Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse(urlRes));
                     startActivity(intent);
 
-                } else if (view == fabFav) {//DB에 즐겨찾기 새로 추가
-
-                    DatabaseReference fld = databaseReference.child("favlink").equalTo(currentUser.getUid(),"uid").getRef();
-                    fld.orderByKey().limitToLast(1).addListenerForSingleValueEvent(new ValueEventListener() {
+                } else if (view == fabBack) {//DB에 즐겨찾기 새로 추가 // 버튼 자체가 동작안함
+                    Toast.makeText(getApplicationContext(),"fabBack",Toast.LENGTH_SHORT).show();
+                    finish();
+                } else if (view == fabHome) { // 홈화면가기
+                    Toast.makeText(getApplicationContext(),"fabHome",Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(WebActivity.this,SearchActivity.class);
+                    startActivity(intent);
+                } else {//즐겨찾기 //이부분이 자꾸 먹통됨
+                    Toast.makeText(getApplicationContext(),"즐겨찾기",Toast.LENGTH_SHORT).show();
+                   /* DatabaseReference fld = databaseReference.child("favlink");//fno를 굳이 아이디별로 특정화 시킬 이유가 없음
+                    fld.orderByChild("fno").limitToLast(1).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-                            Favlink favlinkBefore = dataSnapshot.getValue(Favlink.class);
-                            flcount = favlinkBefore.getFno();
 
+                            Favlink favlinkBefore = dataSnapshot.getValue(Favlink.class);
+                            if (favlinkBefore== null){
+                                flcount = 0;
+                            }else{
+                                flcount = favlinkBefore.getFno();
+                            }
                         }
 
                         @Override
@@ -210,16 +222,10 @@ public class WebActivity extends AppCompatActivity {
                         }
                     });
                     flcount++;
-                    //차후 이미있는 즐겨찾기는 중복처리
                     Favlink favlinkAfter = new Favlink(flcount,urlRes,imgurl,
                             currentUser.getUid(),blogname,0);
                     databaseReference.child("favlink").push().setValue(favlinkAfter);
-
-                } else if (view == fabHome) { // 홈화면가기
-                    Intent intent = new Intent(WebActivity.this,SearchActivity.class);
-                    startActivity(intent);
-                } else {//뒤로가기
-                    finish();
+                    //*/
                 }
                 fam.close(true);
             }

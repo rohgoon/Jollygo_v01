@@ -119,7 +119,6 @@ public class SearchActivity extends AppCompatActivity
         mFragment = mFragmentManager.findFragmentById(R.id.fragment);*/
         //작동 안됨
         if (id == R.id.nav_home) {
-            Toast.makeText(getApplicationContext(),"nav_home",Toast.LENGTH_SHORT).show();//반응 있음
             // Handle the camera action
             Log.e("프래그먼트 교체","nav_home");
             FragmentTransaction ft = mFragmentManager.beginTransaction();

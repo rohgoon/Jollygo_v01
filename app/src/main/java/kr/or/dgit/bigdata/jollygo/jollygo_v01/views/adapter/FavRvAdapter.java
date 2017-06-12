@@ -24,6 +24,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
@@ -77,7 +78,7 @@ public class FavRvAdapter extends RecyclerView.Adapter<FavRvAdapter.ViewHolder> 
             ivBrowser = (ImageView) v.findViewById(R.id.ivFavCard);
             rl = (RelativeLayout) v.findViewById(R.id.list_fav_layout);
             fab = floatingActionButton;
-            ivCard.setOnLongClickListener(this);
+            rl.setOnLongClickListener(this);
         }
 
         @Override
@@ -142,13 +143,14 @@ public class FavRvAdapter extends RecyclerView.Adapter<FavRvAdapter.ViewHolder> 
             @Override
             public void onClick(View v) {
                 //클릭 카운팅
-                final DatabaseReference fld = databaseReference.child("favlink").equalTo(currentUser.getUid(),"uid")
-                        .equalTo(favlinkList.get(position).getFno(),"fno").getRef();
-                fld.addValueEventListener(new ValueEventListener() {
+                Query fld = databaseReference.child("favlink").orderByChild("uid").equalTo(currentUser.getUid());
+                final Query fld2 =fld.orderByChild("fno").equalTo(favlinkList.get(position).getFno());
+                fld2.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         Favlink favlink = dataSnapshot.getValue(Favlink.class);
-                        fld.child("fcount").setValue(favlink.getFcount()+1); //카운팅에 1 더하기
+                        dataSnapshot.getRef().child("fcount").setValue(favlink.getFcount()+1);
+                        //fld2.child("fcount").setValue(favlink.getFcount()+1); //카운팅에 1 더하기
                     }
 
                     @Override
@@ -167,7 +169,7 @@ public class FavRvAdapter extends RecyclerView.Adapter<FavRvAdapter.ViewHolder> 
 
         //프롤팅버튼에 드랍 이벤트 주기
         holder.fab.setOnDragListener(fabDragListener);//드래그 리스너 구현
-
+        boat.isCancelled();
         //Toast.makeText(context,"사이즈는 "+favlinkList.size(),Toast.LENGTH_SHORT).show();//사이즈 자체가 16임->수정 완료
     }//onBindViewHolder
     View.OnDragListener fabDragListener = new View.OnDragListener() {
@@ -179,17 +181,19 @@ public class FavRvAdapter extends RecyclerView.Adapter<FavRvAdapter.ViewHolder> 
             }
             switch (event.getAction()){
                 case DragEvent.ACTION_DROP:
-                    fb.setImageResource(R.drawable.ic_action_name);
                     //파이어베이스에서도 삭제
-                    DatabaseReference fld = databaseReference.child("favlink").equalTo(currentUser.getUid(),"uid")
-                            .equalTo(favlinkList.get(clickIndex).getFno(),"fno").getRef(); //fno 기준으로 삭제함으로 fno를 특정화 시키는게 중요
-                    fld.removeValue();
+                    int fno =favlinkList.get(clickIndex).getFno();
+                    Log.e("받아온 fno>>",fno+"");
+                    //쿼리로 던지고 데이터스냅샷의 getRef로 받아와 삭제해야 한다.
+                    Query fld = databaseReference.child("favlink").orderByChild("uid").equalTo(currentUser.getUid()); //fno 기준으로 삭제함으로 fno를 특정화 시키는게 중요
+                    DatabaseReference removefld = fld.orderByChild("fno").equalTo(fno).getRef(); //.removeValue();
+                    removefld.removeValue();
                     // 삭제
                     deleteItem(clickIndex);
-
+                    fb.setVisibility(View.GONE);
                     return true;
                 case DragEvent.ACTION_DRAG_ENDED:
-                    fb.setImageResource(R.drawable.ic_action_name);
+                    fb.setVisibility(View.GONE);
 
                     return true;
                 default:

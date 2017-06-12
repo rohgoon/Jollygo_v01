@@ -44,6 +44,7 @@ public class FavlinkFragment extends Fragment {
 
     public FavlinkFragment() {
         // Required empty public constructor
+        favlinkList.clear();
     }
 
     @Override

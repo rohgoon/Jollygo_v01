@@ -32,14 +32,7 @@
 
     <include layout="@layout/content_web" />
 
-   <!-- <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fabWeb"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginBottom="50dp"
-        android:layout_marginRight="16dp"
-        app:srcCompat="@drawable/ic_add_white_24dp" />-->
+
     <!--fabPhoto, fabBack,fabHome,fabBrowser;-->
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/fab_menu"
@@ -63,7 +56,7 @@
         app:menu_shadowColor="#66000000"
         app:menu_labels_ellipsize="end"
         app:menu_labels_singleLine="true">
-        <com.github.clans.fab.FloatingActionButton
+      <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fabHome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

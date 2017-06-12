@@ -150,13 +150,13 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.ViewHolder> {
             }
             switch (event.getAction()){
                 case DragEvent.ACTION_DROP:
-                    fb.setImageResource(R.drawable.ic_action_name);
+                    fb.setImageResource(R.drawable.fabback);
                     // 삭제
                     deleteItem(clickIndex);
 
                     return true;
                 case DragEvent.ACTION_DRAG_ENDED:
-                    fb.setImageResource(R.drawable.ic_action_name);
+                    fb.setImageResource(R.drawable.fabback);
 
                     return true;
                 default:
