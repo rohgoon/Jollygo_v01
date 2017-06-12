@@ -3,6 +3,7 @@ package kr.or.dgit.bigdata.jollygo.jollygo_v01;
 import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -15,6 +16,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -48,6 +51,7 @@ public class SearchActivity extends AppCompatActivity
     private DatabaseReference databaseReference = firebaseDatabase.getReference();
     private FragmentManager mFragmentManager;
     private Fragment mFragment;
+    private FrameLayout frameLayout;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -69,7 +73,12 @@ public class SearchActivity extends AppCompatActivity
         currentUser = mAuth.getCurrentUser();//유저정보
         mFragmentManager = getSupportFragmentManager();
         mFragment = mFragmentManager.findFragmentById(R.id.fragment);
-
+        FragmentTransaction ft = mFragmentManager.beginTransaction();
+        SearchMainFragment smf = new SearchMainFragment();
+        ft.replace(R.id.fragment,smf,"nav_home");
+        ft.commit();
+        FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
+        floatingActionButton.setVisibility(View.VISIBLE);
     }
 
 
