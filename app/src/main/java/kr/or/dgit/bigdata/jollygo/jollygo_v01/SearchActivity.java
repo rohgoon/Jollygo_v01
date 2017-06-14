@@ -52,7 +52,7 @@ public class SearchActivity extends AppCompatActivity
     private FragmentManager mFragmentManager;
     private Fragment mFragment;
     private FrameLayout frameLayout;
-
+    private FloatingActionButton floatingActionButton;
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,7 +77,7 @@ public class SearchActivity extends AppCompatActivity
         SearchMainFragment smf = new SearchMainFragment();
         ft.replace(R.id.fragment,smf,"nav_home");
         ft.commit();
-        FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
+        floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
         floatingActionButton.setVisibility(View.VISIBLE);
     }
 
@@ -134,6 +134,7 @@ public class SearchActivity extends AppCompatActivity
             SearchMainFragment smf = new SearchMainFragment();
             ft.replace(R.id.fragment,smf,"nav_home");
             ft.commit();
+            floatingActionButton.setVisibility(View.VISIBLE);
 
             //updateUI(currentUser);
         } else if (id == R.id.nav_favlist) {
@@ -141,6 +142,7 @@ public class SearchActivity extends AppCompatActivity
             FavlinkFragment flf = new FavlinkFragment();
             ft.replace(R.id.fragment,flf,"nav_favlist");
             ft.commit();
+            floatingActionButton.setVisibility(View.GONE);
 
         } else if (id == R.id.nav_signout) {//signOut
             mAuth.signOut();

@@ -24,11 +24,14 @@ import android.widget.Toast;
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -53,6 +56,8 @@ public class WebActivity extends AppCompatActivity {
     private FirebaseUser currentUser;
     private int flcount; //해당 아이디 즐겨찾기 갯수 카운트
     private String url;
+    private Favlink favlinkBefore;
+    private int fcNum;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +76,7 @@ public class WebActivity extends AppCompatActivity {
         fabBrowser = (FloatingActionButton) findViewById(R.id.fabBrowser);
         fabFav = (FloatingActionButton) findViewById(R.id.fabFav);
         fam = (FloatingActionMenu) findViewById(R.id.fab_menu);
+        fcNum=0;
 
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();//유저정보
@@ -161,7 +167,6 @@ public class WebActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 List<Favlink> favlinks = new ArrayList<Favlink>();
-                if (favlinks !=null) {
                     for (DataSnapshot d : dataSnapshot.getChildren()) {
                         favlinks.add(d.getValue(Favlink.class));
                     }
@@ -171,8 +176,8 @@ public class WebActivity extends AppCompatActivity {
                         } else {
                             fabFav.setOnClickListener(onButtonClick());
                         }
-                    }
-                }
+
+                     }
             }
 
             @Override
@@ -202,18 +207,40 @@ public class WebActivity extends AppCompatActivity {
                     Intent intent = new Intent(WebActivity.this,SearchActivity.class);
                     startActivity(intent);
                 } else {//즐겨찾기 //이부분이 자꾸 먹통됨
-                    Toast.makeText(getApplicationContext(),"즐겨찾기",Toast.LENGTH_SHORT).show();
-                    DatabaseReference fld = databaseReference.child("favlink");//fno를 굳이 아이디별로 특정화 시킬 이유가 없음
-                    fld.orderByKey().limitToLast(1).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
 
-                            Favlink favlinkBefore = dataSnapshot.getValue(Favlink.class);
+                    DatabaseReference fld = databaseReference.child("favlink");//fno를 굳이 아이디별로 특정화 시킬 이유가 없음
+                   fld.orderByChild("fno").limitToLast(1).addChildEventListener(new ChildEventListener() {
+                        @Override
+                        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                            favlinkBefore = dataSnapshot.getValue(Favlink.class);
+                            Log.e("데이터 스냅샷",dataSnapshot.getValue().toString());
                             if (favlinkBefore== null){
                                 flcount = 0;
                             }else{
-                                flcount = favlinkBefore.getFno();
+                                flcount = favlinkBefore.getFno()+1;
                             }
+                            fcNum++;
+                            if (fcNum==1){
+                                Toast.makeText(getApplicationContext(), flcount+ "", Toast.LENGTH_SHORT).show();
+                                Favlink favlinkAfter = new Favlink(flcount,urlRes,imgurl,
+                                        currentUser.getUid(),blogname,0);
+                                databaseReference.child("favlink").push().setValue(favlinkAfter);
+                            }
+                        }
+
+                        @Override
+                        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                        }
+
+                        @Override
+                        public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                        }
+
+                        @Override
+                        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
                         }
 
                         @Override
@@ -221,10 +248,6 @@ public class WebActivity extends AppCompatActivity {
 
                         }
                     });
-                    flcount++;
-                    Favlink favlinkAfter = new Favlink(flcount,urlRes,imgurl,
-                            currentUser.getUid(),blogname,0);
-                    databaseReference.child("favlink").push().setValue(favlinkAfter);
 
                 }
                 fam.close(true);
