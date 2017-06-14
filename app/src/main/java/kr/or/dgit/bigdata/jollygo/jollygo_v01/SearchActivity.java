@@ -3,6 +3,8 @@ package kr.or.dgit.bigdata.jollygo.jollygo_v01;
 import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.design.widget.NavigationView;
@@ -18,6 +20,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -141,13 +144,13 @@ public class SearchActivity extends AppCompatActivity
 
             //updateUI(currentUser);
         } else if (id == R.id.nav_favlist) {
-            FragmentTransaction ft = mFragmentManager.beginTransaction();
-            FavlinkFragment flf = new FavlinkFragment();
-            ft.replace(R.id.fragment,flf,"nav_favlist");
-            ft.commit();
-            floatingActionButton.setVisibility(View.GONE);
-            TextView tvTitle = (TextView) findViewById(R.id.tvTitle);
-            tvTitle.setText("즐겨찾기");
+            //핸들러로 독립
+            Message msg = new Message();
+            msg.what =1;
+
+            Handler mh = new mHandler();
+            mh.sendMessageDelayed(msg,500);
+
 
         } else if (id == R.id.nav_signout) {//signOut
             mAuth.signOut();
@@ -168,5 +171,19 @@ public class SearchActivity extends AppCompatActivity
             Toast.makeText(getApplicationContext(),"유저가 없습니다.",Toast.LENGTH_LONG).show();
         }
     }
-
+    private class mHandler extends Handler { // 리사이클링 뷰 갱신하기 전에 프로그래스바 보이기 위한 핸들러
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what ==1){
+                FragmentTransaction ft = mFragmentManager.beginTransaction();
+                FavlinkFragment flf = new FavlinkFragment();
+                ft.replace(R.id.fragment,flf,"nav_favlist");
+                ft.commit();
+                floatingActionButton.setVisibility(View.GONE);
+                TextView tvTitle = (TextView) findViewById(R.id.tvTitle);
+                tvTitle.setText("즐겨찾기");
+                removeMessages(msg.what);//
+            }
+        }
+    }
 }

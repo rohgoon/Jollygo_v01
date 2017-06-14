@@ -3,6 +3,8 @@ package kr.or.dgit.bigdata.jollygo.jollygo_v01.fragments;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -11,6 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,6 +33,7 @@ import kr.or.dgit.bigdata.jollygo.jollygo_v01.R;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.customviews.GridRecyclerView;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.firebasedto.Favlink;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.views.adapter.FavRvAdapter;
+import kr.or.dgit.bigdata.jollygo.jollygo_v01.views.adapter.ListRvAdapter;
 
 public class FavlinkFragment extends Fragment {
     private GridRecyclerView grv;
@@ -68,9 +73,9 @@ public class FavlinkFragment extends Fragment {
         //뷰 구현
         //-->
         grv.setHasFixedSize(true);
-        LinearLayoutManager llm = new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false); //reverseLayout은  sort 순서 반대로하기 기능
+        LinearLayoutManager llm = new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,true); //reverseLayout은  sort 순서 반대로하기 기능
         //최신순으로 뒤집어서 보이기
-        llm.setReverseLayout(true);
+        /*llm.setReverseLayout(true);*/
         llm.setStackFromEnd(true);
 
         grv.setLayoutManager(llm);
@@ -79,6 +84,7 @@ public class FavlinkFragment extends Fragment {
         //어댑터 연결
         favRvAdapter = new FavRvAdapter(getContext(),fab,favlinkList,databaseReference,currentUser);
         grv.setAdapter(favRvAdapter);
+
         //change리스너와 additem 연결
         DatabaseReference flRef = databaseReference.child("favlink");//uid value를 특정해서 가져오지 않음 -> getRef삭제하고 분리 변경 완료 후 작동 잘됨
         flRef.orderByChild("uid").equalTo(currentUser.getUid()).addChildEventListener(new ChildEventListener() {
@@ -110,4 +116,5 @@ public class FavlinkFragment extends Fragment {
             }
         });//addChildEventListener
     }
+
 }

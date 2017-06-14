@@ -255,7 +255,7 @@ public class FavRvAdapter extends RecyclerView.Adapter<FavRvAdapter.ViewHolder> 
                             Integer.parseInt(d.child("fcount").getValue().toString())
                             );
                     //(int fno, String furl, String fimgurl, String uid, String fname, int fcount) {
-                    Toast.makeText(context,fl.toString(),Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(context,fl.toString(),Toast.LENGTH_SHORT).show();
                     clickStack(d.getRef());
                 }
             }
