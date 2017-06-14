@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -185,9 +186,22 @@ public class FavRvAdapter extends RecyclerView.Adapter<FavRvAdapter.ViewHolder> 
                     int fno =favlinkList.get(clickIndex).getFno();
                     Log.e("받아온 fno>>",fno+"");
                     //쿼리로 던지고 데이터스냅샷의 getRef로 받아와 삭제해야 한다.
-                    Query fld = databaseReference.child("favlink").orderByChild("uid").equalTo(currentUser.getUid()); //fno 기준으로 삭제함으로 fno를 특정화 시키는게 중요
-                    DatabaseReference removefld = fld.orderByChild("fno").equalTo(fno).getRef(); //.removeValue();
-                    removefld.removeValue();
+                    Query fld = databaseReference.child("favlink").orderByChild("fno").equalTo(fno); //fno 기준으로 삭제함으로 fno를 특정화 시키는게 중요
+                    fld.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            Toast.makeText(context,dataSnapshot.getChildrenCount()+"",Toast.LENGTH_SHORT).show();
+                            Log.e("받아온개수",dataSnapshot.getChildrenCount()+"");
+                            for (DataSnapshot d: dataSnapshot.getChildren()) {
+                                d.getRef().removeValue();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
                     // 삭제
                     deleteItem(clickIndex);
                     fb.setVisibility(View.GONE);
