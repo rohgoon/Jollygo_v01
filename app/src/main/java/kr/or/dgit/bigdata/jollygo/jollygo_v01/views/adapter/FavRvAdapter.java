@@ -25,7 +25,9 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
@@ -57,9 +59,9 @@ public class FavRvAdapter extends RecyclerView.Adapter<FavRvAdapter.ViewHolder> 
     public FavRvAdapter(Context context, FloatingActionButton floatingActionButton, List<Favlink> favlinkList, DatabaseReference databaseReference, FirebaseUser currentUser) {
         this.context = context;
         this.floatingActionButton = floatingActionButton;
-        this.favlinkList =favlinkList;
+        this.favlinkList = favlinkList;
         this.databaseReference = databaseReference;
-        this.currentUser =currentUser;
+        this.currentUser = currentUser;
     }
 
 
@@ -76,7 +78,7 @@ public class FavRvAdapter extends RecyclerView.Adapter<FavRvAdapter.ViewHolder> 
             cv = (CardView) v;
             ivCard = (ImageView) v.findViewById(R.id.ivFavCard);
             tvTest = (TextView) v.findViewById(R.id.tvFavTitle);
-            ivBrowser = (ImageView) v.findViewById(R.id.ivFavCard);
+            ivBrowser = (ImageView) v.findViewById(R.id.ivBrowser);
             rl = (RelativeLayout) v.findViewById(R.id.list_fav_layout);
             fab = floatingActionButton;
             rl.setOnLongClickListener(this);
@@ -84,14 +86,14 @@ public class FavRvAdapter extends RecyclerView.Adapter<FavRvAdapter.ViewHolder> 
 
         @Override
         public boolean onLongClick(View v) {
-            ClipData clip = ClipData.newPlainText("","");
+            ClipData clip = ClipData.newPlainText("", "");
             fab.setImageResource(R.drawable.ic_delete);
             fab.setVisibility(View.VISIBLE);
-            cv.startDrag(clip, new View.DragShadowBuilder(cv),null, 0);
+            cv.startDrag(clip, new View.DragShadowBuilder(cv), null, 0);
             //View.DragShadowBuilder(cv) 수정요망
 
             clickIndex = getLayoutPosition();
-            Log.e("뷰홀더 롱크릭 >>>>>>>>>>>> ",clickIndex+"번 인덱스 출력");
+            Log.e("뷰홀더 롱크릭 >>>>>>>>>>>> ", clickIndex + "번 인덱스 출력");
             //프롤팅버튼에 드랍 이벤트 주기
             return true;
         }
@@ -140,31 +142,17 @@ public class FavRvAdapter extends RecyclerView.Adapter<FavRvAdapter.ViewHolder> 
         });
 
         //클릭시 웹뷰로 이동
-        holder.rl.setOnClickListener(new View.OnClickListener() {
+
+        holder.tvTest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //클릭 카운팅
-                Query fld = databaseReference.child("favlink").orderByChild("uid").equalTo(currentUser.getUid());
-                final Query fld2 =fld.orderByChild("fno").equalTo(favlinkList.get(position).getFno());
-                fld2.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Favlink favlink = dataSnapshot.getValue(Favlink.class);
-                        dataSnapshot.getRef().child("fcount").setValue(favlink.getFcount()+1);
-                        //fld2.child("fcount").setValue(favlink.getFcount()+1); //카운팅에 1 더하기
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                    }
-                });
-
-                Intent intent = new Intent(context,WebActivity.class);
-                intent.putExtra("url",favlinkList.get(position).getFurl());
-                intent.putExtra("imgurl",favlinkList.get(position).getFimgurl());
-                intent.putExtra("blogname",favlinkList.get(position).getFname());
-                intent.putExtra("byfav",true);
-                context.startActivity(intent);
+                goWebView(position);
+            }
+        });
+        holder.ivCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goWebView(position);
             }
         });
 
@@ -173,26 +161,25 @@ public class FavRvAdapter extends RecyclerView.Adapter<FavRvAdapter.ViewHolder> 
         boat.isCancelled();
         //Toast.makeText(context,"사이즈는 "+favlinkList.size(),Toast.LENGTH_SHORT).show();//사이즈 자체가 16임->수정 완료
     }//onBindViewHolder
+
     View.OnDragListener fabDragListener = new View.OnDragListener() {
         @Override
         public boolean onDrag(View v, DragEvent event) {
             FloatingActionButton fb = null;
-            if(v instanceof FloatingActionButton){
-                fb= (FloatingActionButton) v;
+            if (v instanceof FloatingActionButton) {
+                fb = (FloatingActionButton) v;
             }
-            switch (event.getAction()){
+            switch (event.getAction()) {
                 case DragEvent.ACTION_DROP:
                     //파이어베이스에서도 삭제
-                    int fno =favlinkList.get(clickIndex).getFno();
-                    Log.e("받아온 fno>>",fno+"");
+                    int fno = favlinkList.get(clickIndex).getFno();
+                    Log.e("받아온 fno>>", fno + "");
                     //쿼리로 던지고 데이터스냅샷의 getRef로 받아와 삭제해야 한다.
                     Query fld = databaseReference.child("favlink").orderByChild("fno").equalTo(fno); //fno 기준으로 삭제함으로 fno를 특정화 시키는게 중요
                     fld.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-                            Toast.makeText(context,dataSnapshot.getChildrenCount()+"",Toast.LENGTH_SHORT).show();
-                            Log.e("받아온개수",dataSnapshot.getChildrenCount()+"");
-                            for (DataSnapshot d: dataSnapshot.getChildren()) {
+                            for (DataSnapshot d : dataSnapshot.getChildren()) {
                                 d.getRef().removeValue();
                             }
                         }
@@ -219,9 +206,9 @@ public class FavRvAdapter extends RecyclerView.Adapter<FavRvAdapter.ViewHolder> 
 
     @Override
     public int getItemCount() {
-        if (favlinkList == null){
+        if (favlinkList == null) {
             return 0;
-        }else{
+        } else {
             return favlinkList.size();
         }
 
@@ -230,7 +217,7 @@ public class FavRvAdapter extends RecyclerView.Adapter<FavRvAdapter.ViewHolder> 
     //addItem
     public void addItem(Favlink infoData) {
         favlinkList.add(infoData);
-        notifyItemInserted(favlinkList.size()-1);
+        notifyItemInserted(favlinkList.size() - 1);
         notifyDataSetChanged();
     }
 //deleteItem
@@ -239,15 +226,89 @@ public class FavRvAdapter extends RecyclerView.Adapter<FavRvAdapter.ViewHolder> 
         try {
             favlinkList.remove(position);
             notifyItemRemoved(position);
-            Toast.makeText(context,position+"번 삭제",Toast.LENGTH_LONG).show(); // 테스트용 출력물
+            Toast.makeText(context, position + "번 삭제", Toast.LENGTH_LONG).show(); // 테스트용 출력물
             //notifyDataSetChanged();
 
-        } catch(IndexOutOfBoundsException ex) {
+        } catch (IndexOutOfBoundsException ex) {
             ex.printStackTrace();
         }
     }
 
     public static int getClickIndex() {
         return clickIndex;
+    }
+
+    private void goWebView(int position) {
+        Query flq = databaseReference.child("favlink").orderByChild("fno").equalTo(favlinkList.get(position).getFno());
+        flq.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                for (DataSnapshot d : dataSnapshot.getChildren()) {
+                    clickStack(d.getRef());
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        //클릭 카운팅 runTransaction로 교체
+              /*  Query fld = databaseReference.child("favlink").orderByChild("fno").equalTo(favlinkList.get(position).getFno());
+                fld.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Favlink favlink = dataSnapshot.getValue(Favlink.class);
+                        dataSnapshot.getRef().child("fcount").setValue(favlink.getFcount()+1);
+                        //fld2.child("fcount").setValue(favlink.getFcount()+1); //카운팅에 1 더하기
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });*/
+        Intent intent = new Intent(context, WebActivity.class);
+        intent.putExtra("url", favlinkList.get(position).getFurl());
+        intent.putExtra("imgurl", favlinkList.get(position).getFimgurl());
+        intent.putExtra("blogname", favlinkList.get(position).getFname());
+        intent.putExtra("byfav", true);
+        context.startActivity(intent);
+
+    }
+
+    private void clickStack(DatabaseReference ref) {
+        ref.runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData) {
+                Favlink fl = mutableData.getValue(Favlink.class);
+                if (fl == null){
+                    return Transaction.success(mutableData);
+                }
+                fl.setFcount(fl.getFcount()+1);
+                mutableData.setValue(fl);
+
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+
+            }
+        });
     }
 }

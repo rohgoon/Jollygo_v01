@@ -200,10 +200,8 @@ public class WebActivity extends AppCompatActivity {
                     startActivity(intent);
 
                 } else if (view == fabBack) {//DB에 즐겨찾기 새로 추가 // 버튼 자체가 동작안함
-                    Toast.makeText(getApplicationContext(),"fabBack",Toast.LENGTH_SHORT).show();
                     finish();
                 } else if (view == fabHome) { // 홈화면가기
-                    Toast.makeText(getApplicationContext(),"fabHome",Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(WebActivity.this,SearchActivity.class);
                     startActivity(intent);
                 } else {//즐겨찾기 //이부분이 자꾸 먹통됨
@@ -221,7 +219,7 @@ public class WebActivity extends AppCompatActivity {
                             }
                             fcNum++;
                             if (fcNum==1){
-                                Toast.makeText(getApplicationContext(), flcount+ "", Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(getApplicationContext(), flcount+ "", Toast.LENGTH_SHORT).show();
                                 Favlink favlinkAfter = new Favlink(flcount,urlRes,imgurl,
                                         currentUser.getUid(),blogname,0);
                                 databaseReference.child("favlink").push().setValue(favlinkAfter);

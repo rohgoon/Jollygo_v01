@@ -106,23 +106,4 @@ public class FavlinkFragment extends Fragment {
             }
         });//addChildEventListener
     }
-   /* private void getFavlinkOnce(FirebaseUser currentUser) {//동작은 잘됨, 마지막 fno를 가져오는 걸로 변경 할것
-        DatabaseReference flRef = databaseReference.child("favlink").equalTo(currentUser.getUid(),"uid").getRef();
-
-        flRef.addListenerForSingleValueEvent(new ValueEventListener() {//처음 한번 리스트 불러오기 체크 요망
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                //flcount= (int) dataSnapshot.getChildrenCount();
-                for (DataSnapshot d : dataSnapshot.getChildren()) {
-                    favlinkList.add(d.getValue(Favlink.class)); //2배로 받아옴 받아옴
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-    }*/
 }

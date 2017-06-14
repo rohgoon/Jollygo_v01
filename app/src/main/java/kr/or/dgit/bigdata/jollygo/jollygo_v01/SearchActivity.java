@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -135,6 +136,8 @@ public class SearchActivity extends AppCompatActivity
             ft.replace(R.id.fragment,smf,"nav_home");
             ft.commit();
             floatingActionButton.setVisibility(View.VISIBLE);
+            TextView tvTitle = (TextView) findViewById(R.id.tvTitle);
+            tvTitle.setText("What a lot of chefs in the world");
 
             //updateUI(currentUser);
         } else if (id == R.id.nav_favlist) {
@@ -143,6 +146,8 @@ public class SearchActivity extends AppCompatActivity
             ft.replace(R.id.fragment,flf,"nav_favlist");
             ft.commit();
             floatingActionButton.setVisibility(View.GONE);
+            TextView tvTitle = (TextView) findViewById(R.id.tvTitle);
+            tvTitle.setText("즐겨찾기");
 
         } else if (id == R.id.nav_signout) {//signOut
             mAuth.signOut();
