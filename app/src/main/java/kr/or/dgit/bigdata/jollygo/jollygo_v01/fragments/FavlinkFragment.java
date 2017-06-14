@@ -69,6 +69,10 @@ public class FavlinkFragment extends Fragment {
         //-->
         grv.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false); //reverseLayout은  sort 순서 반대로하기 기능
+        //최신순으로 뒤집어서 보이기
+        llm.setReverseLayout(true);
+        llm.setStackFromEnd(true);
+
         grv.setLayoutManager(llm);
         fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
         fab.setVisibility(View.GONE);//처음엔 플로팅버튼이 안보이게함.
