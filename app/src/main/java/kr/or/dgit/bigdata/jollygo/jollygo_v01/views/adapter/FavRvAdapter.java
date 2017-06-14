@@ -172,7 +172,7 @@ public class FavRvAdapter extends RecyclerView.Adapter<FavRvAdapter.ViewHolder> 
             switch (event.getAction()) {
                 case DragEvent.ACTION_DROP:
                     //파이어베이스에서도 삭제
-                    int fno = favlinkList.get(clickIndex).getFno();
+                    long fno = favlinkList.get(clickIndex).getFno();
                     Log.e("받아온 fno>>", fno + "");
                     //쿼리로 던지고 데이터스냅샷의 getRef로 받아와 삭제해야 한다.
                     Query fld = databaseReference.child("favlink").orderByChild("fno").equalTo(fno); //fno 기준으로 삭제함으로 fno를 특정화 시키는게 중요
@@ -240,26 +240,22 @@ public class FavRvAdapter extends RecyclerView.Adapter<FavRvAdapter.ViewHolder> 
 
     private void goWebView(int position) {
         Query flq = databaseReference.child("favlink").orderByChild("fno").equalTo(favlinkList.get(position).getFno());
-        flq.addChildEventListener(new ChildEventListener() {
+
+        flq.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                for (DataSnapshot d : dataSnapshot.getChildren()) {
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot d:dataSnapshot.getChildren()) {
+                    Favlink fl = new Favlink(Integer.parseInt(d.child("fno").getValue().toString()),
+                            d.child("furl").getValue().toString(),
+                            d.child("fimgurl").getValue().toString(),
+                            d.child("uid").getValue().toString(),
+                            d.child("fname").getValue().toString(),
+                            Integer.parseInt(d.child("fcount").getValue().toString())
+                            );
+                    //(int fno, String furl, String fimgurl, String uid, String fname, int fcount) {
+                    Toast.makeText(context,fl.toString(),Toast.LENGTH_SHORT).show();
                     clickStack(d.getRef());
                 }
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
             }
 
@@ -268,20 +264,7 @@ public class FavRvAdapter extends RecyclerView.Adapter<FavRvAdapter.ViewHolder> 
 
             }
         });
-        //클릭 카운팅 runTransaction로 교체
-              /*  Query fld = databaseReference.child("favlink").orderByChild("fno").equalTo(favlinkList.get(position).getFno());
-                fld.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Favlink favlink = dataSnapshot.getValue(Favlink.class);
-                        dataSnapshot.getRef().child("fcount").setValue(favlink.getFcount()+1);
-                        //fld2.child("fcount").setValue(favlink.getFcount()+1); //카운팅에 1 더하기
-                    }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                    }
-                });*/
         Intent intent = new Intent(context, WebActivity.class);
         intent.putExtra("url", favlinkList.get(position).getFurl());
         intent.putExtra("imgurl", favlinkList.get(position).getFimgurl());
@@ -292,10 +275,12 @@ public class FavRvAdapter extends RecyclerView.Adapter<FavRvAdapter.ViewHolder> 
     }
 
     private void clickStack(DatabaseReference ref) {
-        ref.runTransaction(new Transaction.Handler() {
+        ref.runTransaction(new Transaction.Handler() {//실행안된
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
                 Favlink fl = mutableData.getValue(Favlink.class);
+                Log.e("즐찾 트랜잭션:",fl.toString());
+                //Toast.makeText(context,fl.toString(),Toast.LENGTH_SHORT).show();
                 if (fl == null){
                     return Transaction.success(mutableData);
                 }
@@ -307,7 +292,7 @@ public class FavRvAdapter extends RecyclerView.Adapter<FavRvAdapter.ViewHolder> 
 
             @Override
             public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
-
+                Log.d("트랜잭션 완료", "postTransaction:onComplete:" + databaseError);
             }
         });
     }
