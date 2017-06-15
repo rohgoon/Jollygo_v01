@@ -4,6 +4,11 @@ import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,6 +48,5 @@ public class ImgWords{
     public void setResultImgMap(Map<String, Bitmap> resultImgMap) {
         this.resultImgMap = resultImgMap;
     }
-
 }
 

@@ -19,12 +19,27 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.LogRecord;
 
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.R;
+import kr.or.dgit.bigdata.jollygo.jollygo_v01.firebasedto.Allword;
+import kr.or.dgit.bigdata.jollygo.jollygo_v01.imgmanage.BitmapOnlyAsyncTask;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.imgmanage.ImgHtmlAsyncTask;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.imgmanage.ImgWords;
 
@@ -40,11 +55,17 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.ViewHolder> {
     private ImgWords imgWords;
     private ImgHtmlAsyncTask iha;
     private int prTime;
+    private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+    private DatabaseReference databaseReference = firebaseDatabase.getReference();
+    private FirebaseAuth mAuth;
+    protected FirebaseUser currentUser;
 
     public RvAdapter(Context context, FloatingActionButton floatingActionButton,ImgWords imgWords) {
         this.context = context;
         this.floatingActionButton = floatingActionButton;
         this.imgWords = imgWords;
+        this.mAuth = FirebaseAuth.getInstance();
+        this.currentUser = mAuth.getCurrentUser();
     }
 
 
@@ -98,42 +119,77 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {//이벤트 처리
+    public void onBindViewHolder(final ViewHolder holder, final int position) {//이벤트 처리
         setAnimationFadeIn(holder.cv, position);
         //이미 검색 완료된 요소인지 검증
-            if (imgWords.getResultImgMap().get(imgWords.getmDataset().get(position)) != null){ // 있는 값이면 바로 비트맵 출력
-                Bitmap resBitmap =imgWords.getResultImgMap().get(imgWords.getmDataset().get(position));
-                holder.ivCard.setImageBitmap(resBitmap);
-            }else {
-                iha = new ImgHtmlAsyncTask();
-                Log.e("어싱크테스크 생성<<<<<<<<<<<","ㅇㅇㅇ");
-                iha.execute(imgWords.getmDataset().get(position));
-                Log.e("어싱크테스크 시작<<<<<<<<<<<","ㅇㅇㅇ");
-                Map<String,Bitmap> imgMap = new HashMap<>();
+        //allword내 존재 유무 파악
+        Query awd = databaseReference.child("allword").orderByChild("awname").equalTo(imgWords.getmDataset().get(position));
+        awd.addListenerForSingleValueEvent(new ValueEventListener() {//하나만 받아옴
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getChildrenCount()<1){
+                    iha = new ImgHtmlAsyncTask();
+                    Log.e("어싱크테스크 생성<<<<<<<<<<<","ㅇㅇㅇ");
+                    iha.execute(imgWords.getmDataset().get(position));
+                    Log.e("어싱크테스크 시작<<<<<<<<<<<","ㅇㅇㅇ");
+                    Map<String,Bitmap> imgMap = new HashMap<>();
 
-                try {
-                    imgMap= iha.get();//파싱결과 받음
+                    try {
+                        imgMap= iha.get();//파싱결과 받음
+                        Bitmap resBitmap=imgMap.get(imgWords.getmDataset().get(position));
+                            // 출력물 결과를 맵으로 전송
 
-
-                    Bitmap resBitmap=imgMap.get(imgWords.getmDataset().get(position));
-                    imgWords.getResultImgMap().put(imgWords.getmDataset().get(position),resBitmap);    // 출력물 결과를 맵으로 전송
-                    
-                    if (resBitmap == null){
+                        if (resBitmap == null){
+                            holder.ivCard.setImageResource(R.drawable.jg_icon);//default image
+                        }else {
+                            holder.ivCard.setImageBitmap(resBitmap);
+                        }
+                        //프로그래스바 관련
+                        Log.e("어싱크테스크 완료<<<<<<<<<<<","ㅇㅇㅇㅇ");
+                    } catch (Exception e) {
+                        e.printStackTrace();
                         holder.ivCard.setImageResource(R.drawable.jg_icon);//default image
-                    }else {
-                        holder.ivCard.setImageBitmap(resBitmap);
+                    }finally {
+                        iha.isCancelled();
                     }
-                    //프로그래스바 관련
 
-                    iha.isCancelled();
-                    Log.e("어싱크테스크 완료<<<<<<<<<<<","ㅇㅇㅇㅇ");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    holder.ivCard.setImageResource(R.drawable.jg_icon);//default image
+                }else{//검색하는 단어 allword로 던짐
+                    for (DataSnapshot d : dataSnapshot.getChildren()) {
+                        //int awno, String awname, String awimgurl, int awcount
+                        Allword aw = new Allword(
+                                Integer.parseInt(d.child("awno").getValue().toString()),
+                                d.child("awname").getValue().toString(),
+                                d.child("awimgurl").getValue().toString(),
+                                Integer.parseInt(d.child("awcount").getValue().toString())
+                        );
+                        clickStack(d.getRef()); //allword용 트랜잭션 가동시키기
+                        BitmapOnlyAsyncTask boat = new BitmapOnlyAsyncTask();
+                        boat.execute(aw.getAwimgurl());
+                        Bitmap resBitmap = null;
+                        try {
+                            resBitmap = boat.get();
+                            imgWords.getResultImgMap().put(imgWords.getmDataset().get(position),resBitmap);
+                            if (resBitmap == null){
+                                holder.ivCard.setImageResource(R.drawable.jg_icon);//default image
+                            }else {
+                                holder.ivCard.setImageBitmap(resBitmap);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            holder.ivCard.setImageResource(R.drawable.jg_icon);//default image
+                        }finally {
+                            boat.isCancelled();
+                        }
+
+                    }//foreach
                 }
             }
 
-        //ImgHtmlAsyncTask 이미지 받아오기
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
         holder.tvTest.setText(imgWords.getmDataset().get(position));
 
         //프롤팅버튼에 드랍 이벤트 주기
@@ -180,7 +236,7 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.ViewHolder> {
     public void addItem(String infoData) {
         imgWords.getmDataset().add(infoData);
         notifyItemInserted(imgWords.getmDataset().size()-1);
-        notifyDataSetChanged();
+        //notifyDataSetChanged();
     }
 //deleteItem
 
@@ -211,4 +267,25 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.ViewHolder> {
         this.imgWords = imgWords;
     }
 
+    private void clickStack(DatabaseReference ref) {
+        ref.runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData) {
+
+                    Allword aw = mutableData.getValue(Allword.class);
+                    if (aw == null) {
+                        return Transaction.success(mutableData);
+                    }
+                    aw.setAwcount(aw.getAwcount() + 1);
+                    mutableData.setValue(aw);
+
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+                Log.d("트랜잭션 완료", "postTransaction:onComplete:" + databaseError);
+            }
+        });
+    }
 }
