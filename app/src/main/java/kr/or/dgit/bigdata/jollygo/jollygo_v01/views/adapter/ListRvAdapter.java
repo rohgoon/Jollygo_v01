@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -113,7 +114,45 @@ public class ListRvAdapter extends RecyclerView.Adapter<ListRvAdapter.ViewHolder
             @Override
             public void onClick(View v) {
                 //주소 중복 확인
-                DatabaseReference aud = databaseReference.child("allurl");
+                Query aud = databaseReference.child("allurl").orderByChild("auurl").equalTo(srList.get(position).getRu());
+                aud.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Log.e("주소중복체크",dataSnapshot.getChildrenCount()+"");
+                        if (dataSnapshot.getChildrenCount() <1){
+                            check = false;
+                            existCheck(check,position);
+                        }else {
+                            for (DataSnapshot d : dataSnapshot.getChildren()) {
+                                //int auno, String auurl, String auimgurl, String auname, int aucount
+                                //Allurl auCheck = d.getValue(Allurl.class);
+                                Allurl auCheck = new Allurl(
+                                        Integer.parseInt(d.child("auno").getValue().toString()),
+                                        d.child("auurl").getValue().toString(),
+                                        d.child("auimgurl").getValue().toString(),
+                                        d.child("auname").getValue().toString(),
+                                        Integer.parseInt(d.child("aucount").getValue().toString())
+                                );
+                                if (auCheck == null) {
+                                    check = false;
+                                    existCheck(check,position);
+                                    break;
+                                }
+                                check = true;
+                                auExist = auCheck;
+                                existCheck(check,position);
+                                Toast.makeText(context, auCheck.toString(), Toast.LENGTH_SHORT).show();
+                                Log.e("중복주소값",auCheck.toString());
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+                /*DatabaseReference aud = databaseReference.child("allurl");
                 aud.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -135,6 +174,8 @@ public class ListRvAdapter extends RecyclerView.Adapter<ListRvAdapter.ViewHolder
                             if (auCheck.getAuurl().equals(srList.get(position).getRu())){
                                 check =true;
                                 auExist = auCheck;
+                                Toast.makeText(context,auCheck.toString(),Toast.LENGTH_SHORT).show();
+
                                 break;
                             }
                         }
@@ -144,57 +185,10 @@ public class ListRvAdapter extends RecyclerView.Adapter<ListRvAdapter.ViewHolder
                     public void onCancelled(DatabaseError databaseError) {
 
                     }
-                });
+                });*/
                 //주소 없을시
-                aud.orderByKey().limitToLast(1).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        for (DataSnapshot d : dataSnapshot.getChildren()) {
-                            Allurl auCheck = new Allurl(
-                                    Integer.parseInt(d.child("auno").getValue().toString()),
-                                    d.child("auurl").getValue().toString(),
-                                    d.child("auimgurl").getValue().toString(),
-                                    d.child("auname").getValue().toString(),
-                                    Integer.parseInt(d.child("aucount").getValue().toString())
-                            );
-                            auNum = auCheck.getAuno();
-                            auNum++;
-                        }
+                //addListenerForSingleValueEvent
 
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });//addListenerForSingleValueEvent
-                if (check == false){
-                    Allurl allurl = new Allurl(auNum,srList.get(position).getRu(),
-                            srList.get(position).getOu(),srList.get(position).getPt(),0);
-                    databaseReference.child("allurl").push().setValue(allurl);
-                }else {//트랜잭션 통해 카운팅 수 올리기
-                    Query auForCount = databaseReference.child("allurl").orderByChild("auno").equalTo(auExist.getAuno());
-                    auForCount.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            for (DataSnapshot d : dataSnapshot.getChildren()) {
-                                Allurl auCheck = new Allurl(
-                                        Integer.parseInt(d.child("auno").getValue().toString()),
-                                        d.child("auurl").getValue().toString(),
-                                        d.child("auimgurl").getValue().toString(),
-                                        d.child("auname").getValue().toString(),
-                                        Integer.parseInt(d.child("aucount").getValue().toString())
-                                );
-                                clickStack(d.getRef());
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
-                }
                 //주소(original) 수집
 
                 Intent intent = new Intent(context,WebActivity.class);
@@ -233,5 +227,58 @@ public class ListRvAdapter extends RecyclerView.Adapter<ListRvAdapter.ViewHolder
                 Log.d("트랜잭션 완료", "postTransaction:onComplete:" + databaseError);
             }
         });
+    }
+    private void existCheck(boolean tf, final int position){
+        if (tf == false){
+            DatabaseReference aud = databaseReference.child("aud");
+            aud.orderByKey().limitToLast(1).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot d : dataSnapshot.getChildren()) {
+                        Allurl auCheck = new Allurl(
+                                Integer.parseInt(d.child("auno").getValue().toString()),
+                                d.child("auurl").getValue().toString(),
+                                d.child("auimgurl").getValue().toString(),
+                                d.child("auname").getValue().toString(),
+                                Integer.parseInt(d.child("aucount").getValue().toString())
+                        );
+                        auNum = auCheck.getAuno();
+                        auNum++;
+                        Allurl allurl = new Allurl(auNum,srList.get(position).getRu(),
+                                srList.get(position).getOu(),srList.get(position).getPt(),0);
+                        databaseReference.child("allurl").push().setValue(allurl);
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+        }else {//트랜잭션 통해 카운팅 수 올리기
+            Query auForCount = databaseReference.child("allurl").orderByChild("auno").equalTo(auExist.getAuno());
+            auForCount.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot d : dataSnapshot.getChildren()) {
+                        Allurl auCheck = new Allurl(
+                                Integer.parseInt(d.child("auno").getValue().toString()),
+                                d.child("auurl").getValue().toString(),
+                                d.child("auimgurl").getValue().toString(),
+                                d.child("auname").getValue().toString(),
+                                Integer.parseInt(d.child("aucount").getValue().toString())
+                        );
+                        clickStack(d.getRef());
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
     }
 }
