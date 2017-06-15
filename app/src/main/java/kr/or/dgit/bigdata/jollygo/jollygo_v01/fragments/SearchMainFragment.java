@@ -18,11 +18,23 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.R;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.customviews.GridRecyclerView;
+import kr.or.dgit.bigdata.jollygo.jollygo_v01.firebasedto.Uword;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.imgmanage.ImgWords;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.views.adapter.ListRvAdapter;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.views.adapter.RvAdapter;
@@ -37,6 +49,10 @@ public class SearchMainFragment extends Fragment {
     private static ProgressBar bar;
     private Activity activityThis;
     private FloatingActionButton fab;
+    private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+    private DatabaseReference databaseReference = firebaseDatabase.getReference();
+    private FirebaseAuth mAuth;
+    private FirebaseUser currentUser;
 
     public SearchMainFragment() {
         // Required empty public constructor
@@ -53,6 +69,8 @@ public class SearchMainFragment extends Fragment {
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        mAuth = FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();
         activityThis = getActivity();
         Log.e("카드 액티비티 완성<<<<<<<<<<<","ㅇㅇㅇㅇ");
         super.onActivityCreated(savedInstanceState);
@@ -121,17 +139,21 @@ public class SearchMainFragment extends Fragment {
             public void onClick(View view) {
 
                 Log.e("플로팅버튼클릭>>>>","확인"+grv.getAdapter().getClass().getName().toString());
-                if(grv.getAdapter().getClass().getName().equals("kr.or.dgit.bigdata.jollygo.jollygo_v01.views.adapter.RvAdapter")) {//확인 요망
+                if(grv.getAdapter().getClass().getName().equals("kr.or.dgit.bigdata.jollygo.jollygo_v01.views.adapter.RvAdapter")) {
                     if (getRvAdapter().getImgWords().getmDataset().size() > 0) {
                         fab.setVisibility(View.INVISIBLE);
                         //프로그래스바 등장
                         bar.setVisibility(View.VISIBLE);
                         Toast.makeText(getContext(), "쉐프님들이 모이고 있어요", Toast.LENGTH_LONG).show();
+
+
                         Message msg = new Message();
                         msg.what = 2;
                         Handler mh = new mHandler();
                         mh.sendMessageDelayed(msg, 100);
                         fab.setImageResource(R.drawable.fabback);
+
+
                     } else {
                         Toast.makeText(getContext(), "재료들을 먼저 입력해 주세요.", Toast.LENGTH_SHORT).show();
 
@@ -178,9 +200,10 @@ public class SearchMainFragment extends Fragment {
                 //이후 뷰처리 및 초기화
                 ((TextView)activityThis.findViewById(R.id.tvTitle)).setText("Recipe List");
                 ((SearchView)activityThis.findViewById(R.id.search_view)).setVisibility(View.INVISIBLE);
-                //((FloatingActionButton)activityThis.findViewById(R.id.fab)).setVisibility(View.INVISIBLE);
-                //((FloatingActionButton)activityThis.findViewById(R.id.fab)).setImageResource(R.drawable.);
-                List<String> newList= new ArrayList<String>();
+                for (String s: getRvAdapter().getImgWords().getmDataset()) {
+                    //checkUword
+                }
+                List<String> newList= new ArrayList<String>();//초기화
                 getRvAdapter().getImgWords().setmDataset(newList);
                 bar.setVisibility(View.GONE);
                 fab.setVisibility(View.VISIBLE);
@@ -196,6 +219,70 @@ public class SearchMainFragment extends Fragment {
         this.rvAdapter = rvAdapter;
     }
 
+    private void checkUword(final String s){
+        Query uwQuery = databaseReference.child("uword").orderByChild("uid").equalTo(currentUser.getUid());
+        uwQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getChildrenCount()<1){
+                    //uword 바로 새로 삽입
+                    Uword uw = new Uword(0,currentUser.getUid(),s,0);
+                    databaseReference.child("uword").push().setValue(uw);
+                }else {
+                    int uwCheckNum =0;
+                    List<Uword> uwordList = new ArrayList<Uword>();
+                    for (DataSnapshot d:dataSnapshot.getChildren()) {
+                        //int uwno, String uid, int awno, int uwcount
+                        Uword uw0 = new Uword(
+                                Integer.parseInt(d.child("uwno").getValue().toString()),
+                                d.child("uid").getValue().toString(),
+                                d.child("uwname").getValue().toString(),
+                                Integer.parseInt(d.child("uwcount").getValue().toString())
+                        );
+                        uwordList.add(uw0);
+                        if (uw0.getUwname() == s){
+                            uwCheckNum++;//검색해서 같은 단어가 하나라도 있으면 증가
+                            clickStack(d.getRef());
+                        }
+                    }//foreach
+                    if (uwCheckNum <1){
+                        Uword uwForNum = uwordList.get(uwordList.size()-1);
+                        Uword uw = new Uword(uwForNum.getUwno()+1,currentUser.getUid(),s,0);
+                        databaseReference.child("uword").push().setValue(uw);
+                    }
+                }
 
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+    private void clickStack(DatabaseReference ref) {
+
+
+        ref.runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData) {
+
+                    Uword uw = mutableData.getValue(Uword.class);
+                    if (uw == null){
+                        return Transaction.success(mutableData);
+                    }
+                    uw.setUwcount(uw.getUwcount()+1);
+                    mutableData.setValue(uw);
+
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+                Log.d("트랜잭션 완료", "postTransaction:onComplete:" + databaseError);
+            }
+        });
+    }
 
 }

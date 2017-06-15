@@ -13,17 +13,17 @@ import java.util.Map;
 public class Uword {
     private int uwno;
     private String uid;
-    private int awno;
+    private String uwname;
     private int uwcount;
     public Map<String, Boolean> uwcstars = new HashMap<>();
 
     public Uword() {
     }
 
-    public Uword(int uwno, String uid, int awno, int uwcount) {
+    public Uword(int uwno, String uid, String uwname, int uwcount) {
         this.uwno = uwno;
         this.uid = uid;
-        this.awno = awno;
+        this.uwname = uwname;
         this.uwcount = uwcount;
     }
 
@@ -43,12 +43,12 @@ public class Uword {
         this.uid = uid;
     }
 
-    public int getAwno() {
-        return awno;
+    public String getUwname() {
+        return uwname;
     }
 
-    public void setAwno(int awno) {
-        this.awno = awno;
+    public void setUwname(String uwname) {
+        this.uwname = uwname;
     }
 
     public int getUwcount() {
@@ -63,7 +63,7 @@ public class Uword {
     public String toString() {
         return "uwno:" + uwno +
                 "\nuid:" + uid +
-                "\nawno:" + awno +
+                "\nuwname:" + uwname +
                 "\nuwcount:" + uwcount;
     }
     @Exclude
@@ -71,7 +71,7 @@ public class Uword {
         HashMap<String, Object> result = new HashMap<>();
         result.put("uwno", uwno);
         result.put("uid", uid);
-        result.put("awno", awno);
+        result.put("uwname", uwname);
         result.put("uwcount", uwcount);
         result.put("uwcstars", uwcstars);
 
