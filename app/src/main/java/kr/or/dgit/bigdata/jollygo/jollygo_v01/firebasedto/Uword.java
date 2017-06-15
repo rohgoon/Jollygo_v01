@@ -1,14 +1,21 @@
 package kr.or.dgit.bigdata.jollygo.jollygo_v01.firebasedto;
 
+import com.google.firebase.database.Exclude;
+import com.google.firebase.database.IgnoreExtraProperties;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by rohgoon on 2017-06-08.
  */
-
+@IgnoreExtraProperties
 public class Uword {
     private int uwno;
     private String uid;
     private int awno;
     private int uwcount;
+    public Map<String, Boolean> uwcstars = new HashMap<>();
 
     public Uword() {
     }
@@ -58,5 +65,16 @@ public class Uword {
                 "\nuid:" + uid +
                 "\nawno:" + awno +
                 "\nuwcount:" + uwcount;
+    }
+    @Exclude
+    public Map<String, Object> toMap() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("uwno", uwno);
+        result.put("uid", uid);
+        result.put("awno", awno);
+        result.put("uwcount", uwcount);
+        result.put("uwcstars", uwcstars);
+
+        return result;
     }
 }

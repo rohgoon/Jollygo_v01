@@ -141,8 +141,6 @@ public class ListRvAdapter extends RecyclerView.Adapter<ListRvAdapter.ViewHolder
                                 check = true;
                                 auExist = auCheck;
                                 existCheck(check,position);
-                                Toast.makeText(context, auCheck.toString(), Toast.LENGTH_SHORT).show();
-                                Log.e("중복주소값",auCheck.toString());
                             }
                         }
                     }
@@ -152,42 +150,6 @@ public class ListRvAdapter extends RecyclerView.Adapter<ListRvAdapter.ViewHolder
 
                     }
                 });
-                /*DatabaseReference aud = databaseReference.child("allurl");
-                aud.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-
-                        for (DataSnapshot d : dataSnapshot.getChildren()) {
-                            check =false;
-                            //int auno, String auurl, String auimgurl, String auname, int aucount
-                            //Allurl auCheck = d.getValue(Allurl.class);
-                            Allurl auCheck = new Allurl(
-                                    Integer.parseInt(d.child("auno").getValue().toString()),
-                                    d.child("auurl").getValue().toString(),
-                                    d.child("auimgurl").getValue().toString(),
-                                    d.child("auname").getValue().toString(),
-                                    Integer.parseInt(d.child("aucount").getValue().toString())
-                            );
-                            if (auCheck == null){
-                                break;
-                            }
-                            if (auCheck.getAuurl().equals(srList.get(position).getRu())){
-                                check =true;
-                                auExist = auCheck;
-                                Toast.makeText(context,auCheck.toString(),Toast.LENGTH_SHORT).show();
-
-                                break;
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });*/
-                //주소 없을시
-                //addListenerForSingleValueEvent
 
                 //주소(original) 수집
 
