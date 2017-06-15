@@ -13,6 +13,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import org.jsoup.Jsoup;
@@ -36,14 +37,13 @@ import kr.or.dgit.bigdata.jollygo.jollygo_v01.firebasedto.Uword;
  * Created by NCG on 2017-05-26.
  */
 
-public class ImgHtmlAsyncTask extends AsyncTask<String,Integer,Map<String,Bitmap>> {
+public class ImgHtmlAsyncTask extends AsyncTask<String,Integer,Map<String,Bitmap>> {//재료명 여기서 수집
 
     private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     private DatabaseReference databaseReference = firebaseDatabase.getReference();
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
-    private boolean existCheck = false;
-    private String awimgurl;
+    private Map<String,Bitmap> resMap= new HashMap<>();
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
@@ -54,19 +54,25 @@ public class ImgHtmlAsyncTask extends AsyncTask<String,Integer,Map<String,Bitmap
         //차후 DB 구축시 파싱 예외처리 요망
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
-        Map<String,Bitmap> resMap= new HashMap<>();
+
         //있는지 검색하고 예외처리
 
-        DatabaseReference awd = databaseReference.child("allword").getRef();
+        Query awd = databaseReference.child("allword").orderByChild("awname").equalTo(params[0]);
         awd.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot d : dataSnapshot.getChildren()) {
-                    Allword aw = d.getValue(Allword.class);
-                    if (aw.getAwname().equals(params[0])){
-                        awimgurl = aw.getAwimgurl();
-                        existCheck = true;
-                        break;
+                if (dataSnapshot.getChildrenCount()<1){
+                    resMap = wordNotExists(params[0], resMap);
+                }else{
+                    for (DataSnapshot d : dataSnapshot.getChildren()) {
+                        //int awno, String awname, String awimgurl, int awcount
+                        Allword aw = new Allword(
+                                Integer.parseInt(d.child("awno").getValue().toString()),
+                                d.child("awname").getValue().toString(),
+                                d.child("awimgurl").getValue().toString(),
+                                Integer.parseInt(d.child("awcount").getValue().toString())
+                        );
+                        resMap = wordExists(params[0], aw.getAwimgurl(), resMap);
                     }
                 }
             }
@@ -76,13 +82,7 @@ public class ImgHtmlAsyncTask extends AsyncTask<String,Integer,Map<String,Bitmap
 
             }
         });
-        if (existCheck) {
-            //단어가 DB에 있을 시
-            resMap = wordExists(params[0], awimgurl, resMap);
-        }else {
-            //단어가 DB에 없을 시
-            resMap = wordNotExists(params[0], resMap);
-        }
+
 
         return resMap;
     }
@@ -126,14 +126,13 @@ public class ImgHtmlAsyncTask extends AsyncTask<String,Integer,Map<String,Bitmap
             e.printStackTrace();
         }
         return resMap;
-    }
+    }//wordNotExists
 
-    private Map<String, Bitmap> wordExists(String param, String img,Map<String, Bitmap> resMap) {
-
-
-
+    private Map<String, Bitmap> wordExists(String param, String img,Map<String, Bitmap> resMap) {//트랜잭션 통해 카운트를 올림 + resMap.put(param,imgBitmap);
+        Bitmap bitmap = mkBitmap(img);
+        resMap.put(param,bitmap);
         return resMap;
-    }
+    }//wordExists
 
 
     private Bitmap mkBitmap(String s) {
@@ -165,7 +164,6 @@ public class ImgHtmlAsyncTask extends AsyncTask<String,Integer,Map<String,Bitmap
         Uword uw = new Uword(uwno,currentUser.getUid(),awno,0);
         databaseReference.child("allword").push().setValue(aw);
         databaseReference.child("uword").push().setValue(uw);
-
     }
 
 
