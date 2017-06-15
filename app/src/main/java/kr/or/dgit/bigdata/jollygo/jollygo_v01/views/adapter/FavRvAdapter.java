@@ -254,8 +254,6 @@ public class FavRvAdapter extends RecyclerView.Adapter<FavRvAdapter.ViewHolder> 
                             d.child("fname").getValue().toString(),
                             Integer.parseInt(d.child("fcount").getValue().toString())
                             );
-                    //(int fno, String furl, String fimgurl, String uid, String fname, int fcount) {
-                    //Toast.makeText(context,fl.toString(),Toast.LENGTH_SHORT).show();
                     clickStack(d.getRef());
                 }
             }
@@ -276,7 +274,7 @@ public class FavRvAdapter extends RecyclerView.Adapter<FavRvAdapter.ViewHolder> 
     }
 
     private void clickStack(DatabaseReference ref) {
-        ref.runTransaction(new Transaction.Handler() {//실행안된
+        ref.runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
                 Favlink fl = mutableData.getValue(Favlink.class);

@@ -18,6 +18,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -45,6 +48,7 @@ public class ListRvAdapter extends RecyclerView.Adapter<ListRvAdapter.ViewHolder
     private DatabaseReference databaseReference = firebaseDatabase.getReference();
     private boolean check = false;
     private int auNum;
+    private Allurl auExist;
     public ListRvAdapter(Context context, ImgWords imgWords) {
         this.context = context;
         srList = new ArrayList<>();
@@ -109,17 +113,28 @@ public class ListRvAdapter extends RecyclerView.Adapter<ListRvAdapter.ViewHolder
             @Override
             public void onClick(View v) {
                 //주소 중복 확인
-
-                DatabaseReference aud = databaseReference.child("allurl").getRef();
+                DatabaseReference aud = databaseReference.child("allurl");
                 aud.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
                         for (DataSnapshot d : dataSnapshot.getChildren()) {
                             check =false;
-                            Allurl auCheck = d.getValue(Allurl.class);
+                            //int auno, String auurl, String auimgurl, String auname, int aucount
+                            //Allurl auCheck = d.getValue(Allurl.class);
+                            Allurl auCheck = new Allurl(
+                                    Integer.parseInt(d.child("auno").getValue().toString()),
+                                    d.child("auurl").getValue().toString(),
+                                    d.child("auimgurl").getValue().toString(),
+                                    d.child("auname").getValue().toString(),
+                                    Integer.parseInt(d.child("aucount").getValue().toString())
+                            );
+                            if (auCheck == null){
+                                break;
+                            }
                             if (auCheck.getAuurl().equals(srList.get(position).getRu())){
                                 check =true;
+                                auExist = auCheck;
                                 break;
                             }
                         }
@@ -134,24 +149,53 @@ public class ListRvAdapter extends RecyclerView.Adapter<ListRvAdapter.ViewHolder
                 aud.orderByKey().limitToLast(1).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        Allurl auCheck = dataSnapshot.getValue(Allurl.class);
-                        auNum = auCheck.getAuno();
-                        auNum++;
+                        for (DataSnapshot d : dataSnapshot.getChildren()) {
+                            Allurl auCheck = new Allurl(
+                                    Integer.parseInt(d.child("auno").getValue().toString()),
+                                    d.child("auurl").getValue().toString(),
+                                    d.child("auimgurl").getValue().toString(),
+                                    d.child("auname").getValue().toString(),
+                                    Integer.parseInt(d.child("aucount").getValue().toString())
+                            );
+                            auNum = auCheck.getAuno();
+                            auNum++;
+                        }
+
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
 
                     }
-                });
+                });//addListenerForSingleValueEvent
                 if (check == false){
                     Allurl allurl = new Allurl(auNum,srList.get(position).getRu(),
                             srList.get(position).getOu(),srList.get(position).getPt(),0);
                     databaseReference.child("allurl").push().setValue(allurl);
+                }else {//트랜잭션 통해 카운팅 수 올리기
+                    Query auForCount = databaseReference.child("allurl").orderByChild("auno").equalTo(auExist.getAuno());
+                    auForCount.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for (DataSnapshot d : dataSnapshot.getChildren()) {
+                                Allurl auCheck = new Allurl(
+                                        Integer.parseInt(d.child("auno").getValue().toString()),
+                                        d.child("auurl").getValue().toString(),
+                                        d.child("auimgurl").getValue().toString(),
+                                        d.child("auname").getValue().toString(),
+                                        Integer.parseInt(d.child("aucount").getValue().toString())
+                                );
+                                clickStack(d.getRef());
+                            }
+                        }
 
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
                 }
                 //주소(original) 수집
-
 
                 Intent intent = new Intent(context,WebActivity.class);
                 intent.putExtra("url",srList.get(position).getRu());
@@ -170,5 +214,24 @@ public class ListRvAdapter extends RecyclerView.Adapter<ListRvAdapter.ViewHolder
         }else{
             return srList.size();
         }
+    }
+    private void clickStack(DatabaseReference ref) {
+        ref.runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData) {
+                Allurl au = mutableData.getValue(Allurl.class);
+                if (au == null){
+                    return Transaction.success(mutableData);
+                }
+                au.setAucount(au.getAucount()+1);
+                mutableData.setValue(au);
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+                Log.d("트랜잭션 완료", "postTransaction:onComplete:" + databaseError);
+            }
+        });
     }
 }

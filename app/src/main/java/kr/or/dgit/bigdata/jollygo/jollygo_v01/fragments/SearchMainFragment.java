@@ -175,7 +175,6 @@ public class SearchMainFragment extends Fragment {
                 grv.setLayoutManager(llm);
                 listRvAdapter = new ListRvAdapter(getContext(),getRvAdapter().getImgWords());
                 grv.setAdapter(listRvAdapter);
-
                 //이후 뷰처리 및 초기화
                 ((TextView)activityThis.findViewById(R.id.tvTitle)).setText("Recipe List");
                 ((SearchView)activityThis.findViewById(R.id.search_view)).setVisibility(View.INVISIBLE);
