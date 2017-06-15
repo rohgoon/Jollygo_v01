@@ -200,8 +200,10 @@ public class SearchMainFragment extends Fragment {
                 //이후 뷰처리 및 초기화
                 ((TextView)activityThis.findViewById(R.id.tvTitle)).setText("Recipe List");
                 ((SearchView)activityThis.findViewById(R.id.search_view)).setVisibility(View.INVISIBLE);
+                int plusNum = -1;
                 for (String s: getRvAdapter().getImgWords().getmDataset()) {
-                    //checkUword
+                    plusNum++;
+                    checkUword(s,plusNum);
                 }
                 List<String> newList= new ArrayList<String>();//초기화
                 getRvAdapter().getImgWords().setmDataset(newList);
@@ -219,7 +221,7 @@ public class SearchMainFragment extends Fragment {
         this.rvAdapter = rvAdapter;
     }
 
-    private void checkUword(final String s){
+    private void checkUword(final String s, final int pn){
         Query uwQuery = databaseReference.child("uword").orderByChild("uid").equalTo(currentUser.getUid());
         uwQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -245,9 +247,8 @@ public class SearchMainFragment extends Fragment {
                             clickStack(d.getRef());
                         }
                     }//foreach
-                    if (uwCheckNum <1){
-                        Uword uwForNum = uwordList.get(uwordList.size()-1);
-                        Uword uw = new Uword(uwForNum.getUwno()+1,currentUser.getUid(),s,0);
+                    if (uwCheckNum <1){//같은 단어가 하나도 없으면
+                        Uword uw = new Uword(((int)dataSnapshot.getChildrenCount())+pn,currentUser.getUid(),s,0);
                         databaseReference.child("uword").push().setValue(uw);
                     }
                 }
