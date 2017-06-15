@@ -79,12 +79,26 @@ public class ImgHtmlAsyncTask extends AsyncTask<String,Integer,Map<String,Bitmap
                     }//foreach
                 }else{
                     //없으면 allword에 삽입
-                    Allword aw = new Allword(
-                            (int)dataSnapshot.getChildrenCount(),
-                            params[0],
-                            imgUrl,
-                            0);
-                    databaseReference.child("allword").push().setValue(aw);
+                    dataSnapshot.getRef().addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            int num = (int) dataSnapshot.getChildrenCount();
+                            //
+                            Allword aw = new Allword(
+                                    num,
+                                    params[0],
+                                    imgUrl,
+                                    0);
+                            databaseReference.child("allword").push().setValue(aw);
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+
+
                 }
             }
 
