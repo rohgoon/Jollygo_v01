@@ -1,5 +1,6 @@
 package kr.or.dgit.bigdata.jollygo.jollygo_v01;
 
+import android.*;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -43,7 +44,11 @@ public class MainFrontActivity extends AppCompatActivity  implements
     private ImageButton ibOauth;
     private ImageView ivFront;
     private ProgressDialog mDialog;
-    private String[] permissions = {android.Manifest.permission.READ_EXTERNAL_STORAGE, android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.CAMERA};
+    private String[] permissions = {
+            android.Manifest.permission.READ_EXTERNAL_STORAGE,
+            android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            android.Manifest.permission.CAMERA
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

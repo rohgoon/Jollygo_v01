@@ -3,12 +3,17 @@ package kr.or.dgit.bigdata.jollygo.jollygo_v01;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import com.github.clans.fab.FloatingActionButton;
 
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -34,7 +39,12 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.firebasedto.Allword;
@@ -56,7 +66,9 @@ public class WebActivity extends AppCompatActivity {
     private FirebaseUser currentUser;
     private int flcount; //해당 아이디 즐겨찾기 갯수 카운트
     private String url;
-
+    private static final int PICTUREACT = 101;
+    private File pictureFile;
+    private static final String AUTHORITY = "kr.or.dgit.bigdata.jollygo.jollygo_v01.fileprovider";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -187,9 +199,10 @@ public class WebActivity extends AppCompatActivity {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (view == fabPhoto) {//저장소 지정요망
-                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    startActivity(intent);
+                if (view == fabPhoto) {//사진 저장소 지정요망
+                   /* Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivity(intent);*/
+                    picClick();
 
                 } else if (view == fabBrowser) {
                     Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse(urlRes));
@@ -235,5 +248,128 @@ public class WebActivity extends AppCompatActivity {
                 fam.close(true);
             }
         };
+    }
+    public void picClick(){
+        Intent intent;
+        pictureFile = createImageFile();
+        //가로찍기도 가능한 모드로 변경
+        intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(WebActivity.this, AUTHORITY,pictureFile));
+        startActivityForResult(intent, PICTUREACT);
+
+    }
+
+    private void sendBroadcastNotify() {
+        Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        intent.setData(Uri.parse("file://"+pictureFile.getAbsolutePath()));
+        sendBroadcast(intent);
+    }
+
+    private Uri getCaptureBitmapUri() {
+        Uri uri = null;
+        try {
+            pictureFile.createNewFile();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                uri = FileProvider.getUriForFile(WebActivity.this,AUTHORITY,pictureFile);
+            }else {
+                uri = Uri.fromFile(pictureFile);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return uri;
+    }
+
+    private File createImageFile() {
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmss");
+        String mPath = Environment.getExternalStorageDirectory().getAbsolutePath();//체크
+        //+"/"+"wls"+sdf.format(date)+".jpg";
+        File storageDir = new File(mPath+"/whatchefs");
+        if (!storageDir.exists()){
+            storageDir.mkdir();
+        }
+        File image = null;
+        try {
+            image = File.createTempFile("wls"+sdf.format(date),".jpg",storageDir);
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+        return image;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == PICTUREACT){
+            Uri uri = getCaptureBitmapUri();
+            try {
+                Bitmap captureBmp = rotate(getExifOrientation(pictureFile.getAbsolutePath()),MediaStore.Images.Media.getBitmap(getContentResolver(),uri));
+                sendBroadcastNotify();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    public int getExifOrientation(String filepath){
+        int degree = 0;
+        ExifInterface exif = null;
+        try {
+            exif = new ExifInterface(filepath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (exif != null){
+            degree = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,-1);
+        }
+        return degree;
+    }
+
+    public Bitmap rotate(int degree, Bitmap bitmap){
+        if(bitmap == null){
+            return null;
+        }
+        Bitmap res = bitmap;
+        if (degree > 0){
+            Matrix matrix = getRotateMatrix(degree);
+            res = Bitmap.createBitmap(bitmap,0,0,bitmap.getWidth(),bitmap.getHeight(),matrix,true);
+            if (bitmap != res){
+                bitmap.recycle();
+            }
+        }
+        return null;
+    }
+    private Matrix getRotateMatrix(int ori){
+        Matrix matrix = new Matrix();
+        switch (ori){
+            case 0:
+                matrix.setRotate(90);
+                break;
+            case 2:
+                matrix.setScale(-1,1);
+                break;
+            case 3:
+                matrix.setRotate(180);
+                break;
+            case 4:
+                matrix.setRotate(180);
+                matrix.postScale(-1,1);
+                break;
+            case 5:
+                matrix.setRotate(90);
+                matrix.postScale(-1,1);
+                break;
+            case 6:
+                matrix.setRotate(90);
+                break;
+            case 7:
+                matrix.setRotate(-90);
+                matrix.postScale(-1,1);
+                break;
+            case 8:
+                matrix.setRotate(-90);
+                break;
+        }
+        return matrix;
     }
 }
