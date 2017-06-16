@@ -1,5 +1,6 @@
 package kr.or.dgit.bigdata.jollygo.jollygo_v01;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -14,6 +15,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -67,6 +69,7 @@ public class WebActivity extends AppCompatActivity {
     private int flcount; //해당 아이디 즐겨찾기 갯수 카운트
     private String url;
     private static final int PICTUREACT = 101;
+    private static final int GALLERYOPEN = 102;
     private File pictureFile;
     private static final String AUTHORITY = "kr.or.dgit.bigdata.jollygo.jollygo_v01.fileprovider";
     @Override
@@ -263,6 +266,7 @@ public class WebActivity extends AppCompatActivity {
         Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         intent.setData(Uri.parse("file://"+pictureFile.getAbsolutePath()));
         sendBroadcast(intent);
+
     }
 
     private Uri getCaptureBitmapUri() {
@@ -301,13 +305,45 @@ public class WebActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == PICTUREACT){
-            Uri uri = getCaptureBitmapUri();
-            try {
-                Bitmap captureBmp = rotate(getExifOrientation(pictureFile.getAbsolutePath()),MediaStore.Images.Media.getBitmap(getContentResolver(),uri));
-                sendBroadcastNotify();
-            } catch (IOException e) {
-                e.printStackTrace();
+        if (resultCode == RESULT_OK) {
+            if (requestCode == PICTUREACT) {
+                Log.e("결과코드>>>>>>>>>>>>>>>", "PICTUREACT");
+                Uri uri = getCaptureBitmapUri();
+                try {
+                    Bitmap captureBmp = rotate(getExifOrientation(pictureFile.getAbsolutePath()), MediaStore.Images.Media.getBitmap(getContentResolver(), uri));
+                    sendBroadcastNotify();
+                    //찍은 사진 바로 올리기
+                    AlertDialog.Builder builder = new AlertDialog.Builder(WebActivity.this);
+                    builder.setMessage("사진을 바로 공유하시겠습니까?").setCancelable(false)
+                            .setPositiveButton("좋아요",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            Toast.makeText(getApplicationContext(),"TIP: 작업이 끝나시면 휴대폰의 뒤로가기 버튼을 눌러주세요.",Toast.LENGTH_LONG).show();
+                                           
+                                            Intent i= new Intent(Intent.ACTION_PICK);
+                                            i.setDataAndType(FileProvider.getUriForFile(WebActivity.this, AUTHORITY,pictureFile),"image/*");
+                                            startActivity(i);
+                                        }
+                                    }
+                            ).setNegativeButton("싫어요",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            }
+                    );
+                    builder.show();
+                    //새로이 액티비티를 실행시켜서 이미지뷰에 공유하기 버튼 들어가게 만들기
+                /*Intent i=new Intent(Intent.ACTION_PICK);
+                i.setType("image*//*");
+                startActivity(i);*/
+               /* Intent intent= new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent,GALLERYOPEN);*/
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
