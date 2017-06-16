@@ -173,7 +173,6 @@ public class WebActivity extends AppCompatActivity {
                         } else {
                             fabFav.setOnClickListener(onButtonClick());
                         }
-
                      }
             }
 
