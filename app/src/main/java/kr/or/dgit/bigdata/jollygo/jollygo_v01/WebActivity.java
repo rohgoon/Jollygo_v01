@@ -320,10 +320,22 @@ public class WebActivity extends AppCompatActivity {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             Toast.makeText(getApplicationContext(),"TIP: 작업이 끝나시면 휴대폰의 뒤로가기 버튼을 눌러주세요.",Toast.LENGTH_LONG).show();
-                                           
-                                            Intent i= new Intent(Intent.ACTION_PICK);
-                                            i.setDataAndType(FileProvider.getUriForFile(WebActivity.this, AUTHORITY,pictureFile),"image/*");
+
+                                            //구버전 처리 넣기
+                                            Uri uriPic;
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                                                uriPic = FileProvider.getUriForFile(WebActivity.this,AUTHORITY,pictureFile);
+                                            }else {
+                                                uriPic = Uri.fromFile(pictureFile);
+                                            }
+                                            /*Intent i= new Intent(Intent.ACTION_PICK);*/
+                                            Intent i= new Intent(Intent.ACTION_VIEW);
+                                            //FileProvider.getUriForFile(WebActivity.this, AUTHORITY,pictureFile)
+                                            i.setDataAndType(uriPic,"image/*");
+                                            i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);//
                                             startActivity(i);
+
+
                                         }
                                     }
                             ).setNegativeButton("싫어요",
