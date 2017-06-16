@@ -2,7 +2,10 @@ package kr.or.dgit.bigdata.jollygo.jollygo_v01;
 
 import android.Manifest;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
@@ -11,6 +14,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.FileProvider;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -33,6 +37,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -150,6 +155,25 @@ public class SearchActivity extends AppCompatActivity
 
             Handler mh = new mHandler();
             mh.sendMessageDelayed(msg,500);
+        } else if (id == R.id.nav_gallery) {
+            Toast.makeText(getApplicationContext(),"TIP: 작업이 끝나시면 휴대폰의 뒤로가기 버튼을 눌러주세요.",Toast.LENGTH_LONG).show();
+            String mPath = Environment.getExternalStorageDirectory().getAbsolutePath();//체크
+            File storageDir = new File(mPath+"/whatchefs/");
+            if (!storageDir.exists()){
+                storageDir.mkdir();
+            }
+            Uri uriPic;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                uriPic = FileProvider.getUriForFile(this,WebActivity.AUTHORITY,storageDir);
+            }else {
+                uriPic = Uri.fromFile(storageDir);
+            }
+
+            Intent i= new Intent(Intent.ACTION_VIEW,uriPic);
+            //FileProvider.getUriForFile(WebActivity.this, AUTHORITY,pictureFile)
+            //i.setData(uriPic);
+            i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);//
+            startActivity(i);
 
 
         } else if (id == R.id.nav_signout) {//signOut

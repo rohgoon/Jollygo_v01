@@ -71,7 +71,7 @@ public class WebActivity extends AppCompatActivity {
     private static final int PICTUREACT = 101;
     private static final int GALLERYOPEN = 102;
     private File pictureFile;
-    private static final String AUTHORITY = "kr.or.dgit.bigdata.jollygo.jollygo_v01.fileprovider";
+    public static final String AUTHORITY = "kr.or.dgit.bigdata.jollygo.jollygo_v01.fileprovider";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -347,12 +347,7 @@ public class WebActivity extends AppCompatActivity {
                             }
                     );
                     builder.show();
-                    //새로이 액티비티를 실행시켜서 이미지뷰에 공유하기 버튼 들어가게 만들기
-                /*Intent i=new Intent(Intent.ACTION_PICK);
-                i.setType("image*//*");
-                startActivity(i);*/
-               /* Intent intent= new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(intent,GALLERYOPEN);*/
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
