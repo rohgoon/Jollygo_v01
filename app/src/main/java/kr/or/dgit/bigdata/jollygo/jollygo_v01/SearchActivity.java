@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.design.widget.NavigationView;
@@ -158,9 +159,9 @@ public class SearchActivity extends AppCompatActivity
         } else if (id == R.id.nav_gallery) {
             Toast.makeText(getApplicationContext(),"TIP: 작업이 끝나시면 휴대폰의 뒤로가기 버튼을 눌러주세요.",Toast.LENGTH_LONG).show();
             String mPath = Environment.getExternalStorageDirectory().getAbsolutePath();//체크
-            File storageDir = new File(mPath+"/whatchefs");
+            File storageDir = new File(mPath+"/whatchefs/");
             if (!storageDir.exists()){
-                storageDir.mkdir();
+                storageDir.mkdirs();
             }
             Uri uriPic;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
@@ -168,13 +169,21 @@ public class SearchActivity extends AppCompatActivity
             }else {
                 uriPic = Uri.fromFile(storageDir);
             }
-            Intent i= new Intent(Intent.ACTION_GET_CONTENT);//되는지 휴대폰서 확인 요망
-            /*Intent i= new Intent(Intent.ACTION_GET_CONTENT);//되는지 휴대폰서 확인 요망*/
+            Intent i= new Intent(Intent.ACTION_VIEW,MediaStore.Images.Media.EXTERNAL_CONTENT_URI);//되긴하는데 열람만 가능
+            //Intent i= new Intent(Intent.ACTION_VIEW);//되긴하는데 열람만 가능
             //FileProvider.getUriForFile(WebActivity.this, AUTHORITY,pictureFile)
             //i.setData(uriPic);
-            i.setDataAndType(uriPic, "*/*");
+            //i.setDataAndType(uriPic, "*/*");
+            //i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);//
-            startActivity(Intent.createChooser(i, "Open folder"));
+            startActivity(i);
+            //startActivity(Intent.createChooser(i, "갤러리 앱을 선택하세요"));
+            /*if (i.resolveActivityInfo(getPackageManager(), 0) != null)
+            {
+                startActivity(i);
+            }else {
+                Toast.makeText(getApplicationContext(),"NULL",Toast.LENGTH_LONG).show();
+            }*/
             //startActivity(i);
 
 
