@@ -85,7 +85,7 @@ public class WebActivity extends AppCompatActivity {
         progressBar = (ProgressBar) findViewById(R.id.webPb);
         fabPhoto = (FloatingActionButton) findViewById(R.id.fabPhoto);
         fabBack = (FloatingActionButton) findViewById(R.id.fabBack);
-        fabHome = (FloatingActionButton) findViewById(R.id.fabHome);
+        //fabHome = (FloatingActionButton) findViewById(R.id.fabHome);
         fabBrowser = (FloatingActionButton) findViewById(R.id.fabBrowser);
         fabFav = (FloatingActionButton) findViewById(R.id.fabFav);
         fam = (FloatingActionMenu) findViewById(R.id.fab_menu);
@@ -157,7 +157,7 @@ public class WebActivity extends AppCompatActivity {
         fabPhoto.setOnClickListener(onButtonClick());
         fabBrowser.setOnClickListener(onButtonClick());
         fabBack.setOnClickListener(onButtonClick());
-        fabHome.setOnClickListener(onButtonClick());
+        //fabHome.setOnClickListener(onButtonClick());
         fam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -213,11 +213,11 @@ public class WebActivity extends AppCompatActivity {
 
                 } else if (view == fabBack) {//DB에 즐겨찾기 새로 추가 // 버튼 자체가 동작안함
                     finish();
-                } else if (view == fabHome) { // 홈화면가기
+                /*} else if (view == fabHome) { // 홈화면가기
                     Intent intent = new Intent(WebActivity.this,SearchActivity.class);
-                    startActivity(intent);
+                    startActivity(intent);*/
                 } else {//즐겨찾기 //이부분이 자꾸 먹통됨
-
+                    Toast.makeText(getApplicationContext(),"즐겨찾기에 추가했습니다.",Toast.LENGTH_SHORT).show();
                     DatabaseReference fld = databaseReference.child("favlink");//fno를 굳이 아이디별로 특정화 시킬 이유가 없음
                     fld.orderByChild("fno").limitToLast(1).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override

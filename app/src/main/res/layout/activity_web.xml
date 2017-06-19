@@ -56,7 +56,7 @@
         app:menu_shadowColor="#66000000"
         app:menu_labels_ellipsize="end"
         app:menu_labels_singleLine="true">
-      <com.github.clans.fab.FloatingActionButton
+     <!-- <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fabHome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -64,7 +64,7 @@
             app:fab_colorNormal="#ff4b04"
             app:fab_label="새로 검색"
             android:tint="#fff"
-            app:fab_size="mini" />
+            app:fab_size="mini" />-->
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fabBack"
             android:layout_width="wrap_content"
