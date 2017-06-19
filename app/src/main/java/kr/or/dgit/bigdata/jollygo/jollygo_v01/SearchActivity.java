@@ -25,7 +25,9 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -63,6 +65,7 @@ public class SearchActivity extends AppCompatActivity
     private Fragment mFragment;
     private FrameLayout frameLayout;
     private FloatingActionButton floatingActionButton;
+    private SearchView sv;
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,6 +92,10 @@ public class SearchActivity extends AppCompatActivity
         ft.commit();
         floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
         floatingActionButton.setVisibility(View.VISIBLE);
+        ImageView tbtitle = (ImageView) findViewById(R.id.toolbarTitle);
+        tbtitle.setVisibility(View.VISIBLE);
+        tbtitle.setImageResource(R.drawable.toolbartitle);
+        sv = (SearchView)findViewById(R.id.search_view);
     }
 
 
@@ -145,12 +152,20 @@ public class SearchActivity extends AppCompatActivity
             ft.replace(R.id.fragment,smf,"nav_home");
             ft.commit();
             floatingActionButton.setVisibility(View.VISIBLE);
-            TextView tvTitle = (TextView) findViewById(R.id.tvTitle);
-            tvTitle.setText("What a lot of chefs in the world");
+           /* TextView tvTitle = (TextView) findViewById(R.id.tvTitle);
+            tvTitle.setText("What a lot of chefs in the world");*/
+            sv.setVisibility(View.VISIBLE);
+            sv.setIconified(true);
 
+            ImageView tbtitle = (ImageView) findViewById(R.id.toolbarTitle);
+            tbtitle.setVisibility(View.VISIBLE);
+            tbtitle.setImageResource(R.drawable.toolbartitle);
             //updateUI(currentUser);
         } else if (id == R.id.nav_favlist) {
             //핸들러로 독립
+            ImageView tbtitle = (ImageView) findViewById(R.id.toolbarTitle);
+            tbtitle.setVisibility(View.VISIBLE);
+            tbtitle.setImageResource(R.drawable.favtbtitle);
             Message msg = new Message();
             msg.what =1;
 
@@ -215,8 +230,13 @@ public class SearchActivity extends AppCompatActivity
                 ft.replace(R.id.fragment,flf,"nav_favlist");
                 ft.commit();
                 floatingActionButton.setVisibility(View.GONE);
+                ImageView tbtitle = (ImageView) findViewById(R.id.toolbarTitle);
+                tbtitle.setVisibility(View.VISIBLE);
+                tbtitle.setImageResource(R.drawable.favtbtitle);/*
                 TextView tvTitle = (TextView) findViewById(R.id.tvTitle);
-                tvTitle.setText("즐겨찾기");
+                tvTitle.setText("즐겨찾기");*/
+
+                sv.setVisibility(View.GONE);
                 removeMessages(msg.what);//
             }
         }

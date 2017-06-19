@@ -25,7 +25,16 @@
                 android:layout_below="@+id/toolbar"
                 android:padding="@dimen/activity_horizontal_margin">
                 <!--android:background="@color/colorPrimary"-->
-                <TextView
+                <ImageView
+                    android:id="@+id/toolbarTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentStart="true"
+                    android:src="@drawable/toolbartitle"
+                    android:scaleType="fitStart"
+                    />
+                <!--<TextView
                     android:id="@+id/tvTitle"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -35,7 +44,8 @@
                     android:text="세상에 이 많은 쉐프들"
                     android:layout_centerVertical="true"
                     android:layout_alignParentStart="true"
-                    android:gravity="left"/>
+                    android:gravity="left"
+                    />-->
 
                 <SearchView
                     android:id="@+id/search_view"
@@ -43,7 +53,8 @@
                     android:layout_height="match_parent"
                     android:textSize="15dp"
                     android:layout_alignParentTop="true"
-                    android:layout_alignParentEnd="true"></SearchView>
+                    android:layout_alignParentEnd="true"
+                    app:queryHint="재료 하나를 입력해 주세요."></SearchView>
             </RelativeLayout>
         </android.support.v7.widget.Toolbar>
 

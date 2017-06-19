@@ -47,22 +47,26 @@ public class GridRecyclerView extends RecyclerView {
             ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(),Color.rgb(255,150,0), Color.rgb(228,0,110),Color.rgb(5,50,250), Color.rgb(21,156,3),  Color.rgb(255,150,0));
             @Override
             public void onChildViewAttachedToWindow(View view) {
-               int searchCount = getAdapter().getItemCount();
+                if(getAdapter().getClass().getName().equals("kr.or.dgit.bigdata.jollygo.jollygo_v01.views.adapter.RvAdapter")) {
+                    int searchCount = getAdapter().getItemCount();
 
-                if (searchCount>0){
-                    colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                        @Override
-                        public void onAnimationUpdate(ValueAnimator animator) {
-                            int color = (int) animator.getAnimatedValue();
-                            fab.setBackgroundTintList(ColorStateList.valueOf(color));
-                        }
-                    });
-                    colorAnimation.setRepeatCount(Animation.INFINITE);
-                    colorAnimation.setDuration(2000);
-                    colorAnimation.start();
-                }else {
-                    colorAnimation.cancel();
-                    fab.setBackgroundTintList(ColorStateList.valueOf(Color.rgb(255,150,0)));
+                    if (searchCount > 0) {
+                        colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                            @Override
+                            public void onAnimationUpdate(ValueAnimator animator) {
+                                int color = (int) animator.getAnimatedValue();
+                                fab.setBackgroundTintList(ColorStateList.valueOf(color));
+                            }
+                        });
+                        colorAnimation.setRepeatCount(Animation.INFINITE);
+                        colorAnimation.setDuration(2000);
+                        colorAnimation.start();
+                    } else {
+                        colorAnimation.cancel();
+                        fab.setBackgroundTintList(ColorStateList.valueOf(Color.rgb(255, 150, 0)));
+                    }
+                }else{
+                    fab.setBackgroundTintList(ColorStateList.valueOf(Color.rgb(255, 150, 0)));
                 }
 
             }

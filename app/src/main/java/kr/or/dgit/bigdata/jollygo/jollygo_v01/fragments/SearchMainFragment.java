@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -84,10 +85,13 @@ public class SearchMainFragment extends Fragment {
         imgWords = new ImgWords();//초기화
         rvAdapter = new RvAdapter(getContext(),fab,imgWords);
         grv.setAdapter(rvAdapter);
-        final TextView tvTitle = (TextView) getActivity().findViewById(R.id.tvTitle);
-        if(grv.getAdapter().getClass().getName().equals("kr.or.dgit.bigdata.jollygo.jollygo_v01.views.adapter.RvAdapter")) {
-            grv.gridChangeListener(fab);
-        }
+       // final TextView tvTitle = (TextView) getActivity().findViewById(R.id.tvTitle);
+        final ImageView tbtitle = (ImageView) getActivity().findViewById(R.id.toolbarTitle);
+        tbtitle.setVisibility(View.VISIBLE);
+        tbtitle.setImageResource(R.drawable.toolbartitle);
+
+        grv.gridChangeListener(fab);
+
         //<--
 
 
@@ -95,7 +99,7 @@ public class SearchMainFragment extends Fragment {
         sv.setOnSearchClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        tvTitle.setText("");
+                        tbtitle.setVisibility(View.INVISIBLE);
                     }
         });
         sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -125,14 +129,17 @@ public class SearchMainFragment extends Fragment {
         sv.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
-                int searchCount = getRvAdapter().getItemCount(); // 수정
+               /* int searchCount = getRvAdapter().getItemCount(); // 수정
                 if (searchCount>1) {
                     tvTitle.setText(searchCount + " items were ready");
                 }else if (searchCount == 1){
                     tvTitle.setText(searchCount + " item was ready");
                 }else if (searchCount == 0 ){
                     tvTitle.setText("What a lot of chefs in the world");
-                }
+                }*/
+                //tvTitle.setText("세상에 이 많은 쉐프들");
+                tbtitle.setVisibility(View.VISIBLE);
+                tbtitle.setImageResource(R.drawable.toolbartitle);
                 return false;
             }
         });
@@ -170,14 +177,18 @@ public class SearchMainFragment extends Fragment {
                     imgWords = new ImgWords();//초기화
                     rvAdapter = new RvAdapter(getContext(),fab,imgWords);
                     grv.setAdapter(rvAdapter);
-                    final TextView tvTitle = (TextView) getActivity().findViewById(R.id.tvTitle);
+                    //final TextView tvTitle = (TextView) getActivity().findViewById(R.id.tvTitle);
                     //grv.gridChangeListener(tvTitle);
                     //<--
+                    final ImageView tbtitle = (ImageView) getActivity().findViewById(R.id.toolbarTitle);
+                    tbtitle.setVisibility(View.VISIBLE);
+                    tbtitle.setImageResource(R.drawable.favtbtitle);
+
                     fab.setImageResource(R.drawable.fabhome);
 
                     sv.setVisibility(View.VISIBLE);
                     sv.setIconified(true);
-                    tvTitle.setText("What a lot of chefs in the world");
+                   // tvTitle.setText("세상에 이 많은 쉐프들");
 
                 }
             }
@@ -200,7 +211,10 @@ public class SearchMainFragment extends Fragment {
                 listRvAdapter = new ListRvAdapter(getContext(),getRvAdapter().getImgWords());
                 grv.setAdapter(listRvAdapter);
                 //이후 뷰처리 및 초기화
-                ((TextView)activityThis.findViewById(R.id.tvTitle)).setText("Recipe List");
+                ImageView tbTitle =(ImageView)activityThis.findViewById(R.id.toolbarTitle);
+                tbTitle.setVisibility(View.VISIBLE);
+                tbTitle.setImageResource(R.drawable.recipetitle);
+                //((TextView)activityThis.findViewById(R.id.tvTitle)).setText("레시피 목록");
                 ((SearchView)activityThis.findViewById(R.id.search_view)).setVisibility(View.INVISIBLE);
                 int plusNum = -1;
                 for (String s: getRvAdapter().getImgWords().getmDataset()) {
