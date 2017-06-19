@@ -1,10 +1,21 @@
 package kr.or.dgit.bigdata.jollygo.jollygo_v01.customviews;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.TransitionDrawable;
+import android.os.Build;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -31,38 +42,36 @@ public class GridRecyclerView extends RecyclerView {
     }
 
     public void gridChangeListener(View v){
-        final TextView tvTitle = (TextView) v;
+        final FloatingActionButton fab = (FloatingActionButton) v;
         addOnChildAttachStateChangeListener(new OnChildAttachStateChangeListener() {
+            ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(),Color.rgb(255,150,0), Color.rgb(228,0,110),Color.rgb(5,50,250), Color.rgb(21,156,3),  Color.rgb(255,150,0));
             @Override
             public void onChildViewAttachedToWindow(View view) {
-                int searchCount = getAdapter().getItemCount();
-                if (tvTitle.getText().toString().equals("")){
-                    return;
-                }else{
-                    if (searchCount>1) {
-                        tvTitle.setText(searchCount + " items were ready");
-                    }else if (searchCount == 1){
-                        tvTitle.setText(searchCount + " item was ready");
-                    }else if (searchCount == 0 ){
-                        tvTitle.setText("What a lot of chefs in the world");
-                    }
+               int searchCount = getAdapter().getItemCount();
+
+                if (searchCount>0){
+                    colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                        @Override
+                        public void onAnimationUpdate(ValueAnimator animator) {
+                            int color = (int) animator.getAnimatedValue();
+                            fab.setBackgroundTintList(ColorStateList.valueOf(color));
+                        }
+                    });
+                    colorAnimation.setRepeatCount(Animation.INFINITE);
+                    colorAnimation.setDuration(2000);
+                    colorAnimation.start();
+                }else {
+                    colorAnimation.cancel();
+                    fab.setBackgroundTintList(ColorStateList.valueOf(Color.rgb(255,150,0)));
                 }
+
             }
 
             @Override
             public void onChildViewDetachedFromWindow(View view) {
-                int searchCount = getAdapter().getItemCount();
-                if (tvTitle.getText().toString().equals("")){
-                    return;
-                }else{
-                    if (searchCount>1) {
-                        tvTitle.setText(searchCount + " items were ready");
-                    }else if (searchCount == 1){
-                        tvTitle.setText(searchCount + " item was ready");
-                    }else if (searchCount == 0){
-                        tvTitle.setText("What a lot of chefs in the world");
-                    }
-                }
+                colorAnimation.cancel();
+                fab.setBackgroundTintList(ColorStateList.valueOf(Color.rgb(255,150,0)));
+
             }
         });
     }

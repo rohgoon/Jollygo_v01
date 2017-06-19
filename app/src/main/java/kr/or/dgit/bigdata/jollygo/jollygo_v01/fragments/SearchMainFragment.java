@@ -85,7 +85,9 @@ public class SearchMainFragment extends Fragment {
         rvAdapter = new RvAdapter(getContext(),fab,imgWords);
         grv.setAdapter(rvAdapter);
         final TextView tvTitle = (TextView) getActivity().findViewById(R.id.tvTitle);
-        grv.gridChangeListener(tvTitle);
+        if(grv.getAdapter().getClass().getName().equals("kr.or.dgit.bigdata.jollygo.jollygo_v01.views.adapter.RvAdapter")) {
+            grv.gridChangeListener(fab);
+        }
         //<--
 
 
@@ -169,7 +171,7 @@ public class SearchMainFragment extends Fragment {
                     rvAdapter = new RvAdapter(getContext(),fab,imgWords);
                     grv.setAdapter(rvAdapter);
                     final TextView tvTitle = (TextView) getActivity().findViewById(R.id.tvTitle);
-                    grv.gridChangeListener(tvTitle);
+                    //grv.gridChangeListener(tvTitle);
                     //<--
                     fab.setImageResource(R.drawable.fabhome);
 

@@ -27,19 +27,21 @@
                 <!--android:background="@color/colorPrimary"-->
                 <TextView
                     android:id="@+id/tvTitle"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:textSize="15dp"
                     android:textStyle="bold"
                     android:textColor="#fff"
-                    android:text="What a lot of chefs in the world"
+                    android:text="세상에 이 많은 쉐프들"
                     android:layout_centerVertical="true"
-                    android:layout_alignParentStart="true"/>
+                    android:layout_alignParentStart="true"
+                    android:gravity="left"/>
 
                 <SearchView
                     android:id="@+id/search_view"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
+                    android:textSize="15dp"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentEnd="true"></SearchView>
             </RelativeLayout>
