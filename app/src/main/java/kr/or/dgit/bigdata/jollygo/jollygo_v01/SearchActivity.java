@@ -2,6 +2,8 @@ package kr.or.dgit.bigdata.jollygo.jollygo_v01;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -70,7 +72,9 @@ public class SearchActivity extends AppCompatActivity
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //툴바관련
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
         setSupportActionBar(toolbar);
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA},0);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -96,6 +100,13 @@ public class SearchActivity extends AppCompatActivity
         tbtitle.setVisibility(View.VISIBLE);
         tbtitle.setImageResource(R.drawable.toolbartitle);
         sv = (SearchView)findViewById(R.id.search_view);
+        ImageView searchBtn = (ImageView) sv.findViewById(android.support.v7.appcompat.R.id.search_button);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            searchBtn.setImageTintList(ColorStateList.valueOf(Color.BLACK));
+        }
+        toolbar.setNavigationIcon(R.drawable.navicon);
+        toolbar.invalidate();
+
     }
 
 
@@ -151,7 +162,10 @@ public class SearchActivity extends AppCompatActivity
             SearchMainFragment smf = new SearchMainFragment();
             ft.replace(R.id.fragment,smf,"nav_home");
             ft.commit();
+
+            // 초기화
             floatingActionButton.setVisibility(View.VISIBLE);
+            floatingActionButton.setImageResource(R.drawable.fabhome);
            /* TextView tvTitle = (TextView) findViewById(R.id.tvTitle);
             tvTitle.setText("What a lot of chefs in the world");*/
             sv.setVisibility(View.VISIBLE);

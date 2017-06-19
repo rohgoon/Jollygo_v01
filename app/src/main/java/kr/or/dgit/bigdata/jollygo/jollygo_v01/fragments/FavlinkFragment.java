@@ -56,6 +56,7 @@ public class FavlinkFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_favlink,container,false);
         grv = (GridRecyclerView) root.findViewById(R.id.flRecyclerView);// 확인요망 -> 작동완료
         bar = (ProgressBar) root.findViewById(R.id.flCardPb);
+        bar.setVisibility(View.VISIBLE);
         return root;
     }
 
@@ -92,6 +93,7 @@ public class FavlinkFragment extends Fragment {
                 //Toast.makeText(getContext(),"dataSnapshot 카운트 "+dataSnapshot.getChildrenCount(),Toast.LENGTH_SHORT).show();//6이 카운트 됨
                 Favlink fl= dataSnapshot.getValue(Favlink.class);//
                 favRvAdapter.addItem(fl);
+                bar.setVisibility(View.GONE);
             }
 
             @Override
