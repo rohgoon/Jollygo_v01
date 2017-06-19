@@ -56,7 +56,7 @@
         app:menu_shadowColor="#66000000"
         app:menu_labels_ellipsize="end"
         app:menu_labels_singleLine="true">
-     <!-- <com.github.clans.fab.FloatingActionButton
+       <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fabHome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -64,15 +64,6 @@
             app:fab_colorNormal="#ff4b04"
             app:fab_label="새로 검색"
             android:tint="#fff"
-            app:fab_size="mini" />-->
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fabBack"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/fabback"
-            app:fab_colorNormal="#ff0468"
-            android:tint="#fff"
-            app:fab_label="리스트로"
             app:fab_size="mini" />
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fabPhoto"
@@ -93,11 +84,20 @@
             app:fab_label="브라우저로"
             app:fab_size="mini" />
         <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fabBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/fabback"
+            app:fab_colorNormal="#ff0468"
+            android:tint="#fff"
+            app:fab_label="리스트로"
+            app:fab_size="mini" />
+        <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fabFav"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:fab_colorNormal="#ffde04"
-            android:src="@drawable/fabfav"
+            android:src="@drawable/fabemptyfav"
             android:tint="#fff"
             app:fab_label="즐겨찾기"
             app:fab_size="mini" />

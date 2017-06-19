@@ -85,7 +85,7 @@ public class WebActivity extends AppCompatActivity {
         progressBar = (ProgressBar) findViewById(R.id.webPb);
         fabPhoto = (FloatingActionButton) findViewById(R.id.fabPhoto);
         fabBack = (FloatingActionButton) findViewById(R.id.fabBack);
-        //fabHome = (FloatingActionButton) findViewById(R.id.fabHome);
+        fabHome = (FloatingActionButton) findViewById(R.id.fabHome);
         fabBrowser = (FloatingActionButton) findViewById(R.id.fabBrowser);
         fabFav = (FloatingActionButton) findViewById(R.id.fabFav);
         fam = (FloatingActionMenu) findViewById(R.id.fab_menu);
@@ -157,7 +157,8 @@ public class WebActivity extends AppCompatActivity {
         fabPhoto.setOnClickListener(onButtonClick());
         fabBrowser.setOnClickListener(onButtonClick());
         fabBack.setOnClickListener(onButtonClick());
-        //fabHome.setOnClickListener(onButtonClick());
+        fabHome.setOnClickListener(onButtonClick());
+        fabFav.setOnClickListener(onButtonClick());
         fam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -180,13 +181,24 @@ public class WebActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 List<Favlink> favlinks = new ArrayList<Favlink>();
                     for (DataSnapshot d : dataSnapshot.getChildren()) {
-                        favlinks.add(d.getValue(Favlink.class));
+                        Favlink fl = new Favlink(Integer.parseInt(d.child("fno").getValue().toString()),
+                                d.child("furl").getValue().toString(),
+                                d.child("fimgurl").getValue().toString(),
+                                d.child("uid").getValue().toString(),
+                                d.child("fname").getValue().toString(),
+                                Integer.parseInt(d.child("fcount").getValue().toString())
+                        );
+                        favlinks.add(fl);
                     }
                     for (Favlink f : favlinks) {
                         if (f.getFurl().equals(url)) {//이미 존재
-                            fabFav.setColorFilter(Color.RED);
+                            fabFav.setImageResource(R.drawable.fabfav);
+                            Toast.makeText(getApplicationContext(),"즐겨찾기에 이미 들어있어요.",Toast.LENGTH_SHORT).show();
+                            fabFav.setClickable(false);
+                            break;
                         } else {
-                            fabFav.setOnClickListener(onButtonClick());
+                            fabFav.setImageResource(R.drawable.fabemptyfav);
+                            fabFav.setClickable(true);
                         }
                      }
             }
@@ -202,6 +214,7 @@ public class WebActivity extends AppCompatActivity {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.e("플로팅버튼 확인",view.getId()+"");
                 if (view == fabPhoto) {//사진 저장소 지정요망
                    /* Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     startActivity(intent);*/
@@ -213,11 +226,12 @@ public class WebActivity extends AppCompatActivity {
 
                 } else if (view == fabBack) {//DB에 즐겨찾기 새로 추가 // 버튼 자체가 동작안함
                     finish();
-                /*} else if (view == fabHome) { // 홈화면가기
+                } else if (view == fabHome) { // 홈화면가기
                     Intent intent = new Intent(WebActivity.this,SearchActivity.class);
-                    startActivity(intent);*/
+                    startActivity(intent);
                 } else {//즐겨찾기 //이부분이 자꾸 먹통됨
                     Toast.makeText(getApplicationContext(),"즐겨찾기에 추가했습니다.",Toast.LENGTH_SHORT).show();
+                    fabFav.setImageResource(R.drawable.fabfav);
                     DatabaseReference fld = databaseReference.child("favlink");//fno를 굳이 아이디별로 특정화 시킬 이유가 없음
                     fld.orderByChild("fno").limitToLast(1).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
@@ -238,6 +252,7 @@ public class WebActivity extends AppCompatActivity {
                                 Favlink favlinkAfter = new Favlink(flcount,urlRes,imgurl,
                                         currentUser.getUid(),blogname,0);
                                 databaseReference.child("favlink").push().setValue(favlinkAfter);
+                                fabFav.setClickable(false);
                             }
 
                         }
