@@ -19,9 +19,12 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -43,6 +46,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -97,10 +101,13 @@ public class WebActivity extends AppCompatActivity {
 
         webView = (WebView) findViewById(R.id.webView);
         webView.setWebViewClient(new WebViewClient(){
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+
+
+           /* @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 Toast.makeText(WebActivity.this,"TIP: 우측 하단 버튼 속의 [브라우저로]를 실행하시면 자세히 둘러보실 수 있어요",Toast.LENGTH_SHORT).show();
                 return true;
-            }
+            }*/
 
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
@@ -114,6 +121,13 @@ public class WebActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.GONE);
             }
         });
+        //웹뷰 성능개선
+        if (Build.VERSION.SDK_INT >= 19) {
+            webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        }
+        else {
+            webView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        }
 
         webSettings = webView.getSettings();
         //webView.setInitialScale(1);
@@ -426,5 +440,22 @@ public class WebActivity extends AppCompatActivity {
                 break;
         }
         return matrix;
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {//웹뷰에서 서핑가능하게 제공
+        if (event.getAction() == KeyEvent.ACTION_DOWN) {
+            switch (keyCode) {
+                case KeyEvent.KEYCODE_BACK:
+                    if (webView.canGoBack()) {
+                        webView.goBack();
+                    } else {
+                        finish();
+                    }
+                    return true;
+            }
+
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

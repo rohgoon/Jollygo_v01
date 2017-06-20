@@ -150,7 +150,6 @@ public class ListRvAdapter extends RecyclerView.Adapter<ListRvAdapter.ViewHolder
                 });
 
                 //주소(original) 수집
-
                 Intent intent = new Intent(context,WebActivity.class);
                 intent.putExtra("url",srList.get(position).getRu());
                 intent.putExtra("imgurl",srList.get(position).getOu());

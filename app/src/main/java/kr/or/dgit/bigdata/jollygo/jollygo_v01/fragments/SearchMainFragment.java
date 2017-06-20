@@ -129,15 +129,7 @@ public class SearchMainFragment extends Fragment {
         sv.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
-               /* int searchCount = getRvAdapter().getItemCount(); // 수정
-                if (searchCount>1) {
-                    tvTitle.setText(searchCount + " items were ready");
-                }else if (searchCount == 1){
-                    tvTitle.setText(searchCount + " item was ready");
-                }else if (searchCount == 0 ){
-                    tvTitle.setText("What a lot of chefs in the world");
-                }*/
-                //tvTitle.setText("세상에 이 많은 쉐프들");
+
                 tbtitle.setVisibility(View.VISIBLE);
                 tbtitle.setImageResource(R.drawable.toolbartitle);
                 return false;
