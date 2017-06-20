@@ -2,8 +2,12 @@ package kr.or.dgit.bigdata.jollygo.jollygo_v01;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -72,6 +76,7 @@ public class SearchActivity extends AppCompatActivity
     private FloatingActionButton floatingActionButton;
     private SearchView sv;
     private ImageView tutoMain, tutoDot, tutoBtn;
+    private Boolean tutotf =false;
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,6 +117,8 @@ public class SearchActivity extends AppCompatActivity
         toolbar.invalidate();
 
         //튜토리얼용 다이알로그 등장
+      /*  tutoDbHelper = TutoDbHelper.getInstance(this);
+        sqlite = tutoDbHelper.getWritableDatabase();*/
         View dialog = View.inflate(SearchActivity.this, R.layout.tutodialog,null);
 
         AlertDialog.Builder dlg = new AlertDialog.Builder(SearchActivity.this,R.style.CustomDialog);
@@ -123,10 +130,19 @@ public class SearchActivity extends AppCompatActivity
         dlg.setView(dialog);
         //dlg.show();
         final AlertDialog alert = dlg.create();
-        alert.show();
+        SharedPreferences pref = getSharedPreferences("Tutotf",0);
+        tutotf = pref.getBoolean("tf",false);
+        if (tutotf==false){
+            alert.show();
+        }
+
         tutoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                SharedPreferences pref = getSharedPreferences("Tutotf",0);
+                SharedPreferences.Editor edit = pref.edit();
+                edit.putBoolean("tf",true);
+                edit.commit();
                 alert.dismiss();
             }
         });
@@ -318,5 +334,11 @@ public class SearchActivity extends AppCompatActivity
                 removeMessages(msg.what);//
             }
         }
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+       // sqlite.close();
+
     }
 }

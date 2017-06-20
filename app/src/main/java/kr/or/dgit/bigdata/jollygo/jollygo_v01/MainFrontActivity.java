@@ -4,6 +4,7 @@ import android.*;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -34,6 +35,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class MainFrontActivity extends AppCompatActivity  implements
         GoogleApiClient.OnConnectionFailedListener{
     private FirebaseAuth mAuth;
@@ -49,6 +51,7 @@ public class MainFrontActivity extends AppCompatActivity  implements
             android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
             android.Manifest.permission.CAMERA
     };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,6 +89,7 @@ public class MainFrontActivity extends AppCompatActivity  implements
                 updateUI(currentUser);
             }
         });
+
     }//onCreate
 
     @Override
@@ -243,4 +247,6 @@ public class MainFrontActivity extends AppCompatActivity  implements
         Toast.makeText(this, "사진과 사용자 로그인을 위한 권한 설정입니다. 동의해주시면 어플리케이션 사용이 가능합니다.", Toast.LENGTH_SHORT).show();
         checkPermissions();
     }
+
+
 }
