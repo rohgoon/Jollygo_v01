@@ -1,6 +1,7 @@
 package kr.or.dgit.bigdata.jollygo.jollygo_v01;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -21,11 +22,13 @@ import android.support.v4.content.FileProvider;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -68,6 +71,7 @@ public class SearchActivity extends AppCompatActivity
     private FrameLayout frameLayout;
     private FloatingActionButton floatingActionButton;
     private SearchView sv;
+    private ImageView tutoMain, tutoDot, tutoBtn;
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,8 +111,68 @@ public class SearchActivity extends AppCompatActivity
         toolbar.setNavigationIcon(R.drawable.navicon);
         toolbar.invalidate();
 
+        //튜토리얼용 다이알로그 등장
+        View dialog = View.inflate(SearchActivity.this, R.layout.tutodialog,null);
+
+        AlertDialog.Builder dlg = new AlertDialog.Builder(SearchActivity.this,R.style.CustomDialog);
+        tutoMain = (ImageView) dialog.findViewById(R.id.tutoMain);
+        tutoDot = (ImageView) dialog.findViewById(R.id.tutoDot);
+        tutoBtn = (ImageView) dialog.findViewById(R.id.tutoBtn);
+        tutoMain.setOnTouchListener(tutoTouch());
+        tutoMain.setTag(R.drawable.tuto1);
+        dlg.setView(dialog);
+        //dlg.show();
+        final AlertDialog alert = dlg.create();
+        alert.show();
+        tutoBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alert.dismiss();
+            }
+        });
     }
 
+
+    private View.OnTouchListener tutoTouch() {
+        return new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int action = event.getAction();
+                ImageView iv = (ImageView) v;
+                if (action == MotionEvent.ACTION_DOWN){
+                    switch ((int)iv.getTag()){
+                        case R.drawable.tuto1:
+                            Log.e("튜토리얼 터치","최초 이벤트");
+                            tutoMain.setImageResource(R.drawable.tuto2);
+                            tutoDot.setImageResource(R.drawable.tutodot2);
+                            tutoMain.setTag(R.drawable.tuto2);
+                            break;
+                        case R.drawable.tuto2:
+                            tutoMain.setImageResource(R.drawable.tuto3);
+                            tutoDot.setImageResource(R.drawable.tutodot3);
+                            tutoMain.setTag(R.drawable.tuto3);
+                            break;
+                        case R.drawable.tuto3:
+                            tutoMain.setImageResource(R.drawable.tuto4);
+                            tutoDot.setImageResource(R.drawable.tutodot4);
+                            tutoMain.setTag(R.drawable.tuto4);
+                            tutoBtn.setVisibility(View.VISIBLE);
+                            //sqlLite로 한번만 실행되게 int값 삽입 = 1
+                            break;
+                        default:
+                            tutoMain.setImageResource(R.drawable.tuto1);
+                            tutoDot.setImageResource(R.drawable.tutodot1);
+                            tutoBtn.setVisibility(View.INVISIBLE);
+                            tutoMain.setTag(R.drawable.tuto1);
+                            break;
+                    }
+                    return true;
+                }else {
+                    return false;
+                }
+            }
+        };
+    }
 
 
     @Override
