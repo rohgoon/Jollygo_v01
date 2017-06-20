@@ -14,10 +14,10 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="88dp"
-        android:layout_height="67dp"
-        android:paddingTop="@dimen/nav_header_vertical_spacing"
-        app:srcCompat="@drawable/appicon06" />
+        android:layout_width="100dp"
+        android:layout_height="match_parent"
+        android:paddingTop="5dp"
+        app:srcCompat="@drawable/wlc_main_big" />
 <!--
     <TextView
         android:layout_width="match_parent"

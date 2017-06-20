@@ -9,9 +9,12 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,10 +47,11 @@ public class FavlinkFragment extends Fragment {
     private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     private DatabaseReference databaseReference = firebaseDatabase.getReference();
     private List<Favlink> favlinkList;
-
+    private int count;
 
     public FavlinkFragment() {
         // Required empty public constructor
+
     }
 
     @Override
@@ -62,6 +66,7 @@ public class FavlinkFragment extends Fragment {
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        count=0;
         super.onActivityCreated(savedInstanceState);
         // 즐겨찾기 리스트 받아오기
         //->차후 프래그먼트로 이동
@@ -72,21 +77,46 @@ public class FavlinkFragment extends Fragment {
         //getFavlinkOnce(currentUser);//한번 불러오기 -> 이것 이후에 additem을 해서 두배로 리스트가 만들어 진것
         //뷰 구현
         //-->
-        grv.setHasFixedSize(true);
-        LinearLayoutManager llm = new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,true); //reverseLayout은  sort 순서 반대로하기 기능
-        //최신순으로 뒤집어서 보이기
-        /*llm.setReverseLayout(true);*/
-        llm.setStackFromEnd(true);
 
-        grv.setLayoutManager(llm);
         fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
         fab.setVisibility(View.GONE);//처음엔 플로팅버튼이 안보이게함.
         //어댑터 연결
-        favRvAdapter = new FavRvAdapter(getContext(),fab,favlinkList,databaseReference,currentUser);
-        grv.setAdapter(favRvAdapter);
 
-        //change리스너와 additem 연결
+
+        count=0;
         DatabaseReference flRef = databaseReference.child("favlink");//uid value를 특정해서 가져오지 않음 -> getRef삭제하고 분리 변경 완료 후 작동 잘됨
+        flRef.orderByChild("uid").equalTo(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot d:dataSnapshot.getChildren()) {
+                    Favlink fl = new Favlink(Integer.parseInt(d.child("fno").getValue().toString()),
+                            d.child("furl").getValue().toString(),
+                            d.child("fimgurl").getValue().toString(),
+                            d.child("uid").getValue().toString(),
+                            d.child("fname").getValue().toString(),
+                            Integer.parseInt(d.child("fcount").getValue().toString())
+                    );
+                    favlinkList.add(fl);
+                    count++;
+                    if (count == dataSnapshot.getChildrenCount()){
+                        grv.setHasFixedSize(true);
+                        LinearLayoutManager llm = new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,true); //reverseLayout은  sort 순서 반대로하기 기능
+                        llm.setStackFromEnd(true);
+                        grv.setLayoutManager(llm);
+                        favRvAdapter = new FavRvAdapter(getContext(),fab,favlinkList,databaseReference,currentUser);
+                        grv.setAdapter(favRvAdapter);
+                        bar.setVisibility(View.GONE);
+                    }
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        /*DatabaseReference flRef = databaseReference.child("favlink");//uid value를 특정해서 가져오지 않음 -> getRef삭제하고 분리 변경 완료 후 작동 잘됨
         flRef.orderByChild("uid").equalTo(currentUser.getUid()).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -115,7 +145,8 @@ public class FavlinkFragment extends Fragment {
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });//addChildEventListener
+        });//addChildEventListener*/
+
     }
 
 }

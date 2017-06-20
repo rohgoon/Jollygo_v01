@@ -42,6 +42,7 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -146,6 +147,8 @@ public class SearchActivity extends AppCompatActivity
                 alert.dismiss();
             }
         });
+
+
     }
 
 
@@ -260,6 +263,7 @@ public class SearchActivity extends AppCompatActivity
             ImageView tbtitle = (ImageView) findViewById(R.id.toolbarTitle);
             tbtitle.setVisibility(View.VISIBLE);
             tbtitle.setImageResource(R.drawable.favtbtitle);
+
             Message msg = new Message();
             msg.what =1;
 

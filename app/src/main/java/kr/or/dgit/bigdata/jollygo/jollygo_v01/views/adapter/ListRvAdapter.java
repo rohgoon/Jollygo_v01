@@ -107,9 +107,7 @@ public class ListRvAdapter extends RecyclerView.Adapter<ListRvAdapter.ViewHolder
             holder.ivCard.setImageBitmap(resBitmap);
         }
         holder.tvTest.setText(srList.get(position).getPt());
-        if (getItemCount()==(position-1)){
-            hjat.isCancelled();
-        }
+
         holder.rl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

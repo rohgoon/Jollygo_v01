@@ -13,14 +13,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Created by NCG on 2017-05-26.
  */
 
-public class BitmapOnlyAsyncTask extends AsyncTask<String,Integer,Bitmap> {
+public class BitmapOnlyAsyncTask extends AsyncTask<String,Integer,List<Bitmap>> {
 
 
     @Override
@@ -29,11 +31,13 @@ public class BitmapOnlyAsyncTask extends AsyncTask<String,Integer,Bitmap> {
     }
 
     @Override
-    protected Bitmap doInBackground(String... params) {
+    protected List<Bitmap> doInBackground(String... params) {
         //차후 DB 구축시 파싱 예외처리 요망
-        String url = params[0];
-        Bitmap resBitmap = mkBitmap(url);
 
+        List<Bitmap> resBitmap = new ArrayList<>();
+        for (String s: params) {
+            resBitmap.add(mkBitmap(s));
+        }
 
         return resBitmap;
     }
@@ -56,9 +60,6 @@ public class BitmapOnlyAsyncTask extends AsyncTask<String,Integer,Bitmap> {
         }
     }
 
-    @Override
-    protected void onPostExecute(Bitmap stringBitmapMap) {
-        super.onPostExecute(stringBitmapMap);
-    }
+
 
 }

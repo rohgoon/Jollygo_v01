@@ -30,6 +30,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -56,6 +57,7 @@ public class FavRvAdapter extends RecyclerView.Adapter<FavRvAdapter.ViewHolder> 
     private BitmapOnlyAsyncTask boat;
     private DatabaseReference databaseReference;
     private FirebaseUser currentUser;
+    private List<Bitmap> bitmapList;
 
     public FavRvAdapter(Context context, FloatingActionButton floatingActionButton, List<Favlink> favlinkList, DatabaseReference databaseReference, FirebaseUser currentUser) {
         this.context = context;
@@ -63,6 +65,21 @@ public class FavRvAdapter extends RecyclerView.Adapter<FavRvAdapter.ViewHolder> 
         this.favlinkList = favlinkList;
         this.databaseReference = databaseReference;
         this.currentUser = currentUser;
+        int size = favlinkList.size();
+        this.bitmapList = new ArrayList<>();
+        String[] iwCsr = new String[size];
+        for (int i=0;i<size;i++){
+            iwCsr[i] = favlinkList.get(i).getFimgurl();
+        }
+        boat = new BitmapOnlyAsyncTask();
+        boat.execute(iwCsr);
+        try {
+            this.bitmapList = boat.get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            boat.isCancelled();
+        }
     }
 
 
@@ -119,19 +136,8 @@ public class FavRvAdapter extends RecyclerView.Adapter<FavRvAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {//이벤트 처리
 
-        //이미지 URL 비트맵 전환용 ASYCKTASK 생성
-        boat = new BitmapOnlyAsyncTask();
-        boat.execute(favlinkList.get(position).getFimgurl());
-        try {
-            Bitmap resBitmap = boat.get();
-            holder.ivCard.setImageBitmap(resBitmap);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-
         //ImgHtmlAsyncTask 이미지 받아오기
+        holder.ivCard.setImageBitmap(bitmapList.get(position));
         holder.tvTest.setText(favlinkList.get(position).getFname());
 
         //브라우저로 바로 이동
@@ -160,7 +166,8 @@ public class FavRvAdapter extends RecyclerView.Adapter<FavRvAdapter.ViewHolder> 
 
         //프롤팅버튼에 드랍 이벤트 주기
         holder.fab.setOnDragListener(fabDragListener);//드래그 리스너 구현
-        boat.isCancelled();
+
+
         //Toast.makeText(context,"사이즈는 "+favlinkList.size(),Toast.LENGTH_SHORT).show();//사이즈 자체가 16임->수정 완료
     }//onBindViewHolder
 
@@ -220,7 +227,6 @@ public class FavRvAdapter extends RecyclerView.Adapter<FavRvAdapter.ViewHolder> 
     public void addItem(Favlink infoData) {
         favlinkList.add(infoData);
         notifyItemInserted(favlinkList.size() - 1);
-        notifyDataSetChanged();
     }
 //deleteItem
 
@@ -296,4 +302,11 @@ public class FavRvAdapter extends RecyclerView.Adapter<FavRvAdapter.ViewHolder> 
         });
     }
 
+    public List<Favlink> getFavlinkList() {
+        return favlinkList;
+    }
+
+    public void setFavlinkList(List<Favlink> favlinkList) {
+        this.favlinkList = favlinkList;
+    }
 }
