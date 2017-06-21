@@ -3,13 +3,19 @@ package kr.or.dgit.bigdata.jollygo.jollygo_v01.views.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Handler;
+import android.os.Message;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,12 +32,15 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.R;
+import kr.or.dgit.bigdata.jollygo.jollygo_v01.SearchActivity;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.WebActivity;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.firebasedto.Allurl;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.firebasedto.Allword;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.firebasedto.Favlink;
+import kr.or.dgit.bigdata.jollygo.jollygo_v01.imgmanage.BitmapOnlyAsyncTask;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.imgmanage.ImgWords;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.searchmanage.HtmlJsonAsyncTask;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.searchmanage.SearchResult;
@@ -45,13 +54,18 @@ public class ListRvAdapter extends RecyclerView.Adapter<ListRvAdapter.ViewHolder
     private static int clickIndex;
     private List<SearchResult> srList; //파싱 결과가 들어감
     private HtmlJsonAsyncTask hjat;
+    private BitmapOnlyAsyncTask boat;
     private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     private DatabaseReference databaseReference = firebaseDatabase.getReference();
     private boolean check = false;
     private int auNum;
     private Allurl auExist;
-    public ListRvAdapter(Context context, ImgWords imgWords) {
+    private List<Bitmap> bitmapList;
+    private String[] bmCsr;
+    private ProgressBar progressBar;
+    public ListRvAdapter(Context context, ImgWords imgWords, ProgressBar progressBar) {
         this.context = context;
+        this.progressBar = progressBar;
         srList = new ArrayList<>();
         int size = imgWords.getmDataset().size();
         String[] iwCsr = new String[size];
@@ -62,11 +76,39 @@ public class ListRvAdapter extends RecyclerView.Adapter<ListRvAdapter.ViewHolder
         hjat.execute(iwCsr);
         try {
             srList= hjat.get();//파싱결과 받음
-            hjat.isCancelled();
+
         } catch (Exception e) {
             e.printStackTrace();
-        };
-        Log.e("리스트 사이즈>>>>>",srList.size()+"");
+        }finally {
+            hjat.isCancelled();
+        }
+        Log.e("리스트 결과 사이즈>>>>>",srList.size()+"");
+        //핸들러로 던지기
+        Message msg = new Message();
+        msg.what =1;
+
+        Handler mh = new mHandler();
+        mh.sendMessageDelayed(msg,500);
+
+       /* int bitmapSize = srList.size();
+        bmCsr = new String[bitmapSize];
+        for (int i=0;i<bitmapSize;i++){
+            bmCsr[i] = srList.get(i).getOu();
+        }
+        boat = new BitmapOnlyAsyncTask();
+        boat.execute(bmCsr);
+        try {
+            bitmapList = boat.get();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            boat.isCancelled();
+        }
+        for (int i =0; i<srList.size();i++){
+            srList.get(i).setBitmap(bitmapList.get(i));
+        }*/
+
     }
     public static class ViewHolder extends RecyclerView.ViewHolder{
 
@@ -102,7 +144,7 @@ public class ListRvAdapter extends RecyclerView.Adapter<ListRvAdapter.ViewHolder
     public void onBindViewHolder(ViewHolder holder, final int position){//이벤트 처리 // ou : 이미지 pt : 제목 ru : 링크주소 rid : 중복검사용 고유번호
         Bitmap resBitmap=srList.get(position).getBitmap();
         if (resBitmap == null){
-            holder.ivCard.setImageResource(R.drawable.jg_icon);//default image
+            holder.ivCard.setImageResource(R.drawable.imgloading1);//default image
         }else {
             holder.ivCard.setImageBitmap(resBitmap);
         }
@@ -158,7 +200,7 @@ public class ListRvAdapter extends RecyclerView.Adapter<ListRvAdapter.ViewHolder
                 context.startActivity(intent);
             }
         });
-    }
+    }//onBindViewHolder
 
     @Override
     public int getItemCount() {
@@ -238,6 +280,35 @@ public class ListRvAdapter extends RecyclerView.Adapter<ListRvAdapter.ViewHolder
 
                 }
             });
+        }
+    }
+
+    private class mHandler extends Handler{ // 리사이클링 뷰 갱신하기 전에 프로그래스바 보이기 위한 핸들러
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what ==1){
+                int bitmapSize = srList.size();
+                bmCsr = new String[bitmapSize];
+                for (int i=0;i<bitmapSize;i++){
+                    bmCsr[i] = srList.get(i).getOu();
+                }
+                boat = new BitmapOnlyAsyncTask();
+                boat.execute(bmCsr);
+                try {
+                    bitmapList = boat.get();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }finally {
+                    boat.isCancelled();
+                }
+                for (int i =0; i<srList.size();i++){
+                    srList.get(i).setBitmap(bitmapList.get(i));
+                }
+                notifyDataSetChanged();
+                progressBar.setVisibility(View.GONE);
+                removeMessages(msg.what);//
+            }
         }
     }
 }

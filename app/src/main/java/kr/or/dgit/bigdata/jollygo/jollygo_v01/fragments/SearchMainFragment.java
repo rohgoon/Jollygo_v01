@@ -181,7 +181,6 @@ public class SearchMainFragment extends Fragment {
                     sv.setVisibility(View.VISIBLE);
                     sv.setIconified(true);
                    // tvTitle.setText("세상에 이 많은 쉐프들");
-
                 }
             }
         });
@@ -200,7 +199,7 @@ public class SearchMainFragment extends Fragment {
 
                 LinearLayoutManager llm = new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false); //reverseLayout은  sort 순서 반대로하기 기능
                 grv.setLayoutManager(llm);
-                listRvAdapter = new ListRvAdapter(getContext(),getRvAdapter().getImgWords());
+                listRvAdapter = new ListRvAdapter(getContext(), getRvAdapter().getImgWords(),bar);
                 grv.setAdapter(listRvAdapter);
                 //이후 뷰처리 및 초기화
                 ImageView tbTitle =(ImageView)activityThis.findViewById(R.id.toolbarTitle);
@@ -215,9 +214,10 @@ public class SearchMainFragment extends Fragment {
                 }
                 List<String> newList= new ArrayList<String>();//초기화
                 getRvAdapter().getImgWords().setmDataset(newList);
-                bar.setVisibility(View.GONE);
+                //bar.setVisibility(View.GONE);
                 fab.setVisibility(View.VISIBLE);
                 removeMessages(msg.what);//
+                Log.e("레시피목록>>>>","생성 완료");
             }
         }
     }

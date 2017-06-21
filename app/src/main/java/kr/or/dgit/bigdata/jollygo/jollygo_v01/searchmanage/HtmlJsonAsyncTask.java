@@ -27,6 +27,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import kr.or.dgit.bigdata.jollygo.jollygo_v01.R;
+import kr.or.dgit.bigdata.jollygo.jollygo_v01.SearchActivity;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.firebasedto.Allword;
 import kr.or.dgit.bigdata.jollygo.jollygo_v01.firebasedto.Uword;
 
@@ -36,10 +38,11 @@ import kr.or.dgit.bigdata.jollygo.jollygo_v01.firebasedto.Uword;
 
 public class HtmlJsonAsyncTask extends AsyncTask<String,String,List<SearchResult>> {
     private int cutIndex = 0;
+
     @Override
     protected List<SearchResult> doInBackground(String... params) {
         String addr = "https://www.google.co.kr/search?q=allintext:+레시피+재료";
-
+        Gson gson = new GsonBuilder().disableHtmlEscaping().create();
         for (String str: params) {
             addr += "+"+str;
         }
@@ -51,19 +54,15 @@ public class HtmlJsonAsyncTask extends AsyncTask<String,String,List<SearchResult
             //json 추출해서 리스트에 삽입
             doc = Jsoup.connect(addr).get();
             Elements jsons = doc.select("div.rg_meta"); //기본 썸네일 thumbimage 작동됨
+            Log.e("리스트 파싱 갯수>>>>>>",jsons.size()+"");
+
+            //foreach
             for (Element e: jsons) { //중복 검사후 리스트로 삽입해야 함.
                 SearchResult sr = new SearchResult(); //SearchResult 생성
-
                 String jsonRes = e.html();//json 가져옴. 그냥 긁어도 기능함.
-
-                //String jsonRes = "["+jsonStrFirst.substring(1,jsonStrFirst.length()-2)+"]"; //따옴표 정리. 확인 요망
-                Log.e("파싱 스트링값 >>>>>>>>>>>>> ", jsonRes);
-                //유니코드 정리 필요 Gson 확인요망
-                Gson gson = new GsonBuilder().disableHtmlEscaping().create();
-
                 sr = gson.fromJson(jsonRes,SearchResult.class); // ou : 이미지 pt : 제목 ru : 링크주소
                 //비트맵 처리
-                Log.e("이미지 결과값 >>>>>>>>>>>>> ", sr.getOu());
+               // Log.e("이미지 결과값 >>>>>>>>>>>>> ", sr.getOu());
                 //중복 제거 처리
                 boolean checkTf = false;
                 if (cutIndex > 0) {
@@ -83,14 +82,14 @@ public class HtmlJsonAsyncTask extends AsyncTask<String,String,List<SearchResult
                     if (sr.getOu().equals("")) {
                         imgBitmap = null;
                     } else {
-                        imgBitmap = mkBitmap(sr.getOu());
+                        //imgBitmap = mkBitmap(sr.getOu());
+                        imgBitmap = null;
                     }
                     sr.setBitmap(imgBitmap);
                     srList.add(sr); // List<SearchResult>에 삽입
                     cutIndex++;
                 }
-
-                if (cutIndex >19){ //30개는 대략 12초 20개는 7초
+                if (cutIndex >29){ //30개는 대략 12초 20개는 7초
                     break;
                 }
             }
@@ -104,6 +103,7 @@ public class HtmlJsonAsyncTask extends AsyncTask<String,String,List<SearchResult
     private Bitmap mkBitmap(String s) {
         HttpURLConnection connection = null;
         try {
+
             URL url = new URL(s);
             connection = (HttpURLConnection) url.openConnection();
             connection.setDoInput(true); connection.connect();
