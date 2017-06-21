@@ -19,6 +19,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.NativeExpressAdView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -54,6 +56,7 @@ public class SearchMainFragment extends Fragment {
     private DatabaseReference databaseReference = firebaseDatabase.getReference();
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
+    private NativeExpressAdView mAdViewBig;
 
     public SearchMainFragment() {
         // Required empty public constructor
@@ -65,6 +68,7 @@ public class SearchMainFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_search_main,container,false);
         grv = (GridRecyclerView) root.findViewById(R.id.recyclerView);// 확인요망 -> 작동완료
         bar = (ProgressBar) root.findViewById(R.id.cardPb);
+        mAdViewBig = (NativeExpressAdView) root.findViewById(R.id.adViewBig);
         return root;
     }
 
@@ -75,7 +79,9 @@ public class SearchMainFragment extends Fragment {
         activityThis = getActivity();
         Log.e("카드 액티비티 완성<<<<<<<<<<<","ㅇㅇㅇㅇ");
         super.onActivityCreated(savedInstanceState);
-
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdViewBig.loadAd(adRequest);
+        mAdViewBig.setVisibility(View.VISIBLE);
         //-->
         grv.setHasFixedSize(true);
 
@@ -106,8 +112,8 @@ public class SearchMainFragment extends Fragment {
 
             @Override
             public boolean onQueryTextSubmit(String query) {
-
                 Log.e("카드 추가 시작<<<<<<<<<<<","ㅇㅇㅇ");
+                mAdViewBig.setVisibility(View.GONE);
                 sv.setQuery("",true);
                 //프로그래스바 등장
                 bar.setVisibility(View.VISIBLE);
@@ -180,6 +186,7 @@ public class SearchMainFragment extends Fragment {
 
                     sv.setVisibility(View.VISIBLE);
                     sv.setIconified(true);
+                    mAdViewBig.setVisibility(View.VISIBLE);
                    // tvTitle.setText("세상에 이 많은 쉐프들");
                 }
             }

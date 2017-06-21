@@ -59,7 +59,10 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_main" />
+
+    <include layout="@layout/content_main"
+        android:id="@+id/include" />
+
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
@@ -69,5 +72,6 @@
         android:layout_margin="@dimen/fab_margin"
         app:srcCompat="@drawable/fabhome"
         android:scaleType="center"/>
+
 
 </android.support.design.widget.CoordinatorLayout>

@@ -85,8 +85,8 @@ public class MainFrontActivity extends AppCompatActivity  implements
         ivFront.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FirebaseUser currentUser = mAuth.getCurrentUser();
-                updateUI(currentUser);
+               /* FirebaseUser currentUser = mAuth.getCurrentUser();
+                updateUI(currentUser);*/
             }
         });
 
