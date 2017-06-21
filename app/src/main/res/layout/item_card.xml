@@ -14,7 +14,8 @@
         android:clickable="true"
         android:focusable="true"
         android:foreground="?selectableItemBackground"
-        android:id="@+id/card_layout">
+        android:id="@+id/card_layout"
+        android:background="#f5f5f5">
 
         <ImageView
             android:id="@+id/ivCard"
@@ -30,7 +31,6 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_below="@+id/ivCard"
-            android:background="#f0edcd"
             android:gravity="center_horizontal"
             android:paddingBottom="8dp"
             android:paddingTop="8dp"

@@ -99,6 +99,9 @@ public class FavlinkFragment extends Fragment {
                     favlinkList.add(fl);
                     count++;
                     if (count == dataSnapshot.getChildrenCount()){
+                        if (favlinkList.size() ==0){
+                            Toast.makeText(getContext(),"현재 즐겨찾기에 추가된 레시피가 없어요",Toast.LENGTH_SHORT).show();
+                        }
                         grv.setHasFixedSize(true);
                         LinearLayoutManager llm = new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,true); //reverseLayout은  sort 순서 반대로하기 기능
                         llm.setStackFromEnd(true);

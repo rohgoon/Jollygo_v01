@@ -14,7 +14,8 @@
         android:clickable="true"
         android:focusable="true"
         android:foreground="?selectableItemBackground"
-        android:id="@+id/list_fav_layout">
+        android:id="@+id/list_fav_layout"
+        android:background="#f5f5f5">
 
         <ImageView
             android:id="@+id/ivFavCard"
@@ -30,7 +31,6 @@
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:layout_toRightOf="@+id/ivFavCard"
-            android:background="#fff"
             android:layout_marginLeft="3dp"
             android:padding="8dp"
             android:gravity="left|center"

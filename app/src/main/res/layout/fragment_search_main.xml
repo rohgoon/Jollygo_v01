@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#dedede"
+    android:background="@drawable/bgimg"
     tools:context="kr.or.dgit.bigdata.jollygo.jollygo_v01.fragments.SearchMainFragment">
 
     <kr.or.dgit.bigdata.jollygo.jollygo_v01.customviews.GridRecyclerView

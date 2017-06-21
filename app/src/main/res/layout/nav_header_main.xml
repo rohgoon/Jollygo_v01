@@ -16,7 +16,7 @@
         android:id="@+id/imageView"
         android:layout_width="100dp"
         android:layout_height="match_parent"
-        android:paddingTop="5dp"
+        android:paddingTop="@dimen/activity_vertical_margin"
         app:srcCompat="@drawable/wlc_main_big" />
 <!--
     <TextView
