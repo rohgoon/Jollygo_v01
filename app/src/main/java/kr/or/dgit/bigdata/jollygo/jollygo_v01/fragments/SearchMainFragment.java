@@ -106,6 +106,7 @@ public class SearchMainFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         tbtitle.setVisibility(View.INVISIBLE);
+                        mAdViewBig.setVisibility(View.GONE);
                     }
         });
         sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -113,7 +114,6 @@ public class SearchMainFragment extends Fragment {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Log.e("카드 추가 시작<<<<<<<<<<<","ㅇㅇㅇ");
-                mAdViewBig.setVisibility(View.GONE);
                 sv.setQuery("",true);
                 //프로그래스바 등장
                 bar.setVisibility(View.VISIBLE);

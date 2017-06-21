@@ -18,7 +18,6 @@
         android:layout_height="wrap_content"
         ads:adUnitId="@string/big_native_ad_unit_id"
         android:layout_gravity="center"
-        android:background="#f4f4f4"
         ads:adSize="360x360">
     </com.google.android.gms.ads.NativeExpressAdView>
     <ProgressBar
