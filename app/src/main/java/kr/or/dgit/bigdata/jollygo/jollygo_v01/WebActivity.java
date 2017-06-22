@@ -306,6 +306,7 @@ public class WebActivity extends AppCompatActivity {
             intent.setDataAndType(uri,"image/*");
         }
         intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+        onPause();
         startActivityForResult(intent, PICTUREACT);
 
     }
@@ -335,8 +336,8 @@ public class WebActivity extends AppCompatActivity {
     private File createImageFile() {
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmss");
-        String mPath = Environment.getExternalStorageDirectory().getAbsolutePath();//체크
-        File storageDir = new File(mPath+"/whatchefs");
+        String mPath = Environment.getExternalStorageDirectory().getAbsolutePath()+"/whatchefs";//체크
+        File storageDir = new File(mPath);
         if (!storageDir.exists()){
             storageDir.mkdirs();
         }
@@ -355,7 +356,10 @@ public class WebActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
             if (requestCode == PICTUREACT) {
                 Log.e("결과코드>>>>>>>>>>>>>>>", "PICTUREACT");
+                //pictureFile = FileUtils.getFile(context,data.getData());//추가
+               // Log.e("백패스>>>>>>>",backPath+"");
                 if(pictureFile != null){///
+
                     Uri uri = getCaptureBitmapUri();
                     try {
                         Bitmap captureBmp = rotate(getExifOrientation(pictureFile.getAbsolutePath()), MediaStore.Images.Media.getBitmap(getContentResolver(), uri));
