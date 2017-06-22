@@ -244,7 +244,7 @@ public class MainFrontActivity extends AppCompatActivity  implements
         }
     }
     private void showNoPermissionToastAndFinish() {
-        Toast.makeText(this, "사진과 사용자 로그인을 위한 권한 설정입니다. 동의해주시면 어플리케이션 사용이 가능합니다.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "사진과 사용자 휴대폰에 사진 저장을 위한 권한 설정입니다. 동의해주시면 어플리케이션 사용이 가능합니다.", Toast.LENGTH_SHORT).show();
         checkPermissions();
     }
 }

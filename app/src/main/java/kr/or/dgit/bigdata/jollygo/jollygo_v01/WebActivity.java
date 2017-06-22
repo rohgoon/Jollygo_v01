@@ -73,7 +73,6 @@ public class WebActivity extends AppCompatActivity {
     private int flcount; //해당 아이디 즐겨찾기 갯수 카운트
     private String url;
     private static final int PICTUREACT = 101;
-    private static final int GALLERYOPEN = 102;
     private File pictureFile;
     public static final String AUTHORITY = "kr.or.dgit.bigdata.jollygo.jollygo_v01.fileprovider";
     @Override
@@ -297,8 +296,16 @@ public class WebActivity extends AppCompatActivity {
         Intent intent;
         pictureFile = createImageFile();
         //가로찍기도 가능한 모드로 변경
+        Uri uri= null;
         intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(WebActivity.this, AUTHORITY,pictureFile));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            uri = FileProvider.getUriForFile(WebActivity.this, AUTHORITY, pictureFile);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        }else{
+            uri = Uri.fromFile(pictureFile);
+            intent.setDataAndType(uri,"image/*");
+        }
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
         startActivityForResult(intent, PICTUREACT);
 
     }
@@ -310,10 +317,10 @@ public class WebActivity extends AppCompatActivity {
 
     }
 
-    private Uri getCaptureBitmapUri() {
+    private Uri getCaptureBitmapUri() {//
         Uri uri = null;
         try {
-            pictureFile.createNewFile();
+            pictureFile.createNewFile();//
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
                 uri = FileProvider.getUriForFile(WebActivity.this,AUTHORITY,pictureFile);
             }else {
@@ -329,10 +336,9 @@ public class WebActivity extends AppCompatActivity {
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmss");
         String mPath = Environment.getExternalStorageDirectory().getAbsolutePath();//체크
-        //+"/"+"wls"+sdf.format(date)+".jpg";
         File storageDir = new File(mPath+"/whatchefs");
         if (!storageDir.exists()){
-            storageDir.mkdir();
+            storageDir.mkdirs();
         }
         File image = null;
         try {
@@ -349,45 +355,47 @@ public class WebActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
             if (requestCode == PICTUREACT) {
                 Log.e("결과코드>>>>>>>>>>>>>>>", "PICTUREACT");
-                Uri uri = getCaptureBitmapUri();
-                try {
-                    Bitmap captureBmp = rotate(getExifOrientation(pictureFile.getAbsolutePath()), MediaStore.Images.Media.getBitmap(getContentResolver(), uri));
-                    sendBroadcastNotify();
-                    //찍은 사진 바로 올리기
-                    AlertDialog.Builder builder = new AlertDialog.Builder(WebActivity.this);
-                    builder.setMessage("사진을 바로 공유하시겠습니까?").setCancelable(false)
-                            .setPositiveButton("좋아요",
-                                    new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            Toast.makeText(getApplicationContext(),"TIP: 작업이 끝나시면 휴대폰의 뒤로가기 버튼을 눌러주세요.",Toast.LENGTH_LONG).show();
-                                            //구버전 처리 넣기
-                                            Uri uriPic;
-                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                                                uriPic = FileProvider.getUriForFile(WebActivity.this,AUTHORITY,pictureFile);
-                                            }else {
-                                                uriPic = Uri.fromFile(pictureFile);
+                if(pictureFile != null){///
+                    Uri uri = getCaptureBitmapUri();
+                    try {
+                        Bitmap captureBmp = rotate(getExifOrientation(pictureFile.getAbsolutePath()), MediaStore.Images.Media.getBitmap(getContentResolver(), uri));
+                        sendBroadcastNotify();
+                        //찍은 사진 바로 올리기
+                        AlertDialog.Builder builder = new AlertDialog.Builder(WebActivity.this);
+                        builder.setMessage("사진을 바로 공유하시겠습니까?").setCancelable(false)
+                                .setPositiveButton("좋아요",
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                Toast.makeText(getApplicationContext(), "TIP: 작업이 끝나시면 휴대폰의 뒤로가기 버튼을 눌러주세요.", Toast.LENGTH_LONG).show();
+                                                //구버전 처리 넣기
+                                                Uri uriPic;
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                                    uriPic = FileProvider.getUriForFile(WebActivity.this, AUTHORITY, pictureFile);
+                                                } else {
+                                                    uriPic = Uri.fromFile(pictureFile);
+                                                }
+                                                /*Intent i= new Intent(Intent.ACTION_PICK);*/
+                                                Intent i = new Intent(Intent.ACTION_VIEW);
+                                                //FileProvider.getUriForFile(WebActivity.this, AUTHORITY,pictureFile)
+                                                i.setDataAndType(uriPic, "image/*");
+                                                i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);//
+                                                startActivity(i);
                                             }
-                                            /*Intent i= new Intent(Intent.ACTION_PICK);*/
-                                            Intent i= new Intent(Intent.ACTION_VIEW);
-                                            //FileProvider.getUriForFile(WebActivity.this, AUTHORITY,pictureFile)
-                                            i.setDataAndType(uriPic,"image/*");
-                                            i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);//
-                                            startActivity(i);
                                         }
+                                ).setNegativeButton("싫어요",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.cancel();
                                     }
-                            ).setNegativeButton("싫어요",
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.cancel();
                                 }
-                            }
-                    );
-                    builder.show();
+                        );
+                        builder.show();
 
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
