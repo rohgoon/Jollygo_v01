@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -121,8 +120,6 @@ public class SearchActivity extends AppCompatActivity
         toolbar.invalidate();
 
         //튜토리얼용 다이알로그 등장
-      /*  tutoDbHelper = TutoDbHelper.getInstance(this);
-        sqlite = tutoDbHelper.getWritableDatabase();*/
         View dialog = View.inflate(SearchActivity.this, R.layout.tutodialog,null);//오류보고 20170621
 
         AlertDialog.Builder dlg = new AlertDialog.Builder(SearchActivity.this,R.style.CustomDialog);
@@ -347,7 +344,6 @@ public class SearchActivity extends AppCompatActivity
     @Override
     protected void onPause() {
         super.onPause();
-       // sqlite.close();
 
     }
 }
