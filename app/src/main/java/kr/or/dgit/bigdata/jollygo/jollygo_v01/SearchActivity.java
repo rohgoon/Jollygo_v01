@@ -123,7 +123,7 @@ public class SearchActivity extends AppCompatActivity
         //튜토리얼용 다이알로그 등장
       /*  tutoDbHelper = TutoDbHelper.getInstance(this);
         sqlite = tutoDbHelper.getWritableDatabase();*/
-        View dialog = View.inflate(SearchActivity.this, R.layout.tutodialog,null);
+        View dialog = View.inflate(SearchActivity.this, R.layout.tutodialog,null);//오류보고 20170621
 
         AlertDialog.Builder dlg = new AlertDialog.Builder(SearchActivity.this,R.style.CustomDialog);
         tutoMain = (ImageView) dialog.findViewById(R.id.tutoMain);

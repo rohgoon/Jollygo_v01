@@ -48,9 +48,6 @@ public class ImgHtmlAsyncTask extends AsyncTask<String,Integer,Map<String,Bitmap
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-
-
-
     }
 
     @Override
@@ -74,8 +71,10 @@ public class ImgHtmlAsyncTask extends AsyncTask<String,Integer,Map<String,Bitmap
                                 d.child("awimgurl").getValue().toString(),
                                 Integer.parseInt(d.child("awcount").getValue().toString())
                         );
-                        //allword용 트랜잭션도 가동시키기
-                        clickStack(d.getRef());
+                        //allword용 트랜잭션도 가동시키기 //오류보고 20170621
+                        if (d.exists()) {
+                            clickStack(d.getRef());
+                        }
                     }//foreach
                 }else{
                     //없으면 allword에 삽입

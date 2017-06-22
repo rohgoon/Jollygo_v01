@@ -76,7 +76,6 @@ public class MainFrontActivity extends AppCompatActivity  implements
             public void onClick(View v) {
                 ibOauth.setImageResource(R.drawable.oauthbtn_ns);
                 signIn();
-
             }
         });
         mAuth = FirebaseAuth.getInstance();
