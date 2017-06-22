@@ -83,12 +83,12 @@ public class ListRvAdapter extends RecyclerView.Adapter<ListRvAdapter.ViewHolder
             hjat.isCancelled();
         }
         Log.e("리스트 결과 사이즈>>>>>",srList.size()+"");
-        //핸들러로 던지기
+        //핸들러로 던지기 참치
         Message msg = new Message();
         msg.what =1;
 
         Handler mh = new mHandler();
-        mh.sendMessageDelayed(msg,500);
+        mh.sendMessageDelayed(msg,600);
 
        /* int bitmapSize = srList.size();
         bmCsr = new String[bitmapSize];
@@ -123,7 +123,7 @@ public class ListRvAdapter extends RecyclerView.Adapter<ListRvAdapter.ViewHolder
             tvTest = (TextView) v.findViewById(R.id.tvListTitle);
             rl = (RelativeLayout) v.findViewById(R.id.list_card_layout);
         }
-    }//ViewHolder
+    }//ViewHolder 참치
 
 
     // Create new views (invoked by the layout manager)

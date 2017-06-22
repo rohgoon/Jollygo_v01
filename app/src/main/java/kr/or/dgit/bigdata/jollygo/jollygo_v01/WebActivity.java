@@ -93,11 +93,11 @@ public class WebActivity extends AppCompatActivity {
         fabBrowser = (FloatingActionButton) findViewById(R.id.fabBrowser);
         fabFav = (FloatingActionButton) findViewById(R.id.fabFav);
         fam = (FloatingActionMenu) findViewById(R.id.fab_menu);
-
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();//유저정보
 
-        //fam.setMenuButtonColorNormal(Color.BLUE);
+        //fam
+
 
         webView = (WebView) findViewById(R.id.webView);
         webView.setWebViewClient(new WebViewClient(){
@@ -173,12 +173,24 @@ public class WebActivity extends AppCompatActivity {
         fabBack.setOnClickListener(onButtonClick());
         fabHome.setOnClickListener(onButtonClick());
         fabFav.setOnClickListener(onButtonClick());
-        fam.setOnClickListener(new View.OnClickListener() {
+       /* fam.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
+                Toast.makeText(getApplicationContext(),"FAB버튼 클릭",Toast.LENGTH_SHORT).show();
                 if (fam.isOpened()) {
                     fam.close(true);
                 }
+            }
+        });*/
+        fam.setOnMenuButtonClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (fam.isOpened()) {
+                    //Toast.makeText(getApplicationContext(), "버튼 오픈되었음", Toast.LENGTH_SHORT).show();
+                }
+
+                fam.toggle(true);
             }
         });
 
@@ -277,7 +289,7 @@ public class WebActivity extends AppCompatActivity {
                         }
                     });
                 }
-                fam.close(true);
+                //fam.close(true);
             }
         };
     }
